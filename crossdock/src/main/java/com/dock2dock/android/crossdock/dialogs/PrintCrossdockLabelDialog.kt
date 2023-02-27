@@ -12,6 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import com.dock2dock.android.crossdock.viewModels.DialogPrintCrossdockLabelViewModel
@@ -22,22 +23,32 @@ import com.dock2dock.ui.components.*
 @Composable
 fun DialogPrintCrossdockLabel(tokenManager: TokenManager,
                               dock2DockConfiguration: Dock2DockConfiguration,
-                              visible: MutableState<Boolean>,
-                              salesOrderId: String) {
-    var dismissAction = { visible.value = false }
-    Dialog(onDismissRequest = dismissAction)
-    {
-        DialogPrintCrossdockLabelUI(tokenManager, dock2DockConfiguration, visible, salesOrderId, dismissAction)
+                              visible: Boolean,
+                              onDismissRequest: () -> Unit,
+                              onSuccessRequest: () -> Unit,
+                              salesOrderNo: String) {
+
+    var viewModel = DialogPrintCrossdockLabelViewModel(
+        tokenManager = tokenManager,
+        dock2DockConfiguration =  dock2DockConfiguration,
+        salesOrderNo = salesOrderNo,
+        onSuccess = onSuccessRequest
+    )
+
+    if (visible) {
+        Dialog(onDismissRequest = {
+            onDismissRequest()
+        })
+        {
+            DialogPrintCrossdockLabelUI(viewModel, onDismissRequest)
+        }
     }
 }
 
 @Composable
-fun DialogPrintCrossdockLabelUI(tokenManager: TokenManager,
-                                dock2DockConfiguration: Dock2DockConfiguration,
-                                visible: MutableState<Boolean>,
-                                salesOrderId: String,
-                                onDismissRequest: () -> Unit) {
-    var viewModel = DialogPrintCrossdockLabelViewModel(tokenManager, dock2DockConfiguration, salesOrderId = salesOrderId)
+fun DialogPrintCrossdockLabelUI(viewModel: DialogPrintCrossdockLabelViewModel, onDismissRequest: () -> Unit) {
+
+    val isLoading: Boolean by viewModel.isLoading.observeAsState(false)
 
     Surface(
         modifier = Modifier
@@ -50,12 +61,14 @@ fun DialogPrintCrossdockLabelUI(tokenManager: TokenManager,
 
             DialogHeader(title = "Print Crossdock Label")
 
-            Column(modifier = Modifier.verticalScroll(rememberScrollState(), true).weight(1f, false)) {
-                FormItem("Sales Order Id") {
+            Column(modifier = Modifier
+                .verticalScroll(rememberScrollState(), true)
+                .weight(1f, false)) {
+                FormItem("Sales Order No") {
                     com.dock2dock.ui.components.TextField(
                         readOnly = true,
-                        value = viewModel.salesOrderId,
-                        placeholderText = "Sales Order Id"
+                        value = viewModel.salesOrderNo,
+                        placeholderText = "Sales Order No"
                     )
                 }
 
@@ -103,7 +116,6 @@ fun DialogPrintCrossdockLabelUI(tokenManager: TokenManager,
                 }
             }
 
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -114,14 +126,12 @@ fun DialogPrintCrossdockLabelUI(tokenManager: TokenManager,
             ) {
                 Box(modifier = Modifier.weight(1f)) {
                     PrimaryButton(text = "Cancel") {
-                        visible.value = false
+                        onDismissRequest()
                     }
                 }
                 Box(modifier = Modifier.weight(1f)) {
-                    PrimaryButton(text = "Print", variant = ButtonVariant.Primary) {
-                        viewModel.submit {
-                            onDismissRequest()
-                        }
+                    PrimaryButton(text = "Print", variant = ButtonVariant.Primary, isLoading = isLoading) {
+                        viewModel.onSubmit()
                     }
                 }
             }
@@ -139,7 +149,6 @@ fun DialogHeader(title: String) {
     )
 }
 
-@SuppressLint("UnrememberedMutableState")
 @Preview
 @Composable
 fun PreviewDialogPrintCrossdockLabel() {

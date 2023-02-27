@@ -1,6 +1,7 @@
 package com.dock2dock.android.crossdock.viewModels
 
-import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dock2dock.android.application.models.commands.DeleteCrossdockLabel
@@ -16,12 +17,26 @@ import com.skydoves.sandwich.*
 internal class CrossdockLabelDataTableViewModel(
     tokenManager: TokenManager,
     dock2DockConfiguration: Dock2DockConfiguration,
-    private val salesOrderId: String
-    ): ViewModel()
+    private val salesOrderNo: String): ViewModel()
 {
-    var isLoading = mutableStateOf(false)
-    var loadError = mutableStateOf("")
-    var items = mutableStateOf(listOf<CrossdockLabel>())
+
+    private val _isLoading = MutableLiveData(false)
+    val isLoading: LiveData<Boolean> = _isLoading
+    private fun onIsLoadingChange(value: Boolean) {
+        _isLoading.value = value
+    }
+
+    private val _loadError = MutableLiveData("")
+    val loadError: LiveData<String> = _loadError
+    private fun onLoadErrorChange(value: String) {
+        _loadError.value = value
+    }
+
+    private val _items = MutableLiveData(listOf<CrossdockLabel>())
+    var items: LiveData<List<CrossdockLabel>> = _items
+    private fun onItemsChange(value: List<CrossdockLabel>) {
+        _items.value = value
+    }
 
     private val publicApiClient = getRetrofitClient<PublicApiClient>(tokenManager, dock2DockConfiguration, PUBLICAPI_BASEURL)
 
@@ -31,16 +46,16 @@ internal class CrossdockLabelDataTableViewModel(
 
     fun getCrossdockLabels() {
         viewModelScope.launch {
-            isLoading.value = true
-            var response = publicApiClient.getLabels("salesOrderNo eq '$salesOrderId'")
+            onIsLoadingChange(true)
+            var response = publicApiClient.getLabels("salesOrderNo eq '$salesOrderNo'", "DateCreated desc")
             response.onSuccess {
-                loadError.value = ""
-                items.value = this.data.value
+                onLoadErrorChange("")
+                onItemsChange(this.data.value)
             }.onError {
                 when(this.statusCode) {
-                    StatusCode.Unauthorized -> loadError.value = "We couldn't validate your credentials. Please check before continuing."
+                    StatusCode.Unauthorized -> onLoadErrorChange("We couldn't validate your credentials. Please check before continuing.")
                     else -> {
-                        loadError.value = "An error has occurred. Please retry or contact Dock2Dock support team."
+                        onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
                     }
                 }
 //                map(HttpErrorMapper) {
@@ -48,26 +63,35 @@ internal class CrossdockLabelDataTableViewModel(
 //                    val message = this.message
 //                }
             }.onException {
-                loadError.value = "An error has occurred. Please retry or contact Dock2Dock support team."
+                onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
             }
 
-            isLoading.value = false
+            onIsLoadingChange(false)
         }
     }
 
     fun deleteCrossdockLabel(label: CrossdockLabel) {
         viewModelScope.launch {
-            var label = DeleteCrossdockLabel(label.id, !label.isDeleted)
-            var response = publicApiClient.deleteCrossdockLabel(label)
+            var cmd = DeleteCrossdockLabel(label.id, !label.isDeleted)
+            var response = publicApiClient.deleteCrossdockLabel(cmd)
             response.onSuccess {
 
+                label.isDeleted = cmd.isDeleted
+                onUpdateCrossdockLabel(label)
             }.onError {
 
             }.onException {
 
             }
+        }
+    }
 
-            isLoading.value = false
+    private fun onUpdateCrossdockLabel(label: CrossdockLabel) {
+        var tempItems = items.value?.toMutableList()
+
+        tempItems?.indexOfFirst { it.id == label.id }?.let {
+            tempItems?.set(it, label)
+            onItemsChange(tempItems)
         }
     }
 }

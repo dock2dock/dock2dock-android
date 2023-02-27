@@ -25,7 +25,7 @@ object ApiService {
         configuration: Dock2DockConfiguration,
         baseUrl: String
     ): T {
-        var httpClient = unSafeOkHttpClient()
+        var httpClient = OkHttpClient.Builder()
             .addInterceptor(AuthenticationInterceptor(tokenManager, configuration))
             .build()
         return Retrofit.Builder()
@@ -139,12 +139,10 @@ object ApiService {
 //        }
 
     private suspend fun getNewAccessToken(configuration: Dock2DockConfiguration): Authentication {
-        var httpClient = unSafeOkHttpClient().build()
         val retrofit = Retrofit.Builder()
             .baseUrl(IDENTITYAPI_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
-            .client(httpClient)
             .build()
         val identityClient = retrofit.create(IdentityApiClient::class.java)
 

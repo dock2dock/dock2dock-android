@@ -1,20 +1,22 @@
 package com.dock2dock.ui.components
 
-import android.graphics.drawable.Icon
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dock2dock.ui.ui.theme.PrimaryDark
@@ -48,22 +50,47 @@ fun getButtonColors(variant: ButtonVariant): ButtonColors {
 
 @Composable
 fun PrimaryButton(text: String,
-                  variant: ButtonVariant = ButtonVariant.Default,
                   modifier: Modifier = Modifier.fillMaxWidth(),
+                  variant: ButtonVariant = ButtonVariant.Default,
+                  isLoading: Boolean = false,
                   onClick: () -> Unit) {
+
+    val progressIndicatorColor = getButtonColors(variant = variant)
+
     Button(
         onClick = onClick,
         shape = RectangleShape,
         enabled = true,
         modifier = modifier,
         colors = getButtonColors(variant = variant),
-//        elevation = ButtonDefaults.elevation(
-//            defaultElevation = 8.dp,
-//            disabledElevation = 2.dp,
-//            // Also pressedElevation
-//        )
     ) {
-        Text(text = text)
+        if (isLoading) {
+            LoadingPleaseWait(progressIndicatorColor.contentColor(enabled = true).value)
+        } else {
+            Text(text = text)
+        }
+    }
+}
+
+@Composable
+fun LoadingPleaseWait(color: Color) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(0.dp)
+    ) {
+        Text(
+            text = "Loading.. Please wait..",
+            textAlign = TextAlign.Center
+        )
+
+        CircularProgressIndicator(
+            strokeWidth = 2.dp,
+            color = color,
+            modifier = Modifier
+                .size(26.dp)
+                .align(Alignment.CenterVertically)
+                .padding(8.dp, 0.dp, 0.dp, 0.dp)
+        )
     }
 }
 
@@ -71,8 +98,7 @@ fun PrimaryButton(text: String,
 fun PrimaryIconButton(text: String,
                       icon: ImageVector,
                       modifier: Modifier = Modifier,
-                      interactionSource: MutableInteractionSource =
-                          remember { MutableInteractionSource() },
+                      interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
                       onClick: () -> Unit) {
     val isPressed by interactionSource.collectIsPressedAsState()
 
@@ -101,7 +127,9 @@ fun PrimaryIconButton(text: String,
 @Preview
 @Composable
 fun PrimaryButtonPreview() {
-    PrimaryButton("Hello World") {
-
-    }
+    var isLoading: Boolean by remember { mutableStateOf(false) }
+    PrimaryButton("Hello World",
+        variant = ButtonVariant.Primary,
+        isLoading = isLoading,
+        onClick =  { isLoading = !isLoading })
 }

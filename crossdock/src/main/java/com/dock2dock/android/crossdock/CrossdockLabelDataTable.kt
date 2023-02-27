@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -21,7 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
-import com.dock2dock.android.application.models.commands.DeleteCrossdockLabel
 import com.dock2dock.android.application.models.query.CrossdockLabel
 import com.dock2dock.android.crossdock.dialogs.DialogPrintCrossdockLabel
 import com.dock2dock.android.crossdock.viewModels.CrossdockLabelDataTableViewModel
@@ -31,33 +31,43 @@ import com.dock2dock.ui.components.*
 import com.dock2dock.ui.ui.theme.*
 import com.dock2dock.ui.views.RetryErrorView
 
-data class CrossdockLabelDataTable(val salesOrderId: String) {
+data class CrossdockLabelDataTable(val salesOrderNo: String) {
 
     @Composable
     fun launch(context: Context) {
-        return CrossdockLabelDataTableUI(Dock2DockConfiguration.getInstance(context), TokenManager.getInstance(context), salesOrderId)
+        return CrossdockLabelDataTableUI(Dock2DockConfiguration.getInstance(context), TokenManager.getInstance(context), salesOrderNo)
     }
 }
 
 @Composable
-internal fun CrossdockLabelDataTableUI(dockConfiguration: Dock2DockConfiguration, tokenManager: TokenManager, salesOrderId: String)
+internal fun CrossdockLabelDataTableUI(dockConfiguration: Dock2DockConfiguration, tokenManager: TokenManager, salesOrderNo: String)
 {
-    var viewModel = CrossdockLabelDataTableViewModel(tokenManager, dockConfiguration, salesOrderId)
+    val viewModel = CrossdockLabelDataTableViewModel(tokenManager, dockConfiguration, salesOrderNo)
 
-    val showDialog = remember { mutableStateOf(false)  }
+    var showDialog by remember { mutableStateOf(false) }
 
-    val loadError by remember { viewModel.loadError }
-    val isLoading by remember { viewModel.isLoading }
-    val items by remember { viewModel.items }
+    val loadError by viewModel.loadError.observeAsState("")
+    val isLoading by viewModel.isLoading.observeAsState(false)
+    val items by viewModel.items.observeAsState(listOf())
 
-    if (showDialog.value) {
-        DialogPrintCrossdockLabel(tokenManager, dockConfiguration, showDialog, salesOrderId)
+    if (showDialog) {
+        DialogPrintCrossdockLabel(
+            tokenManager,
+            dockConfiguration,
+            visible = showDialog,
+            onDismissRequest = { showDialog = !showDialog },
+            onSuccessRequest = {
+                showDialog = !showDialog
+                viewModel.getCrossdockLabels()
+                               },
+            salesOrderNo
+        )
     }
 
     Column {
         Row(modifier = Modifier.padding(8.dp, 0.dp), horizontalArrangement = Arrangement.Start) {
-            PrimaryButton(text = "Add", ButtonVariant.Primary, Modifier) {
-                showDialog.value = !showDialog.value
+            PrimaryButton(text = "Add", variant = ButtonVariant.Primary, modifier = Modifier) {
+                showDialog = true
             }
 
             PrimaryIconButton(
@@ -77,8 +87,8 @@ internal fun CrossdockLabelDataTableUI(dockConfiguration: Dock2DockConfiguration
 }
 
 @Composable
-fun DataTable(isLoading: Boolean = false,
-              loadError: String = "",
+fun DataTable(isLoading: Boolean,
+              loadError: String,
               items: List<CrossdockLabel>,
               reloadItems: (() -> Unit) = {},
               onRowDelete: (CrossdockLabel) -> Unit,
@@ -197,5 +207,8 @@ fun PreviewDataTable() {
                 "00090022680000000021",
                 "Chilled Carton",
                 false
-            )), onRowDelete = {})
+            )),
+        onRowDelete = {},
+        isLoading = false,
+        loadError = "")
 }

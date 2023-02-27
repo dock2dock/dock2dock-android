@@ -3,6 +3,8 @@ package com.dock2dock.android.crossdock.viewModels
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dock2dock.android.application.models.commands.CreateCrossdockLabel
@@ -19,9 +21,10 @@ import com.skydoves.sandwich.onException
 import com.skydoves.sandwich.onSuccess
 import kotlinx.coroutines.launch
 
-internal class DialogPrintCrossdockLabelViewModel(tokenManager: TokenManager,
-                                                  dock2DockConfiguration: Dock2DockConfiguration,
-                                                  val salesOrderId: String): ViewModel()
+class DialogPrintCrossdockLabelViewModel(tokenManager: TokenManager,
+                                         dock2DockConfiguration: Dock2DockConfiguration,
+                                         val onSuccess: () -> Unit,
+                                         val salesOrderNo: String): ViewModel()
 {
     private val publicApiClient = ApiService.getRetrofitClient<PublicApiClient>(
         tokenManager,
@@ -29,14 +32,16 @@ internal class DialogPrintCrossdockLabelViewModel(tokenManager: TokenManager,
         Constants.PUBLICAPI_BASEURL
     )
 
-    var isLoading = mutableStateOf(false)
-    var loadError = mutableStateOf("")
+    private val _isLoading = MutableLiveData(false)
+    val isLoading: LiveData<Boolean> = _isLoading
+
+    var loadError = MutableLiveData("")
 
     var handlingUnitId by mutableStateOf("")
         private set
     var quantity by mutableStateOf(0)
         private set
-    var printerId by mutableStateOf("")
+    var printerId by mutableStateOf("Test")
         private set
 
     var printers by mutableStateOf(listOf<Printer>())
@@ -127,17 +132,17 @@ internal class DialogPrintCrossdockLabelViewModel(tokenManager: TokenManager,
         }
     }
 
-    fun submit(onSuccessAction: ()-> Unit) {
+    fun onSubmit() {
         if (!validateForm()) {
             return
         }
         viewModelScope.launch {
-            //isLoading.value = true
-            var createCrossdockLabel = CreateCrossdockLabel(salesOrderId, handlingUnitId, quantity, printerId)
+            _isLoading.value = true
+            var createCrossdockLabel = CreateCrossdockLabel(salesOrderNo, handlingUnitId, quantity, printerId)
             var response = publicApiClient.createCrossdockLabel(createCrossdockLabel)
             response.onSuccess {
                 loadError.value = ""
-                onSuccessAction()
+                onSuccess()
             }.onError {
                 when(this.statusCode) {
                     StatusCode.Unauthorized -> loadError.value = "We couldn't validate your credentials. Please check before continuing."
@@ -153,7 +158,7 @@ internal class DialogPrintCrossdockLabelViewModel(tokenManager: TokenManager,
                 loadError.value = "An error has occurred. Please retry or contact Dock2Dock support team."
             }
 
-            isLoading.value = false
+            _isLoading.value = false
         }
     }
 }

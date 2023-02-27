@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Dock2DockConfiguration.init(this, "4259569b-8339-4062-97ad-eb73f750376a", "SA-w8b~A96q!u5pL!4-21!-G~Q73u!D-M083v7o~p-7j6Vk0aS")
+        Dock2DockConfiguration.init(this, "d96d4b92-d746-45a7-8131-bf9a187c65ea", "Kz2~8!9H89KUZONX2a7qm7-e-61U8J5~kZ-6c7~~-0t~Y-4!zC")
         setContentView(R.layout.activity_pick_item)
         setupFragment()
         populateDetails()

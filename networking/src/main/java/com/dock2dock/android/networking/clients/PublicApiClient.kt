@@ -17,7 +17,7 @@ interface PublicApiClient
     suspend fun deleteCrossdockLabel(@Body label: DeleteCrossdockLabel): ApiResponse<Unit>
 
     @GET("/CrossdockLabel/")
-    suspend fun getLabels(@Query("\$filter") filter: String): ApiResponse<ODataResponse<CrossdockLabel>>
+    suspend fun getLabels(@Query("\$filter") filter: String, @Query("\$orderBy") orderBy: String): ApiResponse<ODataResponse<CrossdockLabel>>
 
     @GET("/Printer/")
     suspend fun getPrinters(): ApiResponse<ODataResponse<Printer>>
