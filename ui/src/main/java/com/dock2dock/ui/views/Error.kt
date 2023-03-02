@@ -52,7 +52,7 @@ fun RetryErrorView(title: String, error: String, modifier: Modifier = Modifier, 
     ErrorView(
         title = title,
         error = error,
-        modifier = modifier) {
+        modifier = modifier.padding(16.dp)) {
         PrimaryButton(
             text = "Retry",
             onClick = { onClick() },

@@ -1,6 +1,5 @@
 package com.dock2dock.android.crossdock.dialogs
 
-import android.annotation.SuppressLint
 import androidx.compose.material.Text
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.window.Dialog
@@ -13,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import com.dock2dock.android.crossdock.viewModels.DialogPrintCrossdockLabelViewModel
@@ -32,8 +32,7 @@ fun DialogPrintCrossdockLabel(tokenManager: TokenManager,
         tokenManager = tokenManager,
         dock2DockConfiguration =  dock2DockConfiguration,
         salesOrderNo = salesOrderNo,
-        onSuccess = onSuccessRequest
-    )
+        onSuccess = onSuccessRequest)
 
     if (visible) {
         Dialog(onDismissRequest = {
@@ -143,8 +142,9 @@ fun DialogPrintCrossdockLabelUI(viewModel: DialogPrintCrossdockLabelViewModel, o
 fun DialogHeader(title: String) {
     Text(
         text = title,
-        fontWeight = FontWeight.Bold,
-        fontSize = 18.sp,
+        fontWeight = FontWeight(400),
+        fontSize = 24.sp,
+        style = TextStyle(lineHeight = 32.sp),
         modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 8.dp)
     )
 }

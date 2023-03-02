@@ -79,7 +79,7 @@ fun LoadingPleaseWait(color: Color) {
         modifier = Modifier.padding(0.dp)
     ) {
         Text(
-            text = "Loading.. Please wait..",
+            text = "Loading..",
             textAlign = TextAlign.Center
         )
 

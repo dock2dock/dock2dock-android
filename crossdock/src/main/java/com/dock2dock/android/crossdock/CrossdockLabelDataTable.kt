@@ -16,8 +16,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,15 +35,14 @@ data class CrossdockLabelDataTable(val salesOrderNo: String) {
 
     @Composable
     fun launch(context: Context) {
-        return CrossdockLabelDataTableUI(Dock2DockConfiguration.getInstance(context), TokenManager.getInstance(context), salesOrderNo)
+        val viewModel = CrossdockLabelDataTableViewModel(TokenManager.getInstance(context), Dock2DockConfiguration.getInstance(context), salesOrderNo)
+        return CrossdockLabelDataTableUI(viewModel)
     }
 }
 
 @Composable
-internal fun CrossdockLabelDataTableUI(dockConfiguration: Dock2DockConfiguration, tokenManager: TokenManager, salesOrderNo: String)
+internal fun CrossdockLabelDataTableUI(viewModel: CrossdockLabelDataTableViewModel)
 {
-    val viewModel = CrossdockLabelDataTableViewModel(tokenManager, dockConfiguration, salesOrderNo)
-
     var showDialog by remember { mutableStateOf(false) }
 
     val loadError by viewModel.loadError.observeAsState("")
@@ -52,15 +51,15 @@ internal fun CrossdockLabelDataTableUI(dockConfiguration: Dock2DockConfiguration
 
     if (showDialog) {
         DialogPrintCrossdockLabel(
-            tokenManager,
-            dockConfiguration,
+            viewModel.tokenManager,
+            viewModel.dock2DockConfiguration,
             visible = showDialog,
             onDismissRequest = { showDialog = !showDialog },
             onSuccessRequest = {
                 showDialog = !showDialog
                 viewModel.getCrossdockLabels()
                                },
-            salesOrderNo
+            viewModel.salesOrderNo
         )
     }
 
@@ -93,62 +92,91 @@ fun DataTable(isLoading: Boolean,
               reloadItems: (() -> Unit) = {},
               onRowDelete: (CrossdockLabel) -> Unit,
               modifier: Modifier = Modifier) {
+
+
+    if (isLoading) {
+        TableLoading()
+    }
+
     LazyColumn(
         modifier = modifier
     ) {
         item {
-
-            Row(
-                Modifier
-                    .background(PrimaryOxfordBlue)
-                    .padding(0.dp, 6.dp)
-            ) {
-                Text(
-                    modifier = Modifier
-                        .weight(0.44f)
-                        .padding(start = 8.dp),
-                    color = PrimaryWhite,
-                    text = "Barcode",
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    modifier = Modifier
-                        .weight(0.5f)
-                        .padding(start = 8.dp),
-                    color = PrimaryWhite,
-                    text = "Handling Unit",
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            TableHeaderRow()
         }
-        items(
-            items = items,
-            key = { item -> item.id }
-        ) { item ->
-            TableRow(
-                item = item,
-                onRowDelete = onRowDelete
-            )
-        }
-    }
 
-        Box(
-            contentAlignment = Center,
-            modifier = Modifier.padding(20.dp).fillMaxWidth()
-        ) {
-            if (isLoading) {
-                CircularProgressIndicator(color = PrimaryOxfordBlue)
-            }
-            if (loadError.isNotEmpty()) {
+        if (loadError.isNotEmpty()) {
+            item {
                 RetryErrorView(
                     error = loadError,
                     title = "We're sorry",
-                ) {
-                    reloadItems()
-                }
+                    onClick = reloadItems
+                )
+            }
+
+        }
+        else if (!isLoading && items.isEmpty()) {
+            item {
+                Text("No Records Found!")
+            }
+        } else {
+            items(
+                items = items,
+                key = { item -> item.id }
+            ) { item ->
+                TableRow(
+                    item = item,
+                    onRowDelete = onRowDelete
+                )
             }
         }
 
+    }
+}
+
+
+@Composable
+internal fun TableLoading() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(Color.Gray.copy(alpha = 0.1f))
+    ) {
+        Column(
+            modifier = Modifier.align(Alignment.Center),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            CircularProgressIndicator(color = PrimaryOxfordBlue)
+            Text(text = "Loading...")
+        }
+    }
+}
+
+@Composable
+fun TableHeaderRow() {
+    Row(
+        Modifier
+            .background(PrimaryOxfordBlue)
+            .padding(0.dp, 6.dp)
+    ) {
+        Text(
+            modifier = Modifier
+                .weight(0.44f)
+                .padding(start = 8.dp),
+            color = PrimaryWhite,
+            text = "Barcode",
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            modifier = Modifier
+                .weight(0.5f)
+                .padding(start = 8.dp),
+            color = PrimaryWhite,
+            text = "Handling Unit",
+            fontWeight = FontWeight.Bold
+        )
+    }
 }
 
 @Composable
@@ -211,4 +239,14 @@ fun PreviewDataTable() {
         onRowDelete = {},
         isLoading = false,
         loadError = "")
+}
+
+@Preview(showBackground = true, widthDp = 300, heightDp = 300)
+@Composable
+fun PreviewTableLoading()
+{
+    Box {
+        Text("No records found")
+        TableLoading()
+    }
 }

@@ -14,11 +14,10 @@ import com.dock2dock.android.networking.ApiService
 import com.dock2dock.android.networking.clients.PublicApiClient
 import com.dock2dock.android.networking.configuration.Dock2DockConfiguration
 import com.dock2dock.android.networking.managers.TokenManager
+import com.dock2dock.android.networking.models.Dock2DockErrorCode
+import com.dock2dock.android.networking.models.HttpErrorMapper
 import com.dock2dock.android.networking.utilities.Constants
-import com.skydoves.sandwich.StatusCode
-import com.skydoves.sandwich.onError
-import com.skydoves.sandwich.onException
-import com.skydoves.sandwich.onSuccess
+import com.skydoves.sandwich.*
 import kotlinx.coroutines.launch
 
 class DialogPrintCrossdockLabelViewModel(tokenManager: TokenManager,
@@ -35,7 +34,11 @@ class DialogPrintCrossdockLabelViewModel(tokenManager: TokenManager,
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
 
-    var loadError = MutableLiveData("")
+    private val _loadError = MutableLiveData("")
+    val loadError: LiveData<String> = _loadError
+    private fun onLoadErrorChange(value: String) {
+        _loadError.value = value
+    }
 
     var handlingUnitId by mutableStateOf("")
         private set
@@ -112,9 +115,16 @@ class DialogPrintCrossdockLabelViewModel(tokenManager: TokenManager,
             response.onSuccess {
                 printers = this.data.value
             }.onError {
-
+                map(HttpErrorMapper) {
+                    when(this.code) {
+                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange("We couldn't validate your credentials. Please check before continuing.")
+                        else -> {
+                            onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
+                        }
+                    }
+                }
             }.onException {
-
+                onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
             }
         }
     }
@@ -125,9 +135,16 @@ class DialogPrintCrossdockLabelViewModel(tokenManager: TokenManager,
             response.onSuccess {
                 handlingUnits = this.data.value
             }.onError {
-
+                map(HttpErrorMapper) {
+                    when(this.code) {
+                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange("We couldn't validate your credentials. Please check before continuing.")
+                        else -> {
+                            onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
+                        }
+                    }
+                }
             }.onException {
-
+                onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
             }
         }
     }
@@ -141,21 +158,19 @@ class DialogPrintCrossdockLabelViewModel(tokenManager: TokenManager,
             var createCrossdockLabel = CreateCrossdockLabel(salesOrderNo, handlingUnitId, quantity, printerId)
             var response = publicApiClient.createCrossdockLabel(createCrossdockLabel)
             response.onSuccess {
-                loadError.value = ""
+                onLoadErrorChange("")
                 onSuccess()
             }.onError {
-                when(this.statusCode) {
-                    StatusCode.Unauthorized -> loadError.value = "We couldn't validate your credentials. Please check before continuing."
-                    else -> {
-                        loadError.value = "An error has occurred. Please retry or contact Dock2Dock support team."
+                map(HttpErrorMapper) {
+                    when(this.code) {
+                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange("We couldn't validate your credentials. Please check before continuing.")
+                        else -> {
+                            onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
+                        }
                     }
                 }
-//                map(HttpErrorMapper) {
-//                    val code = this.code
-//                    val message = this.message
-//                }
             }.onException {
-                loadError.value = "An error has occurred. Please retry or contact Dock2Dock support team."
+                onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
             }
 
             _isLoading.value = false

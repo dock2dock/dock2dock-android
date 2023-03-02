@@ -1,5 +1,6 @@
 package com.dock2dock.android.crossdock.viewModels
 
+import android.accounts.NetworkErrorException
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,14 +11,16 @@ import com.dock2dock.android.networking.ApiService.getRetrofitClient
 import com.dock2dock.android.networking.clients.*
 import com.dock2dock.android.networking.configuration.Dock2DockConfiguration
 import com.dock2dock.android.networking.managers.TokenManager
+import com.dock2dock.android.networking.models.Dock2DockErrorCode
+import com.dock2dock.android.networking.models.HttpErrorMapper
 import com.dock2dock.android.networking.utilities.Constants.PUBLICAPI_BASEURL
 import kotlinx.coroutines.launch
 import com.skydoves.sandwich.*
 
 internal class CrossdockLabelDataTableViewModel(
-    tokenManager: TokenManager,
-    dock2DockConfiguration: Dock2DockConfiguration,
-    private val salesOrderNo: String): ViewModel()
+    val tokenManager: TokenManager,
+    val dock2DockConfiguration: Dock2DockConfiguration,
+    val salesOrderNo: String): ViewModel()
 {
 
     private val _isLoading = MutableLiveData(false)
@@ -52,16 +55,14 @@ internal class CrossdockLabelDataTableViewModel(
                 onLoadErrorChange("")
                 onItemsChange(this.data.value)
             }.onError {
-                when(this.statusCode) {
-                    StatusCode.Unauthorized -> onLoadErrorChange("We couldn't validate your credentials. Please check before continuing.")
-                    else -> {
-                        onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
+                map(HttpErrorMapper) {
+                    when(this.code) {
+                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange("We couldn't validate your credentials. Please check before continuing.")
+                        else -> {
+                            onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
+                        }
                     }
                 }
-//                map(HttpErrorMapper) {
-//                    val code = this.code
-//                    val message = this.message
-//                }
             }.onException {
                 onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
             }
@@ -79,7 +80,14 @@ internal class CrossdockLabelDataTableViewModel(
                 label.isDeleted = cmd.isDeleted
                 onUpdateCrossdockLabel(label)
             }.onError {
-
+                map(HttpErrorMapper) {
+                    when(this.code) {
+                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange("We couldn't validate your credentials. Please check before continuing.")
+                        else -> {
+                            onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
+                        }
+                    }
+                }
             }.onException {
 
             }
