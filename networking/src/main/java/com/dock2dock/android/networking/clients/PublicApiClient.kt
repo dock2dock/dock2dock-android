@@ -20,7 +20,7 @@ interface PublicApiClient
     suspend fun getLabels(@Query("\$filter") filter: String, @Query("\$orderBy") orderBy: String): ApiResponse<ODataResponse<CrossdockLabel>>
 
     @GET("/Printer/")
-    suspend fun getPrinters(): ApiResponse<ODataResponse<Printer>>
+    suspend fun getPrinters(@Query("\$orderBy") orderBy: String): ApiResponse<ODataResponse<Printer>>
 
     @GET("/CrossdockHandlingUnit/")
     suspend fun getCrossdockHandlingUnits(): ApiResponse<ODataResponse<CrossdockHandlingUnit>>

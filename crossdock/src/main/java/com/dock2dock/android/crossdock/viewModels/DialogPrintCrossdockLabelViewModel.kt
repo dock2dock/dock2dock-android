@@ -44,7 +44,7 @@ class DialogPrintCrossdockLabelViewModel(tokenManager: TokenManager,
         private set
     var quantity by mutableStateOf(0)
         private set
-    var printerId by mutableStateOf("Test")
+    var printerId by mutableStateOf("")
         private set
 
     var printers by mutableStateOf(listOf<Printer>())
@@ -111,7 +111,7 @@ class DialogPrintCrossdockLabelViewModel(tokenManager: TokenManager,
 
     private fun getPrinters() {
         viewModelScope.launch {
-            var response = publicApiClient.getPrinters()
+            val response = publicApiClient.getPrinters("Name asc")
             response.onSuccess {
                 printers = this.data.value
             }.onError {
@@ -131,7 +131,7 @@ class DialogPrintCrossdockLabelViewModel(tokenManager: TokenManager,
 
     private fun getHandlingUnits() {
         viewModelScope.launch {
-            var response = publicApiClient.getCrossdockHandlingUnits()
+            val response = publicApiClient.getCrossdockHandlingUnits()
             response.onSuccess {
                 handlingUnits = this.data.value
             }.onError {
@@ -155,8 +155,8 @@ class DialogPrintCrossdockLabelViewModel(tokenManager: TokenManager,
         }
         viewModelScope.launch {
             _isLoading.value = true
-            var createCrossdockLabel = CreateCrossdockLabel(salesOrderNo, handlingUnitId, quantity, printerId)
-            var response = publicApiClient.createCrossdockLabel(createCrossdockLabel)
+            val createCrossdockLabel = CreateCrossdockLabel(salesOrderNo, handlingUnitId, quantity, printerId)
+            val response = publicApiClient.createCrossdockLabel(createCrossdockLabel)
             response.onSuccess {
                 onLoadErrorChange("")
                 onSuccess()

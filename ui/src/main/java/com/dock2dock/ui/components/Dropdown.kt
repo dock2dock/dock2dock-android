@@ -10,10 +10,13 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import com.dock2dock.ui.ui.theme.PrimaryDark
 import com.dock2dock.ui.ui.theme.PrimaryOxfordBlue
@@ -95,6 +98,20 @@ fun BasicDropdownMenuItem(text: String) {
     Text(text = text)
 }
 
+@Composable
+fun SubTitleDropdownMenuItem(title: String, subTitle: String?) {
+    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Text(text = title)
+        if (!subTitle.isNullOrEmpty()) {
+            Text(subTitle,
+                fontSize = 12.sp,
+                style = TextStyle(color = Color.DarkGray),
+            )
+        }
+
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun FluentDropdownPreview() {
@@ -104,5 +121,13 @@ fun FluentDropdownPreview() {
         selectedOption =  "Kotlin")
         {
         BasicDropdownMenuItem(text = it)
+
     }
+
+}
+
+@Preview(showBackground = true)
+@Composable
+fun FluentSubtitleDropdownPreview() {
+    SubTitleDropdownMenuItem("TSC DA220", "Warehouse")
 }

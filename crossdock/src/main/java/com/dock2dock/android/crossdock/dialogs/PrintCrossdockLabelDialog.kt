@@ -28,7 +28,7 @@ fun DialogPrintCrossdockLabel(tokenManager: TokenManager,
                               onSuccessRequest: () -> Unit,
                               salesOrderNo: String) {
 
-    var viewModel = DialogPrintCrossdockLabelViewModel(
+    val viewModel = DialogPrintCrossdockLabelViewModel(
         tokenManager = tokenManager,
         dock2DockConfiguration =  dock2DockConfiguration,
         salesOrderNo = salesOrderNo,
@@ -64,7 +64,7 @@ fun DialogPrintCrossdockLabelUI(viewModel: DialogPrintCrossdockLabelViewModel, o
                 .verticalScroll(rememberScrollState(), true)
                 .weight(1f, false)) {
                 FormItem("Sales Order No") {
-                    com.dock2dock.ui.components.TextField(
+                    TextField(
                         readOnly = true,
                         value = viewModel.salesOrderNo,
                         placeholderText = "Sales Order No"
@@ -88,7 +88,7 @@ fun DialogPrintCrossdockLabelUI(viewModel: DialogPrintCrossdockLabelViewModel, o
                 }
 
                 FormItem(title = "Quantity") {
-                    com.dock2dock.ui.components.TextField(
+                    TextField(
                         value = viewModel.quantity.toString(),
                         valueChanged = {
                             viewModel.onQuantityValueChanged(it?.toIntOrNull() ?: 0)
@@ -110,7 +110,7 @@ fun DialogPrintCrossdockLabelUI(viewModel: DialogPrintCrossdockLabelViewModel, o
                         valueChanged = {
                             viewModel.onPrinterIdValueChanged(it.id)
                         }) {
-                        BasicDropdownMenuItem(it.name)
+                        SubTitleDropdownMenuItem(it.name, it.location)
                     }
                 }
             }
