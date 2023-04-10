@@ -4,41 +4,33 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.annotation.RestrictTo
 
-class Dock2DockConfiguration constructor(val clientId: String,
-                                                 val clientSecretKey: String) {
+class Dock2DockConfiguration constructor(val apiKey: String) {
 
     private class Store(context: Context) {
         private val prefs: SharedPreferences = context.applicationContext.getSharedPreferences(NAME, 0)
 
         @JvmSynthetic
         fun save(
-            clientId: String,
-            clientSecretKey: String
+            apiKey: String
         ) {
             prefs.edit()
-                .putString(KEY_CLIENT_ID, clientId)
-                .putString(KEY_CLIENT_SECRET_KEY, clientSecretKey)
+                .putString(KEY_API_KEY, apiKey)
                 .apply()
         }
 
-        internal fun load(): Dock2DockConfiguration? {
-            var clientId = prefs.getString(KEY_CLIENT_ID, null)
-            var clientSecretKey = prefs.getString(KEY_CLIENT_SECRET_KEY, null)
+        fun load(): Dock2DockConfiguration? {
+            val apiKey = prefs.getString(KEY_API_KEY, null)
 
-            if (clientId.isNullOrEmpty() || clientSecretKey.isNullOrEmpty()) {
+            if (apiKey.isNullOrEmpty()) {
                 return null
             }
-            return Dock2DockConfiguration(
-                    clientId = clientId,
-                    clientSecretKey = clientSecretKey
-            )
+            return Dock2DockConfiguration(apiKey = apiKey)
         }
 
         private companion object {
             private val NAME = Dock2DockConfiguration::class.java.canonicalName
 
-            private const val KEY_CLIENT_ID = "key_client_id"
-            private const val KEY_CLIENT_SECRET_KEY = "key_client_secret_key"
+            private const val KEY_API_KEY = "key_api_key"
         }
     }
     companion object {
@@ -59,13 +51,11 @@ class Dock2DockConfiguration constructor(val clientId: String,
         }
 
         fun init(context: Context,
-                  clientId: String,
-                  clientSecretKey: String) {
-            instance = Dock2DockConfiguration(clientId, clientSecretKey)
+                  apiKey: String) {
+            instance = Dock2DockConfiguration(apiKey)
 
             Store(context)
-                .save(clientId, clientSecretKey)
-
+                .save(apiKey)
         }
 
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)

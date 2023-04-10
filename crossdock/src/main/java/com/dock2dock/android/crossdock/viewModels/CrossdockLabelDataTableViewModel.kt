@@ -1,6 +1,5 @@
 package com.dock2dock.android.crossdock.viewModels
 
-import android.accounts.NetworkErrorException
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -22,7 +21,6 @@ internal class CrossdockLabelDataTableViewModel(
     val dock2DockConfiguration: Dock2DockConfiguration,
     val salesOrderNo: String): ViewModel()
 {
-
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> = _isLoading
     private fun onIsLoadingChange(value: Boolean) {
@@ -41,7 +39,7 @@ internal class CrossdockLabelDataTableViewModel(
         _items.value = value
     }
 
-    private val publicApiClient = getRetrofitClient<PublicApiClient>(tokenManager, dock2DockConfiguration, PUBLICAPI_BASEURL)
+    private val publicApiClient = getRetrofitClient<PublicApiClient>(dock2DockConfiguration, PUBLICAPI_BASEURL)
 
     init {
         getCrossdockLabels()

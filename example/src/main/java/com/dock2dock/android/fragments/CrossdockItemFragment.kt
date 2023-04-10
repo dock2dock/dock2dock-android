@@ -14,7 +14,7 @@ class CrossdockItemFragment: Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        var crossdockLabelDataTable = CrossdockLabelDataTable("1234705")
+        val crossdockLabelDataTable = CrossdockLabelDataTable("1234706")
         return ComposeView(requireContext()).apply {
             setContent {
                 crossdockLabelDataTable.launch(requireContext())

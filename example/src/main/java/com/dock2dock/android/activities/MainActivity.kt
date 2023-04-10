@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Dock2DockConfiguration.init(this, "d96d4b92-d746-45a7-8131-bf9a187c65ea", "Kz2~8!9H89KUZONX2a7qm7-e-61U8J5~kZ-6c7~~-0t~Y-4!zC")
+        Dock2DockConfiguration.init(this, "d2d_8f69aeb7ac874ae1964fbbd8f0758_fe3577")
         setContentView(R.layout.activity_pick_item)
         setupFragment()
         populateDetails()
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupFragment() {
         fragAdapter = PagerAdapter(supportFragmentManager)
-        var fragments = arrayListOf(
+        val fragments = arrayListOf(
             FragmentModel(PickItemFragment(), "Lines"),
             FragmentModel(StagingItemFragment(), "Staging"),
             FragmentModel(CrossdockItemFragment(), "Crossdock")
@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         address2Id.text = "Christchurch City"
         address3Id.text = "Christchurch"
 
-        var formatter = SimpleDateFormat("dd MMM yyyy")
+        val formatter = SimpleDateFormat("dd MMM yyyy")
         shipmentDateId.text = formatter.format(Date())
     }
 }

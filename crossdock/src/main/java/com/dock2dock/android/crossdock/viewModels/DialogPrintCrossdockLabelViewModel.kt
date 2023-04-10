@@ -20,13 +20,11 @@ import com.dock2dock.android.networking.utilities.Constants
 import com.skydoves.sandwich.*
 import kotlinx.coroutines.launch
 
-class DialogPrintCrossdockLabelViewModel(tokenManager: TokenManager,
-                                         dock2DockConfiguration: Dock2DockConfiguration,
+class DialogPrintCrossdockLabelViewModel(dock2DockConfiguration: Dock2DockConfiguration,
                                          val onSuccess: () -> Unit,
                                          val salesOrderNo: String): ViewModel()
 {
     private val publicApiClient = ApiService.getRetrofitClient<PublicApiClient>(
-        tokenManager,
         dock2DockConfiguration,
         Constants.PUBLICAPI_BASEURL
     )
@@ -89,7 +87,7 @@ class DialogPrintCrossdockLabelViewModel(tokenManager: TokenManager,
 
     //validate
     private fun validateQuantity() {
-        var result = quantity > 0
+        val result = quantity > 0
         quantityIsError = !result
     }
 
