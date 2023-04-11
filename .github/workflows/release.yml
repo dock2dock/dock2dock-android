@@ -1,5 +1,8 @@
 name: Publish release to Maven Central
 
+on:
+  workflow_dispatch:
+
 jobs:
   publish:
     runs-on: ubuntu-latest

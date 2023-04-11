@@ -1,5 +1,8 @@
 name: Publish SNAPSHOT to Maven Central
 
+on:
+  workflow_dispatch:
+
 jobs:
   publish-snapshot:
     runs-on: ubuntu-latest
