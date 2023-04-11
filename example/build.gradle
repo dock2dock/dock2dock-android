@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.dock2dock.android'
+    namespace 'io.dock2dock'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.dock2dock.android"
+        applicationId "io.dock2dock"
         minSdk 23
         targetSdk 33
         versionCode 1

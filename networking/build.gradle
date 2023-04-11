@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'com.dock2dock.android.networking'
+    namespace 'io.dock2dock.networking'
     compileSdk 33
 
     defaultConfig {

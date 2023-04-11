@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'com.dock2dock.ui'
+    namespace 'io.dock2dock.ui'
     compileSdk 33
 
     defaultConfig {

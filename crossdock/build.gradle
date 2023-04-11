@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'com.dock2dock.android.crossdock'
+    namespace 'io.dock2dock.crossdock'
     compileSdk 33
 
     defaultConfig {
