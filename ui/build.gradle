@@ -1,5 +1,8 @@
 apply from: configs.androidLibrary
 
+apply plugin: 'signing'
+apply plugin: 'maven-publish'
+
 dependencies {
     implementation "androidx.compose.runtime:runtime:$compose_ui_version"
     implementation 'androidx.core:core-ktx:1.9.0'
@@ -17,3 +20,11 @@ dependencies {
 
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1'
 }
+
+ext {
+    artifactId = "dock2dock-android"
+    artifactName = "dock2dock-android"
+    artifactDescrption = "Dock2Dock Android SDK"
+}
+
+apply from: "${rootDir}/deploy/deploy.gradle"
