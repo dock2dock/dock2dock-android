@@ -2,23 +2,21 @@ package io.dock2dock.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import io.dock2dock.adapters.FragmentModel
-import io.dock2dock.adapters.PagerAdapter
-import io.dock2dock.fragments.CrossdockItemFragment
-import io.dock2dock.fragments.PickItemFragment
-import io.dock2dock.fragments.StagingItemFragment
+import io.dock2dock.activities.databinding.ActivityPickItemBinding
+import io.dock2dock.adapters.*
+import io.dock2dock.fragments.*
 import io.dock2dock.networking.configuration.Dock2DockConfiguration
-import io.dock2dock.R
-import kotlinx.android.synthetic.main.activity_pick_item.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
-
+    private lateinit var binding: ActivityPickItemBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Dock2DockConfiguration.init(this, "d2d_8f69aeb7ac874ae1964fbbd8f0758_fe3577")
-        setContentView(R.layout.activity_pick_item)
+        binding = ActivityPickItemBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
         setupFragment()
         populateDetails()
     }
@@ -36,20 +34,20 @@ class MainActivity : AppCompatActivity() {
         )
 
         fragAdapter.fragments = fragments
-        viewPager.adapter = fragAdapter
+        binding.viewPager.adapter = fragAdapter
 
-        tabs.setupWithViewPager(viewPager)
+        binding.tabs.setupWithViewPager(binding.viewPager)
     }
 
     private fun populateDetails() {
-        orderId.text = "123456"
-        customerNameId.text = "New World Durham"
-        address1Id.text = "45 Main Street"
-        address2Id.text = "Christchurch City"
-        address3Id.text = "Christchurch"
+        binding.orderId.text = "123456"
+        binding.customerNameId.text = "New World Durham"
+        binding.address1Id.text = "45 Main Street"
+        binding.address2Id.text = "Christchurch City"
+        binding.address3Id.text = "Christchurch"
 
         val formatter = SimpleDateFormat("dd MMM yyyy")
-        shipmentDateId.text = formatter.format(Date())
+        binding.shipmentDateId.text = formatter.format(Date())
     }
 }
 //
