@@ -20,7 +20,7 @@ jobs:
         run: ./gradlew clean
 
       - name: Build and upload artifacts
-        run: ./gradlew dock2dock:uploadArchives --no-daemon --no-parallel
+        run: ./gradlew uploadArchives --no-daemon --no-parallel
         env:
           SONATYPE_NEXUS_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
           SONATYPE_NEXUS_PASSWORD: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
