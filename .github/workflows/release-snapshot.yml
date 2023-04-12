@@ -20,10 +20,11 @@ jobs:
         run: ./gradlew clean
 
       - name: Build and upload artifacts
-        run: ./gradlew uploadArchives --no-daemon --no-parallel
+        run: ./gradlew publishReleasePublicationToSonatypeRepository --no-daemon --no-parallel
         env:
-          SONATYPE_NEXUS_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
-          SONATYPE_NEXUS_PASSWORD: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
-          ORG_GRADLE_PROJECT_signingKeyId: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGKEYID }}
-          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGKEY }}
-          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGPASSWORD }}
+          NEXUS_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
+          NEXUS_PASSWORD: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
+          SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
+          signing.keyId: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGKEYID }}
+          signing.key: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGKEY }}
+          signing.password: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGPASSWORD }}
