@@ -1,0 +1,4 @@
+ext.configs = [
+        androidLibrary: "${project.rootDir}/build-configuration/android-base-library.gradle",
+        androidApplication: "${project.rootDir}/build-configuration/android-base-application.gradle",
+]
