@@ -36,7 +36,7 @@ dependencies {
     // ...
     
     // Dock2Dock Android SDK
-    implementation 'io.dock2dock:dock2dock-android:1.0.0'
+    implementation 'io.dock2dock:dock2dock-android:0.0.1'
 }
 ```
 
