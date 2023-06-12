@@ -8,8 +8,7 @@ import io.dock2dock.application.models.commands.DeleteCrossdockLabel
 import io.dock2dock.application.models.query.*
 import io.dock2dock.networking.ApiService.getRetrofitClient
 import io.dock2dock.networking.clients.*
-import io.dock2dock.networking.configuration.Dock2DockConfiguration
-import io.dock2dock.networking.managers.TokenManager
+import io.dock2dock.application.configuration.Dock2DockConfiguration
 import io.dock2dock.networking.models.Dock2DockErrorCode
 import io.dock2dock.networking.models.HttpErrorMapper
 import io.dock2dock.networking.utilities.Constants.PUBLICAPI_BASEURL
@@ -17,7 +16,6 @@ import kotlinx.coroutines.launch
 import com.skydoves.sandwich.*
 
 internal class CrossdockLabelDataTableViewModel(
-    val tokenManager: TokenManager,
     val dock2DockConfiguration: Dock2DockConfiguration,
     val salesOrderNo: String): ViewModel()
 {

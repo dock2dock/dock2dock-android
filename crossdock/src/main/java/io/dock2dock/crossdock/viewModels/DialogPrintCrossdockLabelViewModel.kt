@@ -12,8 +12,7 @@ import io.dock2dock.application.models.query.CrossdockHandlingUnit
 import io.dock2dock.application.models.query.Printer
 import io.dock2dock.networking.ApiService
 import io.dock2dock.networking.clients.PublicApiClient
-import io.dock2dock.networking.configuration.Dock2DockConfiguration
-import io.dock2dock.networking.managers.TokenManager
+import io.dock2dock.application.configuration.Dock2DockConfiguration
 import io.dock2dock.networking.models.Dock2DockErrorCode
 import io.dock2dock.networking.models.HttpErrorMapper
 import io.dock2dock.networking.utilities.Constants

@@ -16,8 +16,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import io.dock2dock.crossdock.viewModels.DialogPrintCrossdockLabelViewModel
-import io.dock2dock.networking.configuration.Dock2DockConfiguration
-import io.dock2dock.networking.managers.TokenManager
+import io.dock2dock.application.configuration.Dock2DockConfiguration
 import io.dock2dock.ui.components.*
 
 @Composable

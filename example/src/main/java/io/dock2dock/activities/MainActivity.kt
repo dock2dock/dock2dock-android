@@ -4,8 +4,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import io.dock2dock.activities.databinding.ActivityPickItemBinding
 import io.dock2dock.adapters.*
+import io.dock2dock.crossdock.fragments.*
 import io.dock2dock.fragments.*
-import io.dock2dock.networking.configuration.Dock2DockConfiguration
+import io.dock2dock.application.configuration.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -19,6 +20,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(view)
         setupFragment()
         populateDetails()
+        title = "Track Order"
     }
 
     private lateinit var fragAdapter: PagerAdapter
@@ -30,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         val fragments = arrayListOf(
             FragmentModel(PickItemFragment(), "Lines"),
             FragmentModel(StagingItemFragment(), "Staging"),
-            FragmentModel(CrossdockItemFragment(), "Crossdock")
+            FragmentModel(CrossdockLabelsFragment("1234706"), "Crossdock")
         )
 
         fragAdapter.fragments = fragments
@@ -41,9 +43,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun populateDetails() {
         binding.orderId.text = "123456"
-        binding.customerNameId.text = "New World Durham"
-        binding.address1Id.text = "45 Main Street"
-        binding.address2Id.text = "Christchurch City"
+        binding.sellToCustomerNameTxt.text = "New World Durham Street"
+        binding.customerNameId.text = "New World Durham Street"
+        binding.address1Id.text = "175 Durham Street South"
+        binding.address2Id.text = "Christchurch Central City"
         binding.address3Id.text = "Christchurch"
 
         val formatter = SimpleDateFormat("dd MMM yyyy")
