@@ -1,4 +1,4 @@
-package io.dock2dock.networking.configuration
+package io.dock2dock.application.configuration
 
 import android.content.Context
 import android.content.SharedPreferences

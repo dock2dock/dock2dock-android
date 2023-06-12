@@ -17,7 +17,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,8 +24,7 @@ import androidx.compose.ui.unit.*
 import io.dock2dock.application.models.query.CrossdockLabel
 import io.dock2dock.crossdock.dialogs.DialogPrintCrossdockLabel
 import io.dock2dock.crossdock.viewModels.CrossdockLabelDataTableViewModel
-import io.dock2dock.networking.configuration.Dock2DockConfiguration
-import io.dock2dock.networking.managers.TokenManager
+import io.dock2dock.application.configuration.Dock2DockConfiguration
 import io.dock2dock.ui.components.*
 import io.dock2dock.ui.ui.theme.*
 import io.dock2dock.ui.views.RetryErrorView
@@ -35,7 +33,7 @@ data class CrossdockLabelDataTable(val salesOrderNo: String) {
 
     @Composable
     fun launch(context: Context) {
-        val viewModel = CrossdockLabelDataTableViewModel(TokenManager.getInstance(context), Dock2DockConfiguration.getInstance(context), salesOrderNo)
+        val viewModel = CrossdockLabelDataTableViewModel(Dock2DockConfiguration.getInstance(context), salesOrderNo)
         return CrossdockLabelDataTableUI(viewModel)
     }
 }

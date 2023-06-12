@@ -1,6 +1,6 @@
 package io.dock2dock.networking
 
-import io.dock2dock.networking.configuration.Dock2DockConfiguration
+import io.dock2dock.application.configuration.Dock2DockConfiguration
 import com.skydoves.sandwich.adapters.ApiResponseCallAdapterFactory
 import okhttp3.*
 import retrofit2.Retrofit
