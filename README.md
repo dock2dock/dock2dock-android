@@ -18,8 +18,8 @@ Table of contents
 <!--te-->
 
 ## Releases
-* The [changelog](CHANGELOG.md) provides a summary of changes in each release.
-* The [migration guide](MIGRATING.md) provides instructions on upgrading from older versions.
+<!-- * The [changelog](CHANGELOG.md) provides a summary of changes in each release.
+* The [migration guide](MIGRATING.md) provides instructions on upgrading from older versions. -->
 
 ## Installation
 
