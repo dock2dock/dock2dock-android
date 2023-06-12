@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity()
 }
 ```
 
-## Features
+### Features
 
 We provide, **CrossdockLabelsFragment** a prebuilt UI that combines all the tasks required to crossdock - displaying label details, creating / print  label and delete unused labels - into a single fragment that can be displayed in your app.
 
@@ -77,6 +77,13 @@ private fun setupFragment()
   binding.tabs.setupWithViewPager(binding.viewPager)
 }
 ```
+![](https://github.com/dock2dock/dock2dock-android/assets/20273969/eaa526cd-3459-43c7-a2b6-641008089cac)
+
+
+
+### Examples
+
+- The [Example project](https://github.com/dock2dock/dock2dock-android/tree/master/example) demonstrates how to integrate and use our prebuilt ui.
 
 
 
