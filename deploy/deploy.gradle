@@ -30,7 +30,7 @@ afterEvaluate { project ->
                     artifact project.artifactPath
                 }
 
-                groupId = rootProject.group_name
+                groupId = GROUP
                 artifactId = project.artifactId
                 version = rootProject.version_name
 

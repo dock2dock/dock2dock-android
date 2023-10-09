@@ -22,9 +22,9 @@ dependencies {
 }
 
 ext {
-    artifactId = "dock2dock-android"
-    artifactName = "dock2dock-android"
-    artifactDescrption = "Dock2Dock Android SDK"
+    artifactId = "ui"
+    artifactName = "ui"
+    artifactDescrption = "The ui module of Dock2Dock Android SDK"
 }
 
 apply from: "${rootDir}/deploy/deploy.gradle"

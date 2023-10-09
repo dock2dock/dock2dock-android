@@ -22,7 +22,13 @@ android {
         compose true
     }
 
+    def localProperties = new Properties()
+    localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+
     buildTypes {
+        debug {
+            buildConfigField("String", "Dock2Dock_ApiKey", localProperties['dock2dock_apiKey'])
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'

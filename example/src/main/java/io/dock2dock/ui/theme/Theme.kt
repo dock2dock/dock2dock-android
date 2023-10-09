@@ -1,4 +1,4 @@
-package io.dock2dock.ui.theme
+package io.dock2dock.android.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme

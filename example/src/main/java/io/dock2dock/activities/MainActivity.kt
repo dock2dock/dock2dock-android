@@ -3,18 +3,21 @@ package io.dock2dock.activities
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import io.dock2dock.activities.databinding.ActivityPickItemBinding
-import io.dock2dock.adapters.*
-import io.dock2dock.crossdock.fragments.*
-import io.dock2dock.fragments.*
-import io.dock2dock.application.configuration.*
+import io.dock2dock.adapters.FragmentModel
+import io.dock2dock.adapters.PagerAdapter
+import io.dock2dock.android.configuration.Dock2DockConfiguration
+import io.dock2dock.android.fragments.CrossdockLabelsFragment
+import io.dock2dock.fragments.PickItemFragment
+import io.dock2dock.fragments.StagingItemFragment
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPickItemBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Dock2DockConfiguration.init(this, "d2d_8f69aeb7ac874ae1964fbbd8f0758_fe3577")
+        Dock2DockConfiguration.init(this, BuildConfig.Dock2Dock_ApiKey, "https://api.nonprod.dock2dock.io/")
+
         binding = ActivityPickItemBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
