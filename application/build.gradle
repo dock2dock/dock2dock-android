@@ -1,3 +1,5 @@
+import io.dock2dock.android.Configuration
+
 apply from: configs.androidLibrary
 
 apply plugin: 'signing'
@@ -17,6 +19,8 @@ ext {
     artifactId = "application"
     artifactName = "application"
     artifactDescrption = "The application module of Dock2Dock Android SDK"
+    publishVersion = rootVersionName
+    groupId = Configuration.artifactGroup
 }
 
 apply from: "${rootDir}/deploy/deploy.gradle"

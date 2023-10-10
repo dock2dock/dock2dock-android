@@ -1,11 +1,11 @@
 apply plugin: "signing"
 apply plugin: "maven-publish"
 
-nexusStaging {
-    packageGroup = GROUP
-    numberOfRetries = 40
-    delayBetweenRetriesInMillis = 4000
-}
+//nexusStaging {
+//    packageGroup = GROUP
+//    numberOfRetries = 40
+//    delayBetweenRetriesInMillis = 4000
+//}
 
 if (project.hasProperty('android')) {
     task androidSourcesJar(type: Jar) {
@@ -30,9 +30,9 @@ afterEvaluate { project ->
                     artifact project.artifactPath
                 }
 
-                groupId = GROUP
+                groupId = project.groupId
                 artifactId = project.artifactId
-                version = rootProject.version_name
+                version = project.publishVersion
 
                 pom {
                     name = project.artifactName
