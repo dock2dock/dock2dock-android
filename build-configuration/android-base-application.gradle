@@ -24,12 +24,18 @@ android {
         compose true
     }
 
-    def localProperties = new Properties()
-    localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+    var apiKey = ""
+    File secretPropsFile = project.rootProject.file('local.properties')
+
+    if (secretPropsFile.exists()) {
+        def localProperties = new Properties()
+        localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+        apiKey = localProperties['dock2dock_apiKey']
+    }
 
     buildTypes {
         debug {
-            buildConfigField("String", "Dock2Dock_ApiKey", localProperties['dock2dock_apiKey'])
+            buildConfigField("String", "Dock2Dock_ApiKey", apiKey)
         }
         release {
             minifyEnabled false
