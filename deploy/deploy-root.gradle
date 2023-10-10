@@ -5,9 +5,9 @@ import io.dock2dock.android.Configuration
 ext["ossrhUsername"] = ''
 ext["ossrhPassword"] = ''
 ext["sonatypeStagingProfileId"] = ''
-ext["signingKeyId"] = ''
-ext["signingPassword"] = ''
-ext["signingKey"] = ''
+ext["signing.keyId"] = ''
+ext["signing.password"] = ''
+ext["signing.key"] = ''
 ext["snapshot"] = ''
 
 File secretPropsFile = project.rootProject.file('local.properties')
@@ -21,9 +21,9 @@ if (secretPropsFile.exists()) {
     ext["ossrhUsername"] = System.getenv('ORG_GRADLE_PROJECT_nexusUserName')
     ext["ossrhPassword"] = System.getenv('ORG_GRADLE_PROJECT_nexusPassword')
     ext["sonatypeStagingProfileId"] = System.getenv('ORG_GRADLE_PROJECT_sonatypeStagingProfileId')
-    ext["signingKeyId"] = System.getenv('ORG_GRADLE_PROJECT_signingKeyId')
-    ext["signingPassword"] = System.getenv('ORG_GRADLE_PROJECT_signingPassword')
-    ext["signingKey"] = System.getenv('ORG_GRADLE_PROJECT_signingPassword')
+    ext["signing.keyId"] = System.getenv('ORG_GRADLE_PROJECT_signingKeyId')
+    ext["signing.password"] = System.getenv('ORG_GRADLE_PROJECT_signingPassword')
+    ext["signing.key"] = System.getenv('ORG_GRADLE_PROJECT_signingPassword')
     ext["snapshot"] = System.getenv('SNAPSHOT')
 }
 
