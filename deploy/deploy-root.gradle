@@ -21,7 +21,7 @@ if (secretPropsFile.exists()) {
     ext["ossrhUsername"] = System.getenv('ORG_GRADLE_PROJECT_nexusUserName')
     ext["ossrhPassword"] = System.getenv('ORG_GRADLE_PROJECT_nexusPassword')
     ext["sonatypeStagingProfileId"] = System.getenv('ORG_GRADLE_PROJECT_sonatypeStagingProfileId')
-    ext["signingkeyId"] = System.getenv('ORG_GRADLE_PROJECT_signingKeyId')
+    ext["signingKeyId"] = System.getenv('ORG_GRADLE_PROJECT_signingKeyId')
     ext["signingPassword"] = System.getenv('ORG_GRADLE_PROJECT_signingPassword')
     ext["signingKey"] = System.getenv('ORG_GRADLE_PROJECT_signingPassword')
     ext["snapshot"] = System.getenv('SNAPSHOT')
