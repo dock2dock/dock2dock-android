@@ -23,7 +23,7 @@ if (secretPropsFile.exists()) {
     ext["sonatypeStagingProfileId"] = System.getenv('ORG_GRADLE_PROJECT_sonatypeStagingProfileId')
     ext["signing.keyId"] = System.getenv('ORG_GRADLE_PROJECT_signingKeyId')
     ext["signing.password"] = System.getenv('ORG_GRADLE_PROJECT_signingPassword')
-    ext["signing.key"] = System.getenv('ORG_GRADLE_PROJECT_signingPassword')
+    ext["signing.key"] = System.getenv('ORG_GRADLE_PROJECT_signingKey')
     ext["snapshot"] = System.getenv('SNAPSHOT')
 }
 
