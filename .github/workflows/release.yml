@@ -22,7 +22,7 @@ jobs:
         run: ./gradlew clean
 
       - name: Build and upload artifacts
-        run: ./gradlew publishReleasePublicationToSonatypeRepository --no-daemon --no-parallel
+        run: ./gradlew publishReleasePublicationToSonatypeRepository --no-daemon --no-parallel --stacktrace
         env:
           NEXUS_USERNAME: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
