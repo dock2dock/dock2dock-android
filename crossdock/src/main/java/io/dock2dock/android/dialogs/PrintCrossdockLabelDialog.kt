@@ -29,13 +29,13 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import io.dock2dock.android.components.BasicDropdownMenuItem
 import io.dock2dock.android.components.ButtonVariant
+import io.dock2dock.android.components.Dock2DockNumberTextField
 import io.dock2dock.android.components.Dock2DockTextField
 import io.dock2dock.android.components.FluentDropdown
 import io.dock2dock.android.components.FormItem
@@ -113,13 +113,12 @@ internal fun DialogPrintCrossdockLabelUI(viewModel: DialogPrintCrossdockLabelVie
                 }
 
                 FormItem(title = "Quantity") {
-                    Dock2DockTextField(
-                        value = viewModel.quantity.toString(),
+                    Dock2DockNumberTextField(
+                        value = viewModel.quantity,
                         valueChanged = {
-                            viewModel.onQuantityValueChanged(it?.toIntOrNull() ?: 0)
+                            viewModel.onQuantityValueChanged(it)
                         },
                         errorMessage = viewModel.quantityValidationMessage,
-                        keyboardType = KeyboardType.Number,
                         isError = viewModel.quantityIsError,
                         placeholderText = "Quantity"
                     )
