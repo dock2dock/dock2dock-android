@@ -1,3 +1,5 @@
+import io.dock2dock.android.Configuration
+
 apply from: configs.androidLibrary
 
 apply plugin: 'signing'
@@ -9,6 +11,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'com.google.android.material:material:1.8.0'
 
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$compose_ui_version"
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
     implementation 'androidx.activity:activity-compose:1.6.1'
     implementation "androidx.compose.ui:ui:$compose_ui_version"
@@ -24,13 +27,15 @@ dependencies {
 
     implementation project(":ui")
     implementation project(":networking")
-    implementation project(":application")
+    api project(":application")
 }
 
 ext {
     artifactId = "dock2dock-android"
     artifactName = "dock2dock-android"
     artifactDescrption = "Dock2Dock Android SDK"
+    publishVersion = rootVersionName
+    groupId = Configuration.artifactGroup
 }
 
 apply from: "${rootDir}/deploy/deploy.gradle"

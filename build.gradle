@@ -1,4 +1,5 @@
 import java.time.Duration
+import io.dock2dock.android.Configuration
 
 buildscript {
     apply from: 'dependencies.gradle'
@@ -24,18 +25,18 @@ buildscript {
 plugins {
     id 'io.github.gradle-nexus.publish-plugin' version '1.3.0'
     id 'io.codearte.nexus-staging' version '0.30.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.8.0' apply false
+    id 'com.android.library' version '7.4.2' apply false
+    id 'org.jetbrains.kotlin.android' version '1.8.0' apply false
 }
 
 subprojects {
-    group = GROUP
+    group = Configuration.artifactGroup
 }
 
 ext {
     compileSdkVersion = 33
     buildToolsVersion = "30.0.3"
-
-    group_name = GROUP
-    version_name = VERSION_NAME
 }
 
 apply from: "${rootDir}/deploy/deploy-root.gradle"

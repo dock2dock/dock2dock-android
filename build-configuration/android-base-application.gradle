@@ -1,3 +1,5 @@
+import io.dock2dock.android.Configuration
+
 apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
 
@@ -6,7 +8,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        minSdk 23
+        minSdk Configuration.minSdk
         targetSdkVersion rootProject.ext.compileSdkVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -22,7 +24,19 @@ android {
         compose true
     }
 
+    var apiKey = ""
+    File secretPropsFile = project.rootProject.file('local.properties')
+
+    if (secretPropsFile.exists()) {
+        def localProperties = new Properties()
+        localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+        apiKey = localProperties['dock2dock_apiKey']
+    }
+
     buildTypes {
+        debug {
+            buildConfigField("String", "Dock2Dock_ApiKey", apiKey)
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
