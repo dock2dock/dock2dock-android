@@ -2,6 +2,7 @@ package io.dock2dock.android.components
 
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -11,8 +12,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -21,6 +25,7 @@ import io.dock2dock.android.extensions.toIntString
 import io.dock2dock.android.ui.theme.PrimaryDark
 import io.dock2dock.android.ui.theme.PrimaryOxfordBlue
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun Dock2DockTextField(
     value: String,
@@ -37,13 +42,23 @@ fun Dock2DockTextField(
         Color.Black
     }
 
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     OutlinedTextField(value = value,
         onValueChange = {
             valueChanged(it)
         },
         modifier = Modifier.defaultMinSize(minHeight = 32.dp),
         shape = RoundedCornerShape(0),
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType),
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = keyboardType,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                keyboardController?.hide()
+            }
+        ),
         colors = TextFieldDefaults.outlinedTextFieldColors(
             unfocusedBorderColor = PrimaryDark,
             focusedBorderColor = PrimaryOxfordBlue,
@@ -56,7 +71,6 @@ fun Dock2DockTextField(
     if (isError) {
         ValidationErrorMessage(errorMessage = errorMessage ?: "")
     }
-
 }
 
 @Composable
