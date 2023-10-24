@@ -16,6 +16,10 @@ object HttpErrorMapper : ApiErrorModelMapper<Dock2DockApiError> {
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
             .create()
 
-        return gson.fromJson(stringResponse, Dock2DockApiError::class.java)
+        return try {
+            gson.fromJson(stringResponse, Dock2DockApiError::class.java)
+        } catch (ex: Exception) {
+            Dock2DockApiError(apiErrorResponse.statusCode.code, stringResponse.toString(), "Unknown", Dock2DockApiErrorContext("", ""))
+        }
     }
 }

@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         val fragments = arrayListOf(
             FragmentModel(PickItemFragment(), "Lines"),
             FragmentModel(StagingItemFragment(), "Staging"),
-            FragmentModel(CrossdockLabelsFragment("1234706"), "Crossdock")
+            FragmentModel(CrossdockLabelsFragment("42202"), "Crossdock")
         )
 
         fragAdapter.fragments = fragments

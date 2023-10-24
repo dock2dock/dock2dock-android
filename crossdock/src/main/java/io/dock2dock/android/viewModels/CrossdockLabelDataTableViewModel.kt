@@ -9,11 +9,15 @@ import com.skydoves.sandwich.onError
 import com.skydoves.sandwich.onException
 import com.skydoves.sandwich.onSuccess
 import io.dock2dock.android.ApiService.getRetrofitClient
+import io.dock2dock.android.SERVER_NETWORK_ERROR
+import io.dock2dock.android.UNAUTHORISED_NETWORK_ERROR
 import io.dock2dock.android.clients.PublicApiClient
 import io.dock2dock.android.models.Dock2DockErrorCode
 import io.dock2dock.android.models.HttpErrorMapper
 import io.dock2dock.android.models.commands.DeleteCrossdockLabel
 import io.dock2dock.android.models.query.CrossdockLabel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 internal class CrossdockLabelDataTableViewModel(
@@ -25,17 +29,18 @@ internal class CrossdockLabelDataTableViewModel(
         _isLoading.value = value
     }
 
-    private val _loadError = MutableLiveData("")
-    val loadError: LiveData<String> = _loadError
-    private fun onLoadErrorChange(value: String) {
-        _loadError.value = value
+    private val _showErrorDialog = MutableLiveData(false)
+    val showErrorDialog: LiveData<Boolean> = _showErrorDialog
+
+    fun onCloseErrorDialog() {
+        _showErrorDialog.value = false
     }
 
-    private val _items = MutableLiveData(listOf<CrossdockLabel>())
-    var items: LiveData<List<CrossdockLabel>> = _items
-    private fun onItemsChange(value: List<CrossdockLabel>) {
-        _items.value = value
-    }
+    private val _errorMessage = MutableLiveData("")
+    val errorMessage: LiveData<String> = _errorMessage
+
+    private var _items: MutableStateFlow<List<CrossdockLabel>> = MutableStateFlow(listOf())
+    val items: StateFlow<List<CrossdockLabel>> get() = _items
 
     private val publicApiClient = getRetrofitClient<PublicApiClient>()
 
@@ -44,58 +49,65 @@ internal class CrossdockLabelDataTableViewModel(
     }
 
     fun getCrossdockLabels() {
+        _errorMessage.value = ""
         viewModelScope.launch {
             onIsLoadingChange(true)
             val response = publicApiClient.getLabels("salesOrderNo eq '$salesOrderNo'", "DateCreated desc")
             response.onSuccess {
-                onLoadErrorChange("")
-                onItemsChange(this.data.value)
+                _items.value = this.data.value
             }.onError {
                 map(HttpErrorMapper) {
                     when(this.code) {
-                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange("We couldn't validate your credentials. Please check before continuing.")
+                        Dock2DockErrorCode.Unauthorised -> {
+                            _errorMessage.value = UNAUTHORISED_NETWORK_ERROR
+                        }
                         else -> {
-                            onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
+                            _errorMessage.value = SERVER_NETWORK_ERROR
                         }
                     }
                 }
             }.onException {
-                onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
+                _errorMessage.value = SERVER_NETWORK_ERROR
             }
-
             onIsLoadingChange(false)
+            _showErrorDialog.value = errorMessage.value?.isNotEmpty()
         }
     }
 
-    fun deleteCrossdockLabel(label: CrossdockLabel) {
+    suspend fun deleteCrossdockLabel(label: CrossdockLabel) {
+        _errorMessage.value = ""
         viewModelScope.launch {
             val cmd = DeleteCrossdockLabel(label.id, !label.isDeleted)
             val response = publicApiClient.deleteCrossdockLabel(cmd)
             response.onSuccess {
-
-                label.isDeleted = cmd.isDeleted
-                onUpdateCrossdockLabel(label)
+                onUpdateCrossdockLabel(cmd.isDeleted, label)
             }.onError {
                 map(HttpErrorMapper) {
                     when(this.code) {
-                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange("We couldn't validate your credentials. Please check before continuing.")
+                        Dock2DockErrorCode.Unauthorised -> _errorMessage.value = UNAUTHORISED_NETWORK_ERROR
+                        Dock2DockErrorCode.BadRequest,
+                        Dock2DockErrorCode.UnprocessableEntity,
+                        Dock2DockErrorCode.NotFound,
+                        Dock2DockErrorCode.Validation -> _errorMessage.value = this.message
                         else -> {
-                            onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
+                            _errorMessage.value = SERVER_NETWORK_ERROR
                         }
                     }
                 }
             }.onException {
-
+                _errorMessage.value = SERVER_NETWORK_ERROR
             }
+            _showErrorDialog.value = errorMessage.value?.isNotEmpty()
         }
     }
 
-    private fun onUpdateCrossdockLabel(label: CrossdockLabel) {
-        val tempItems = items.value?.toMutableList()
-
-        tempItems?.indexOfFirst { it.id == label.id }?.let {
-            tempItems?.set(it, label)
-            onItemsChange(tempItems)
+    private fun onUpdateCrossdockLabel(state: Boolean, item: CrossdockLabel) {
+        _items.value = _items.value.map {
+            if (it.id == item.id) {
+                it.copy(isDeleted = state)
+            } else {
+                it
+            }
         }
     }
 }
