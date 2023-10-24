@@ -10,16 +10,23 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.RestoreFromTrash
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,18 +40,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
 import io.dock2dock.android.components.ButtonVariant
 import io.dock2dock.android.components.PrimaryButton
 import io.dock2dock.android.configuration.Dock2DockConfiguration
 import io.dock2dock.android.dialogs.DialogPrintCrossdockLabel
 import io.dock2dock.android.dialogs.SettingsDialog
 import io.dock2dock.android.models.query.CrossdockLabel
+import io.dock2dock.android.ui.theme.ColorSuccess
 import io.dock2dock.android.ui.theme.PrimaryOxfordBlue
 import io.dock2dock.android.ui.theme.PrimaryWhite
 import io.dock2dock.android.viewModels.CrossdockLabelDataTableViewModel
-import io.dock2dock.android.views.RetryErrorView
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 
 internal data class CrossdockLabelDataTable(val salesOrderNo: String) {
 
@@ -59,11 +72,19 @@ internal data class CrossdockLabelDataTable(val salesOrderNo: String) {
 internal fun CrossdockLabelDataTableUI(viewModel: CrossdockLabelDataTableViewModel)
 {
     var showDialog by remember { mutableStateOf(false) }
+
     var showSettingsDialog by remember { mutableStateOf(false) }
 
-    val loadError by viewModel.loadError.observeAsState("")
+    val errorMessage by viewModel.errorMessage.observeAsState("")
     val isLoading by viewModel.isLoading.observeAsState(false)
-    val items by viewModel.items.observeAsState(listOf())
+    val showServerErrorDialog by viewModel.showErrorDialog.observeAsState(false)
+
+    ServerAlertDialog(
+        show = showServerErrorDialog,
+        message = errorMessage,
+        onDismiss = viewModel::onCloseErrorDialog,
+        onConfirm = viewModel::onCloseErrorDialog
+    )
 
     DialogPrintCrossdockLabel(
         visible = showDialog,
@@ -101,11 +122,29 @@ internal fun CrossdockLabelDataTableUI(viewModel: CrossdockLabelDataTableViewMod
             }
 
         }
-        DataTable(loadError = loadError,
+        DataTable(loadError = errorMessage,
             isLoading = isLoading,
-            items = items,
-            reloadItems = { viewModel.getCrossdockLabels() },
-            onRowDelete = { viewModel.deleteCrossdockLabel(it) }
+            viewModel = viewModel
+        )
+    }
+}
+
+@Composable
+fun ServerAlertDialog(
+    show: Boolean,
+    message: String,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    if (show) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            confirmButton = {
+                TextButton(onClick = onConfirm)
+                { Text(text = "Ok") }
+            },
+            title = { Text(text = "Error!") },
+            text = { Text(text = message) }
         )
     }
 }
@@ -113,11 +152,10 @@ internal fun CrossdockLabelDataTableUI(viewModel: CrossdockLabelDataTableViewMod
 @Composable
 internal fun DataTable(isLoading: Boolean,
               loadError: String,
-              items: List<CrossdockLabel>,
-              reloadItems: (() -> Unit) = {},
-              onRowDelete: (CrossdockLabel) -> Unit,
+              viewModel: CrossdockLabelDataTableViewModel,
               modifier: Modifier = Modifier) {
 
+    val items by viewModel.items.collectAsStateWithLifecycle()
 
     if (isLoading) {
         TableLoading()
@@ -130,17 +168,7 @@ internal fun DataTable(isLoading: Boolean,
             TableHeaderRow()
         }
 
-        if (loadError.isNotEmpty()) {
-            item {
-                RetryErrorView(
-                    error = loadError,
-                    title = "We're sorry",
-                    onClick = reloadItems
-                )
-            }
-
-        }
-        else if (!isLoading && items.isEmpty()) {
+        if (!isLoading && items.isEmpty()) {
             item {
                 Text(
                     modifier = Modifier
@@ -157,7 +185,7 @@ internal fun DataTable(isLoading: Boolean,
             ) { item ->
                 TableRow(
                     item = item,
-                    onRowDelete = onRowDelete
+                    viewModel = viewModel
                 )
             }
         }
@@ -189,7 +217,7 @@ internal fun TableHeaderRow() {
     Row(
         Modifier
             .background(PrimaryOxfordBlue)
-            .padding(0.dp, 6.dp)
+            .padding(4.dp, 6.dp)
     ) {
         Text(
             modifier = Modifier
@@ -214,73 +242,135 @@ internal fun TableHeaderRow() {
 internal fun TableRow(
     item: CrossdockLabel,
     modifier: Modifier = Modifier,
-    onRowDelete: (CrossdockLabel) -> Unit) {
+    viewModel: CrossdockLabelDataTableViewModel) {
+
+    var isLoading by remember { mutableStateOf(false) }
+
+    var deleteIcon = if (item.isDeleted) {
+        Icons.Filled.RestoreFromTrash
+    } else {
+        Icons.Filled.Delete
+    }
+
+    var textDecoration = if (item.isDeleted) {
+        TextDecoration.LineThrough
+    } else {
+        TextDecoration.None
+    }
+
+    val sdf = SimpleDateFormat("EEE MMM dd, h:mm aa")
+    var dateAsString = sdf.format(item.dateCreated)
+
     Row(
-        modifier = modifier.padding(0.dp, 4.dp),
+        modifier = modifier.padding(4.dp, 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val modifier = Modifier
             .weight(1f)
             .padding(start = 8.dp)
-        Text(
-            modifier = modifier,
-            text = item.barcode,
-        )
+        Column(modifier = modifier) {
+            Text(
+                text = item.barcode,
+                maxLines = 1,
+                textDecoration = textDecoration
+            )
+            Spacer(modifier = Modifier.padding(top = 1.dp))
+            Text(
+                style = MaterialTheme.typography.caption,
+                color = Color.Gray,
+                text = dateAsString,
+                maxLines = 1,
+            )
+        }
         Text(
             modifier = modifier,
             text = item.handlingUnitName,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textDecoration = textDecoration
         )
-        Icon(Icons.Filled.Delete, "contentDescription",
-            Modifier.clickable {
-                onRowDelete(item)
-            })
+        Column(modifier = Modifier.width(24.dp)) {
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(16.dp),
+                    color = Color.Black
+                )
+            }
+            else if (item.isProcessed) {
+                Icon(imageVector = Icons.Filled.CheckCircle,
+                    contentDescription = "contentDescription",
+                    tint = ColorSuccess)
+            } else {
+                Icon(imageVector = deleteIcon,
+                    contentDescription = "contentDescription",
+                    Modifier.clickable {
+                        isLoading = true
+
+                        viewModel.viewModelScope.launch {
+                            // Update the item
+                            viewModel.deleteCrossdockLabel(item)
+
+                            isLoading = false // Hide loading indicator
+                        }
+                    })
+            }
+        }
+
     }
     Divider(color = Color.LightGray, thickness = 0.5.dp, modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp))
 }
+//
+//@Preview(showBackground = true, backgroundColor = 0xFFFFFF)
+//@Composable
+//internal fun PreviewDataTable() {
+//    var viewModel =
+//    DataTable(
+//        items = listOf(
+//            CrossdockLabel(
+//                "7cafc3ae-edb1-42f7-820d-0d9003242dfd",
+//                "00090022680000000021",
+//                false,
+//                "Chilled Carton cgwquygffwqfgywfguywqf",
+//                false
+//            ),
+//            CrossdockLabel(
+//                "7cafc3ae-edb1-42f8-820d-0d9003242dfd",
+//                "00090022680000000021",
+//                false,
+//                "Chilled Carton",
+//                true
+//            ),
+//            CrossdockLabel(
+//                "7cafc3ae-edb1-42f9-820d-0d9003242dfd",
+//                "00090022680000000021",
+//                false,
+//                "Chilled Carton",
+//                false
+//            ),
+//            CrossdockLabel(
+//                "7cafc3ae-edb1-42fd-820d-0d9003242dfd",
+//                "00090022680000000021",
+//                true,
+//                "Chilled Carton",
+//                false
+//            )),
+//        onRowDelete = {
+//            Thread.sleep(5000)
+//            it.isDeleted = !it.isDeleted
+//        },
+//        isLoading = false,
+//        loadError = "")
+//}
 
-@Preview(showBackground = true)
-@Composable
-internal fun PreviewDataTable() {
-    DataTable(
-        items = listOf(
-            CrossdockLabel(
-                "7cafc3ae-edb1-42f7-820d-0d9003242dfd",
-                "00090022680000000021",
-                "Chilled Carton",
-                false
-            ),
-            CrossdockLabel(
-                "7cafc3ae-edb1-42f8-820d-0d9003242dfd",
-                "00090022680000000021",
-                "Chilled Carton",
-                true
-            ),
-            CrossdockLabel(
-                "7cafc3ae-edb1-42f9-820d-0d9003242dfd",
-                "00090022680000000021",
-                "Chilled Carton",
-                false
-            ),
-            CrossdockLabel(
-                "7cafc3ae-edb1-42fd-820d-0d9003242dfd",
-                "00090022680000000021",
-                "Chilled Carton",
-                false
-            )),
-        onRowDelete = {},
-        isLoading = false,
-        loadError = "")
-}
-
-@Preview(showBackground = true)
-@Composable
-internal fun PreviewEmptyDataTable() {
-    DataTable(
-        items = listOf(),
-        onRowDelete = {},
-        isLoading = false,
-        loadError = "")
-}
+//@Preview(showBackground = true)
+//@Composable
+//internal fun PreviewEmptyDataTable() {
+//    DataTable(
+//        items = listOf(),
+//        onRowDelete = {},
+//        isLoading = false,
+//        loadError = "")
+//}
 
 @Preview(showBackground = true, widthDp = 300, heightDp = 300)
 @Composable

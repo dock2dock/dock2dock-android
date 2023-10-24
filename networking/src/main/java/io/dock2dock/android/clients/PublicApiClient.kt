@@ -1,11 +1,11 @@
 package io.dock2dock.android.clients
 
+import com.skydoves.sandwich.ApiResponse
+import io.dock2dock.android.models.ODataResponse
 import io.dock2dock.android.models.commands.*
 import io.dock2dock.android.models.query.CrossdockHandlingUnit
 import io.dock2dock.android.models.query.CrossdockLabel
 import io.dock2dock.android.models.query.Printer
-import io.dock2dock.android.models.ODataResponse
-import com.skydoves.sandwich.ApiResponse
 import retrofit2.http.*
 
 interface PublicApiClient

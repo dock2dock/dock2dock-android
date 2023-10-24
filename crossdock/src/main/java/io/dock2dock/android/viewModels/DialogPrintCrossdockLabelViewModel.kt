@@ -12,6 +12,8 @@ import com.skydoves.sandwich.onError
 import com.skydoves.sandwich.onException
 import com.skydoves.sandwich.onSuccess
 import io.dock2dock.android.ApiService
+import io.dock2dock.android.SERVER_NETWORK_ERROR
+import io.dock2dock.android.UNAUTHORISED_NETWORK_ERROR
 import io.dock2dock.android.clients.PublicApiClient
 import io.dock2dock.android.configuration.Dock2DockConfiguration
 import io.dock2dock.android.models.Dock2DockErrorCode
@@ -123,14 +125,14 @@ internal class DialogPrintCrossdockLabelViewModel(val onSuccess: () -> Unit,
             }.onError {
                 map(HttpErrorMapper) {
                     when(this.code) {
-                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange("We couldn't validate your credentials. Please check before continuing.")
+                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange(UNAUTHORISED_NETWORK_ERROR)
                         else -> {
-                            onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
+                            onLoadErrorChange(SERVER_NETWORK_ERROR)
                         }
                     }
                 }
             }.onException {
-                onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
+                onLoadErrorChange(SERVER_NETWORK_ERROR)
             }
         }
     }
@@ -149,9 +151,9 @@ internal class DialogPrintCrossdockLabelViewModel(val onSuccess: () -> Unit,
             }.onError {
                 map(HttpErrorMapper) {
                     when(this.code) {
-                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange("We couldn't validate your credentials. Please check before continuing.")
+                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange(UNAUTHORISED_NETWORK_ERROR)
                         else -> {
-                            onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
+                            onLoadErrorChange(SERVER_NETWORK_ERROR)
                         }
                     }
                 }
@@ -175,9 +177,13 @@ internal class DialogPrintCrossdockLabelViewModel(val onSuccess: () -> Unit,
             }.onError {
                 map(HttpErrorMapper) {
                     when(this.code) {
-                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange("We couldn't validate your credentials. Please check before continuing.")
+                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange(UNAUTHORISED_NETWORK_ERROR)
+                        Dock2DockErrorCode.BadRequest,
+                        Dock2DockErrorCode.UnprocessableEntity,
+                        Dock2DockErrorCode.NotFound,
+                        Dock2DockErrorCode.Validation -> onLoadErrorChange(this.message)
                         else -> {
-                            onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
+                            onLoadErrorChange(SERVER_NETWORK_ERROR)
                         }
                     }
                 }
