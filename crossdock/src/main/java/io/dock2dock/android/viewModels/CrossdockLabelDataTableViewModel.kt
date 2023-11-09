@@ -16,6 +16,7 @@ import io.dock2dock.android.models.Dock2DockErrorCode
 import io.dock2dock.android.models.HttpErrorMapper
 import io.dock2dock.android.models.commands.DeleteCrossdockLabel
 import io.dock2dock.android.models.query.CrossdockLabel
+import io.dock2dock.android.models.query.CrossdockSalesOrder
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -42,10 +43,43 @@ internal class CrossdockLabelDataTableViewModel(
     private var _items: MutableStateFlow<List<CrossdockLabel>> = MutableStateFlow(listOf())
     val items: StateFlow<List<CrossdockLabel>> get() = _items
 
+    private val _salesOrder = MutableLiveData<CrossdockSalesOrder?>()
+    val salesOrder: LiveData<CrossdockSalesOrder?> = _salesOrder
+
     private val publicApiClient = getRetrofitClient<PublicApiClient>()
 
     init {
-        getCrossdockLabels()
+        getSalesOrder()
+    }
+
+    private fun getSalesOrder() {
+        _errorMessage.value = ""
+        viewModelScope.launch {
+            onIsLoadingChange(true)
+            val response = publicApiClient.getSalesOrder(salesOrderNo)
+            response.onSuccess {
+                _salesOrder.value = this.data
+                _items.value = this.data.labels
+            }.onError {
+                map(HttpErrorMapper) {
+                    when(this.code) {
+                        Dock2DockErrorCode.Unauthorised -> {
+                            _errorMessage.value = UNAUTHORISED_NETWORK_ERROR
+                        }
+                        Dock2DockErrorCode.NotFound -> {
+                            _errorMessage.value = this.message
+                        }
+                        else -> {
+                            _errorMessage.value = SERVER_NETWORK_ERROR
+                        }
+                    }
+                }
+            }.onException {
+                _errorMessage.value = SERVER_NETWORK_ERROR
+            }
+            onIsLoadingChange(false)
+            _showErrorDialog.value = errorMessage.value?.isNotEmpty()
+        }
     }
 
     fun getCrossdockLabels() {

@@ -41,6 +41,7 @@ import io.dock2dock.android.components.FluentDropdown
 import io.dock2dock.android.components.FormItem
 import io.dock2dock.android.components.PrimaryButton
 import io.dock2dock.android.components.SubTitleDropdownMenuItem
+import io.dock2dock.android.components.ValidationErrorMessage
 import io.dock2dock.android.configuration.Dock2DockConfiguration
 import io.dock2dock.android.ui.theme.PrimaryDark
 import io.dock2dock.android.ui.theme.Transparent
@@ -69,6 +70,8 @@ internal fun DialogPrintCrossdockLabelUI(viewModel: DialogPrintCrossdockLabelVie
 
     val isLoading: Boolean by viewModel.isLoading.observeAsState(false)
 
+    val errorMessage by viewModel.loadError.observeAsState("")
+
     LaunchedEffect(key1 = Unit) {
         viewModel.load()
     }
@@ -83,6 +86,10 @@ internal fun DialogPrintCrossdockLabelUI(viewModel: DialogPrintCrossdockLabelVie
         Column(modifier = Modifier.padding(all = 24.dp)) {
 
             DialogHeader(title = "Print Crossdock Label", onDismissRequest)
+
+            if (!errorMessage.isNullOrEmpty()) {
+                ValidationErrorMessage(errorMessage)
+            }
 
             Column(modifier = Modifier
                 .verticalScroll(rememberScrollState(), true)
