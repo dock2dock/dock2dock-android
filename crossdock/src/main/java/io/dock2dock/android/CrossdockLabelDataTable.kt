@@ -81,6 +81,7 @@ internal fun CrossdockLabelDataTableUI(viewModel: CrossdockLabelDataTableViewMod
     val errorMessage by viewModel.errorMessage.observeAsState("")
     val isLoading by viewModel.isLoading.observeAsState(false)
     val salesOrder by viewModel.salesOrder.observeAsState(null)
+    val salesOrderNotFound by viewModel.salesOrderNotFound.observeAsState(false)
     val showServerErrorDialog by viewModel.showErrorDialog.observeAsState(false)
 
     ServerAlertDialog(
@@ -110,7 +111,7 @@ internal fun CrossdockLabelDataTableUI(viewModel: CrossdockLabelDataTableViewMod
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically) {
 
-            if (salesOrder == null) {
+            if (salesOrderNotFound) {
                 Text(text = "Crossdock sales order not found",
                     color = ColorError,
                     fontSize = 14.sp)
@@ -123,7 +124,7 @@ internal fun CrossdockLabelDataTableUI(viewModel: CrossdockLabelDataTableViewMod
                         .padding(7.dp, 0.dp),
                         color = Color.White)
             }
-            else {
+            else if (salesOrder != null) {
                 PrimaryButton(text = "Print", variant = ButtonVariant.Primary) {
                     showDialog = true
                 }

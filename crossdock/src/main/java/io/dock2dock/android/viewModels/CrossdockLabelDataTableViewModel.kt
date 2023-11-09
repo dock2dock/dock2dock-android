@@ -46,6 +46,9 @@ internal class CrossdockLabelDataTableViewModel(
     private val _salesOrder = MutableLiveData<CrossdockSalesOrder?>()
     val salesOrder: LiveData<CrossdockSalesOrder?> = _salesOrder
 
+    private val _salesOrderNotFound = MutableLiveData<Boolean>(false)
+    val salesOrderNotFound: LiveData<Boolean> = _salesOrderNotFound
+
     private val publicApiClient = getRetrofitClient<PublicApiClient>()
 
     init {
@@ -68,6 +71,7 @@ internal class CrossdockLabelDataTableViewModel(
                         }
                         Dock2DockErrorCode.NotFound -> {
                             _errorMessage.value = this.message
+                            _salesOrderNotFound.value = true
                         }
                         else -> {
                             _errorMessage.value = SERVER_NETWORK_ERROR
