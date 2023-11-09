@@ -9,3 +9,4 @@ data class CrossdockLabel(
     val handlingUnitName: String,
     val dateCreated: Date,
     var isDeleted: Boolean)
+
