@@ -18,48 +18,45 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import io.dock2dock.android.components.BasicDropdownMenuItem
 import io.dock2dock.android.components.ButtonVariant
-import io.dock2dock.android.components.Dock2DockNumberTextField
 import io.dock2dock.android.components.Dock2DockTextField
 import io.dock2dock.android.components.FluentDropdown
 import io.dock2dock.android.components.FormItem
 import io.dock2dock.android.components.PrimaryButton
 import io.dock2dock.android.components.SubTitleDropdownMenuItem
 import io.dock2dock.android.components.ValidationErrorMessage
-import io.dock2dock.android.configuration.Dock2DockConfiguration
+import io.dock2dock.android.models.query.CrossdockLabel
 import io.dock2dock.android.ui.theme.PrimaryDark
 import io.dock2dock.android.ui.theme.Transparent
-import io.dock2dock.android.viewModels.DialogPrintCrossdockLabelViewModel
+import io.dock2dock.android.viewModels.ReprintCrossdockLabelViewModel
 
 @Composable
-internal fun DialogPrintCrossdockLabel(visible: Boolean,
+internal fun DialogReprintCrossdockLabel(visible: Boolean,
                               onDismissRequest: () -> Unit,
                               onSuccessRequest: () -> Unit,
-                              salesOrderNo: String) {
+                              crossdockLabel: CrossdockLabel) {
     if (visible) {
-        val viewModel = DialogPrintCrossdockLabelViewModel(
-            salesOrderNo = salesOrderNo,
+        val viewModel = ReprintCrossdockLabelViewModel(
+            crossdockLabel = crossdockLabel,
             onSuccess = onSuccessRequest)
         Dialog(onDismissRequest = {
             onDismissRequest()
         })
         {
-            DialogPrintCrossdockLabelContent(viewModel, onDismissRequest)
+            DialogReprintCrossdockLabelContent(viewModel, onDismissRequest)
         }
     }
 }
 
 @Composable
-internal fun DialogPrintCrossdockLabelContent(viewModel: DialogPrintCrossdockLabelViewModel, onDismissRequest: () -> Unit) {
+internal fun DialogReprintCrossdockLabelContent(viewModel: ReprintCrossdockLabelViewModel, onDismissRequest: () -> Unit) {
 
     val isLoading: Boolean by viewModel.isLoading.observeAsState(false)
 
     val errorMessage by viewModel.loadError.observeAsState("")
+    val barcode = viewModel.crossdockLabel.barcode
 
     LaunchedEffect(key1 = Unit) {
         viewModel.load()
@@ -74,7 +71,7 @@ internal fun DialogPrintCrossdockLabelContent(viewModel: DialogPrintCrossdockLab
 
         Column(modifier = Modifier.padding(all = 24.dp)) {
 
-            Dock2DockDialogHeader(title = "Print Crossdock Label", onDismissRequest)
+            Dock2DockDialogHeader(title = "Reprint Crossdock Label", onDismissRequest)
 
             if (!errorMessage.isNullOrEmpty()) {
                 ValidationErrorMessage(errorMessage)
@@ -83,40 +80,10 @@ internal fun DialogPrintCrossdockLabelContent(viewModel: DialogPrintCrossdockLab
             Column(modifier = Modifier
                 .verticalScroll(rememberScrollState(), true)
                 .weight(1f, false)) {
-                FormItem("Sales Order No") {
+                FormItem("Barcode") {
                     Dock2DockTextField(
                         readOnly = true,
-                        value = viewModel.salesOrderNo,
-                        placeholderText = "Sales Order No"
-                    )
-                }
-
-                FormItem("Handling Unit") {
-                    FluentDropdown(
-                        options = viewModel.handlingUnits,
-                        selectedTextExpression = { it.name },
-                        selectedText = viewModel.handlingUnitName,
-                        errorMessage = viewModel.handlingUnitIdErrorMessage,
-                        isError = viewModel.handlingUnitIdIsError,
-                        placeholderText = "Select your handling unit",
-                        selectedItemChanged = {
-                            viewModel.onHandlingUnitValueChanged(it)
-                        }
-                    )
-                    {
-                        BasicDropdownMenuItem(it.name)
-                    }
-                }
-
-                FormItem(title = "Quantity") {
-                    Dock2DockNumberTextField(
-                        value = viewModel.quantity,
-                        valueChanged = {
-                            viewModel.onQuantityValueChanged(it)
-                        },
-                        errorMessage = viewModel.quantityValidationMessage,
-                        isError = viewModel.quantityIsError,
-                        placeholderText = "Quantity"
+                        value = barcode,
                     )
                 }
 
@@ -159,14 +126,4 @@ internal fun DialogPrintCrossdockLabelContent(viewModel: DialogPrintCrossdockLab
             }
         }
     }
-}
-
-
-
-@Preview(showBackground = true, widthDp = 300, heightDp = 300)
-@Composable
-internal fun PreviewDialogPrintCrossdockLabel() {
-    val context = LocalContext.current
-    Dock2DockConfiguration.init(context, "")
-    DialogPrintCrossdockLabel(true, {}, {}, salesOrderNo = "12345")
 }
