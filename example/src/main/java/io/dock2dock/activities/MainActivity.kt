@@ -29,23 +29,25 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fragAdapter: PagerAdapter
 
     var formatter = SimpleDateFormat("E dd MMMM")
+    private val salesOrderNo = "42242"
 
     private fun setupFragment() {
         fragAdapter = PagerAdapter(supportFragmentManager)
         val fragments = arrayListOf(
             FragmentModel(PickItemFragment(), "Lines"),
             FragmentModel(StagingItemFragment(), "Staging"),
-            FragmentModel(CrossdockLabelsFragment("42202"), "Crossdock")
+            FragmentModel(CrossdockLabelsFragment(salesOrderNo), "Crossdock")
         )
 
         fragAdapter.fragments = fragments
         binding.viewPager.adapter = fragAdapter
+        binding.viewPager.offscreenPageLimit = 3
 
         binding.tabs.setupWithViewPager(binding.viewPager)
     }
 
     private fun populateDetails() {
-        binding.orderId.text = "123456"
+        binding.orderId.text = salesOrderNo
         binding.sellToCustomerNameTxt.text = "New World Durham Street"
         binding.customerNameId.text = "New World Durham Street"
         binding.address1Id.text = "175 Durham Street South"

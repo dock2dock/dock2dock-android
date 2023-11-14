@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import io.dock2dock.android.components.ButtonVariant
@@ -52,7 +53,9 @@ import io.dock2dock.android.configuration.Dock2DockConfiguration
 import io.dock2dock.android.dialogs.DialogPrintCrossdockLabel
 import io.dock2dock.android.dialogs.SettingsDialog
 import io.dock2dock.android.models.query.CrossdockLabel
+import io.dock2dock.android.ui.theme.ColorError
 import io.dock2dock.android.ui.theme.ColorSuccess
+import io.dock2dock.android.ui.theme.PrimaryOrangeWeb
 import io.dock2dock.android.ui.theme.PrimaryOxfordBlue
 import io.dock2dock.android.ui.theme.PrimaryWhite
 import io.dock2dock.android.viewModels.CrossdockLabelDataTableViewModel
@@ -77,6 +80,8 @@ internal fun CrossdockLabelDataTableUI(viewModel: CrossdockLabelDataTableViewMod
 
     val errorMessage by viewModel.errorMessage.observeAsState("")
     val isLoading by viewModel.isLoading.observeAsState(false)
+    val salesOrder by viewModel.salesOrder.observeAsState(null)
+    val salesOrderNotFound by viewModel.salesOrderNotFound.observeAsState(false)
     val showServerErrorDialog by viewModel.showErrorDialog.observeAsState(false)
 
     ServerAlertDialog(
@@ -102,10 +107,27 @@ internal fun CrossdockLabelDataTableUI(viewModel: CrossdockLabelDataTableViewMod
     )
 
     Column {
-        Row(modifier = Modifier.padding(8.dp, 0.dp), horizontalArrangement = Arrangement.Start) {
+        Row(modifier = Modifier.padding(8.dp, 0.dp),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically) {
 
-            PrimaryButton(text = "Print", variant = ButtonVariant.Primary) {
-                showDialog = true
+            if (salesOrderNotFound) {
+                Text(text = "Crossdock sales order not found",
+                    color = ColorError,
+                    fontSize = 14.sp)
+            }
+            else if (salesOrder?.shipped == true) {
+                Text(text = "Shipped",
+                    fontSize = 16.sp,
+                        modifier = Modifier
+                        .background(color = PrimaryOrangeWeb)
+                        .padding(7.dp, 0.dp),
+                        color = Color.White)
+            }
+            else if (salesOrder != null) {
+                PrimaryButton(text = "Print", variant = ButtonVariant.Primary) {
+                    showDialog = true
+                }
             }
             Spacer(Modifier.weight(1f))
             IconButton(onClick = {
@@ -141,7 +163,9 @@ fun ServerAlertDialog(
             onDismissRequest = onDismiss,
             confirmButton = {
                 TextButton(onClick = onConfirm)
-                { Text(text = "Ok") }
+                {
+                    Text(text = "Ok", color = PrimaryOxfordBlue)
+                }
             },
             title = { Text(text = "Error!") },
             text = { Text(text = message) }
@@ -221,8 +245,7 @@ internal fun TableHeaderRow() {
     ) {
         Text(
             modifier = Modifier
-                .weight(0.44f)
-                .padding(start = 8.dp),
+                .weight(0.44f),
             color = PrimaryWhite,
             text = "Barcode",
             fontWeight = FontWeight.Bold
@@ -267,8 +290,7 @@ internal fun TableRow(
     ) {
         val modifier = Modifier
             .weight(1f)
-            .padding(start = 8.dp)
-        Column(modifier = modifier) {
+        Column(modifier = modifier.fillMaxWidth()) {
             Text(
                 text = item.barcode,
                 maxLines = 1,

@@ -5,6 +5,7 @@ import io.dock2dock.android.models.ODataResponse
 import io.dock2dock.android.models.commands.*
 import io.dock2dock.android.models.query.CrossdockHandlingUnit
 import io.dock2dock.android.models.query.CrossdockLabel
+import io.dock2dock.android.models.query.CrossdockSalesOrder
 import io.dock2dock.android.models.query.Printer
 import retrofit2.http.*
 
@@ -18,6 +19,9 @@ interface PublicApiClient
 
     @GET("/CrossdockLabel/")
     suspend fun getLabels(@Query("\$filter") filter: String, @Query("\$orderBy") orderBy: String): ApiResponse<ODataResponse<CrossdockLabel>>
+
+    @GET("/SalesOrder/{no}")
+    suspend fun getSalesOrder(@Path("no") no: String): ApiResponse<CrossdockSalesOrder>
 
     @GET("/Printer/")
     suspend fun getPrinters(@Query("\$orderBy") orderBy: String): ApiResponse<ODataResponse<Printer>>
