@@ -17,6 +17,9 @@ interface PublicApiClient
     @POST("/CrossdockLabel/delete")
     suspend fun deleteCrossdockLabel(@Body label: DeleteCrossdockLabel): ApiResponse<Unit>
 
+    @POST("/CrossdockLabel/reprint")
+    suspend fun reprintCrossdockLabel(@Body label: ReprintCrossdockLabel): ApiResponse<Unit>
+
     @GET("/CrossdockLabel/")
     suspend fun getLabels(@Query("\$filter") filter: String, @Query("\$orderBy") orderBy: String): ApiResponse<ODataResponse<CrossdockLabel>>
 
