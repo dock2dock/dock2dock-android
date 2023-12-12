@@ -20,7 +20,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import io.dock2dock.android.extensions.toIntString
 import io.dock2dock.android.ui.theme.PrimaryDark
 import io.dock2dock.android.ui.theme.PrimaryOxfordBlue
@@ -100,11 +99,6 @@ fun Dock2DockNumberTextField(
         readOnly = readOnly,
         isError = isError,
         placeholderText = placeholderText)
-}
-
-@Composable
-fun ValidationErrorMessage(errorMessage: String) {
-    Text(text = errorMessage, color = Color.Red, fontSize = 12.sp)
 }
 
 @Preview(showBackground = true,

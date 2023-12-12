@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fragAdapter: PagerAdapter
 
     var formatter = SimpleDateFormat("E dd MMMM")
-    private val salesOrderNo = "42242"
+    private val salesOrderNo = "42202"
 
     private fun setupFragment() {
         fragAdapter = PagerAdapter(supportFragmentManager)
