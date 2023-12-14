@@ -29,6 +29,8 @@ dependencies {
 
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
 
+    implementation("io.github.dokar3:sheets:0.5.4")
+
     implementation project(":ui")
     implementation project(":networking")
     api project(":application")

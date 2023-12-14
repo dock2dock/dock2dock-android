@@ -1,14 +1,12 @@
-package io.dock2dock.android
+package io.dock2dock.android.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -17,16 +15,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomSheetScaffold
-import androidx.compose.material.BottomSheetScaffoldState
-import androidx.compose.material.BottomSheetState
-import androidx.compose.material.BottomSheetValue
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -37,9 +29,7 @@ import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.RestoreFromTrash
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -50,7 +40,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -60,9 +49,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
-import io.dock2dock.android.components.BottomSheetDragHandle
-import io.dock2dock.android.components.ButtonVariant
-import io.dock2dock.android.components.PrimaryButton
+import com.dokar.sheets.BottomSheet
+import com.dokar.sheets.rememberBottomSheetState
 import io.dock2dock.android.dialogs.ConfirmDialog
 import io.dock2dock.android.dialogs.DialogPrintCrossdockLabel
 import io.dock2dock.android.dialogs.DialogReprintCrossdockLabel
@@ -104,15 +92,14 @@ internal fun CrossdockLabelDataTableUI(viewModel: CrossdockLabelDataTableViewMod
 
     val selectedItem by viewModel.selectedItem.collectAsState(null)
 
-    val bottomSheetState = rememberBottomSheetScaffoldState(
-        bottomSheetState = BottomSheetState(
-        initialValue = if (selectedItem != null) BottomSheetValue.Expanded else BottomSheetValue.Collapsed,
-            confirmValueChange = {
-                if (it == BottomSheetValue.Collapsed) {
-                    viewModel.setSelectedItem(null)
-                }
-                true
-        })
+    val bottomSheetState = rememberBottomSheetState(
+        initialValue = if (selectedItem != null) com.dokar.sheets.BottomSheetValue.Expanded else com.dokar.sheets.BottomSheetValue.Collapsed,
+        confirmValueChange = {
+            if (it == com.dokar.sheets.BottomSheetValue.Collapsed) {
+                viewModel.setSelectedItem(null)
+            }
+            true
+        },
     )
 
     ErrorDialog(
@@ -137,58 +124,66 @@ internal fun CrossdockLabelDataTableUI(viewModel: CrossdockLabelDataTableViewMod
         onDismissRequest = { showSettingsDialog = !showSettingsDialog }
     )
 
-    CrossdockLabelActionBottomSheet(bottomSheetState, viewModel) {
-        Column {
-            Row(modifier = Modifier.padding(8.dp, 0.dp),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically) {
+    val scope = rememberCoroutineScope()
 
-                if (salesOrderNotFound) {
-                    Text(text = "Crossdock sales order not found",
-                        color = ColorError,
-                        fontSize = 14.sp)
-                }
-                else if (salesOrder?.shipped == true) {
-                    Text(text = "Shipped",
-                        fontSize = 16.sp,
-                        modifier = Modifier
-                            .background(color = PrimaryOrangeWeb)
-                            .padding(7.dp, 0.dp),
-                        color = Color.White)
-                }
-                else if (salesOrder != null) {
-                    PrimaryButton(text = "Print", variant = ButtonVariant.Primary) {
-                        showDialog = true
-                    }
-                }
-                Spacer(Modifier.weight(1f))
-                IconButton(onClick = {
-                    viewModel.getCrossdockLabels()
-                }) {
-                    Icon(Icons.Filled.Refresh,
-                        "contentDescription")
-                }
-                IconButton(onClick = {
-                    showSettingsDialog = true
-                }) {
-                    Icon(Icons.Filled.Settings,
-                        "contentDescription")
-                }
+    Column {
+        Row(modifier = Modifier.padding(8.dp, 0.dp),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically) {
 
+            if (salesOrderNotFound) {
+                Text(text = "Crossdock sales order not found",
+                    color = ColorError,
+                    fontSize = 14.sp)
             }
-            DataTable(loadError = errorMessage,
-                isLoading = isLoading,
-                viewModel = viewModel
-            )
+            else if (salesOrder?.shipped == true) {
+                Text(text = "Shipped",
+                    fontSize = 16.sp,
+                    modifier = Modifier
+                        .background(color = PrimaryOrangeWeb)
+                        .padding(7.dp, 0.dp),
+                    color = Color.White)
+            }
+            else if (salesOrder != null) {
+                PrimaryButton(text = "Print", variant = ButtonVariant.Primary) {
+                    showDialog = true
+                }
+            }
+            Spacer(Modifier.weight(1f))
+            IconButton(onClick = {
+                viewModel.getCrossdockLabels()
+            }) {
+                Icon(Icons.Filled.Refresh,
+                    "contentDescription")
+            }
+            IconButton(onClick = {
+                showSettingsDialog = true
+            }) {
+                Icon(Icons.Filled.Settings,
+                    "contentDescription")
+            }
+
+        }
+        DataTable(loadError = errorMessage,
+            isLoading = isLoading,
+            viewModel = viewModel
+        ) {
+            viewModel.setSelectedItem(it)
+            scope.launch {
+                bottomSheetState.expand(animate = true)
+            }
         }
     }
+
+    CrossdockLabelActionBottomSheet(bottomSheetState, viewModel)
 }
 
 @Composable
 internal fun DataTable(isLoading: Boolean,
               loadError: String,
               viewModel: CrossdockLabelDataTableViewModel,
-              modifier: Modifier = Modifier) {
+              modifier: Modifier = Modifier,
+                       setSelected: ((CrossdockLabel) -> Unit) = {}) {
 
     val items by viewModel.items.collectAsStateWithLifecycle()
 
@@ -221,31 +216,12 @@ internal fun DataTable(isLoading: Boolean,
                 TableRow(
                     item = item,
                     onSelected = {
-                        viewModel.setSelectedItem(item)
+                        setSelected(item)
                     }
                 )
             }
         }
 
-    }
-}
-
-
-@Composable
-internal fun TableLoading() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .background(Color.Gray.copy(alpha = 0.1f))
-    ) {
-        Column(
-            modifier = Modifier.align(Alignment.Center),
-            verticalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            CircularProgressIndicator(color = PrimaryOxfordBlue)
-            Text(text = "Loading...")
-        }
     }
 }
 
@@ -338,12 +314,12 @@ internal fun TableRow(
             })
         }
     }
-    Divider(color = Color.LightGray, thickness = 0.5.dp, modifier = Modifier.padding(8.dp, 0.dp, 0.dp, 0.dp))
+    TableRowDivider()
 }
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
-internal fun CrossdockLabelActionBottomSheet(state: BottomSheetScaffoldState, viewModel: CrossdockLabelDataTableViewModel, content:@Composable () -> Unit) {
+internal fun CrossdockLabelActionBottomSheet(state: com.dokar.sheets.BottomSheetState, viewModel: CrossdockLabelDataTableViewModel) {
 
     var showConfirmDialog by remember { mutableStateOf(false) }
 
@@ -355,7 +331,7 @@ internal fun CrossdockLabelActionBottomSheet(state: BottomSheetScaffoldState, vi
 
     fun closeSheet() {
         coroutineScope.launch {
-            state.bottomSheetState.collapse()
+            state.collapse()
             viewModel.setSelectedItem(null)
         }
     }
@@ -375,62 +351,45 @@ internal fun CrossdockLabelActionBottomSheet(state: BottomSheetScaffoldState, vi
         }
     }
 
-    BottomSheetScaffold(
-        scaffoldState = state,
-        sheetPeekHeight = 0.dp, // <--- new line
-        sheetShape = RoundedCornerShape(
+    BottomSheet(
+        state = state,
+        modifier = Modifier
+            .heightIn(min = 200.dp),
+        shape = RoundedCornerShape(
             topStart = 16.dp,
             topEnd = 16.dp
-        ),
-        sheetContent = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = 300.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                BottomSheetDragHandle()
-                Column(modifier = Modifier.padding(top = 8.dp)) {
-                    BottomSheetActionRow(name = "Reprint Label", imageVector = Icons.Filled.Print, onclick = {
+        )) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Column(modifier = Modifier.padding(top = 8.dp)) {
+                BottomSheetActionRow(
+                    name = "Reprint Label",
+                    imageVector = Icons.Filled.Print,
+                    onclick = {
                         showReprintDialog = true
                     })
-                    if (!isLabelProcessed) {
-                        if (isLabelDeleted) {
-                            BottomSheetActionRow(
-                                name = "Undelete Label",
-                                imageVector = Icons.Filled.RestoreFromTrash,
-                                onclick = {
-                                    deleteUnDeleteLabel()
-                                })
-                        }
-                        else {
-                            BottomSheetActionRow(
-                                name = "Delete Label",
-                                contentColor = ColorError,
-                                imageVector = Icons.Filled.Delete,
-                                onclick = {
-                                    showConfirmDialog = true
-                                })
-                        }
+                if (!isLabelProcessed) {
+                    if (isLabelDeleted) {
+                        BottomSheetActionRow(
+                            name = "Undelete Label",
+                            imageVector = Icons.Filled.RestoreFromTrash,
+                            onclick = {
+                                deleteUnDeleteLabel()
+                            })
+                    } else {
+                        BottomSheetActionRow(
+                            name = "Delete Label",
+                            contentColor = ColorError,
+                            imageVector = Icons.Filled.Delete,
+                            onclick = {
+                                showConfirmDialog = true
+                            })
                     }
                 }
             }
-        }
-    ) {
-        // transparent overlay on top of content, shown if sheet is expanded
-        if (state.bottomSheetState.isExpanded) {
-            Box(
-                modifier = Modifier
-                    .background(color = Color.Black.copy(alpha = 0.5f))
-                    .fillMaxSize()
-                    .clickable {
-                        closeSheet()
-                    }
-            ) {
-                content()
-            }
-        } else {
-            content()
         }
     }
 
@@ -466,28 +425,6 @@ internal fun CrossdockLabelActionBottomSheet(state: BottomSheetScaffoldState, vi
     }
 }
 
-@Composable
-internal fun BottomSheetActionRow(contentColor: Color = Color.Black, name: String, imageVector: ImageVector, onclick: () -> Unit) {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .clickable {
-            onclick()
-        }
-        .padding(horizontal = 16.dp, vertical = 12.dp),
-    verticalAlignment = Alignment.CenterVertically
-    ) {
-        CompositionLocalProvider(LocalContentColor provides contentColor) {
-            Icon(
-                imageVector = imageVector,
-                contentDescription = "contentDescription"
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Text(text = name)
-        }
-
-    }
-}
-
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable
 internal fun PreviewTableRowHeader() {
@@ -520,16 +457,6 @@ internal fun PreviewTableRow() {
 //        isLoading = false,
 //        loadError = "")
 //}
-
-@Preview(showBackground = true, widthDp = 300, heightDp = 300)
-@Composable
-fun PreviewTableLoading()
-{
-    Box {
-        Text("No records found")
-        TableLoading()
-    }
-}
 
 //@Preview(showBackground = true, widthDp = 300, heightDp = 300)
 //@Composable
