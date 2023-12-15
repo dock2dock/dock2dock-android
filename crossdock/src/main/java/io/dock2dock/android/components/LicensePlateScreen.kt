@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,9 +30,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.dokar.sheets.rememberBottomSheetState
 import io.dock2dock.android.models.query.LicensePlate
 import io.dock2dock.android.ui.theme.PrimaryOxfordBlue
 import io.dock2dock.android.viewModels.LicensePlateViewModel
+import kotlinx.coroutines.launch
 import java.util.Date
 
 internal data class LicensePlateLauncher(val viewModel: LicensePlateViewModel) {
@@ -48,13 +51,25 @@ fun LicensePlateScreen(
 ) {
     val licensePlate by viewModel.licensePlate.collectAsState(null)
 
+    val showLinesSheetState = rememberBottomSheetState()
+
+    val coroutineScope = rememberCoroutineScope()
+
     licensePlate?.let { lp ->
         LicensePlateContent(
             licensePlate = lp,
             onClose = { viewModel.clearLicensePlate() },
             onRefresh = { viewModel.refresh(lp.no) },
+            onViewLines = {
+                coroutineScope.launch {
+                    showLinesSheetState.expand(animate = true)
+                }
+            },
+            onComplete = { viewModel.complete() }
         )
+        LicensePlateLinesBottomSheet(showLinesSheetState, lp.no)
     }
+
 }
 
 @Composable
@@ -90,12 +105,12 @@ internal fun LicensePlateContent(
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("COUNT", color = Color.LightGray, fontSize = 10.sp)
-                    Text(text = "2")
+                    Text(text = licensePlate.totalCount.toString())
                 }
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("QUANTITY", color = Color.LightGray, fontSize = 10.sp)
-                    Text(text = "12.250 kg")
+                    Text(text = licensePlate.quantityDescription)
                 }
 
                 Row(Modifier.align(Alignment.CenterVertically),
@@ -137,6 +152,6 @@ internal fun LicensePlateContent(
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable
 internal fun PreviewLicensePlateContent() {
-    val licensePlate = LicensePlate("LP000008", "Chilled Chep", false, "000942190400001123456", Date(2023,12,4,12,22,0))
+    val licensePlate = LicensePlate("LP000008", "Chilled Chep", false, "000942190400001123456", Date(2023,12,4,12,22,0), 12.5, 2, 12)
     LicensePlateContent(licensePlate)
 }

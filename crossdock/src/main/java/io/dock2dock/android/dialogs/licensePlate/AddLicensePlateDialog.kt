@@ -34,10 +34,11 @@ import io.dock2dock.android.viewModels.AddLicensePlateDialogViewModel
 
 @Composable
 internal fun AddLicensePlateDialog(visible: Boolean,
+                                   salesOrderNo: String,
                               onDismissRequest: () -> Unit,
                               onSuccessRequest: () -> Unit) {
     if (visible) {
-        val viewModel = AddLicensePlateDialogViewModel()
+        val viewModel = AddLicensePlateDialogViewModel(salesOrderNo, onSuccessRequest)
         Dialog(onDismissRequest = {
             onDismissRequest()
         })
@@ -109,11 +110,11 @@ internal fun AddLicensePlateDialogContent(viewModel: AddLicensePlateDialogViewMo
                     Text("Cancel")
                 }
                 PrimaryButton(
-                    text = "Print",
+                    text = "Add",
                     modifier = Modifier.weight(1f),
                     variant = ButtonVariant.Primary,
                     isLoading = isLoading) {
-                    //viewModel.onSubmit()
+                    viewModel.onSubmit()
                 }
             }
         }

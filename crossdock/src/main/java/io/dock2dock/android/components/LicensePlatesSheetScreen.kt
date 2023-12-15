@@ -51,7 +51,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 @Composable
-fun LicensePlatesSheetScreen(viewModel: LicensePlatesSheetViewModel) {
+fun LicensePlatesSheetScreen(
+    viewModel: LicensePlatesSheetViewModel
+) {
 
     LaunchedEffect(key1 = Unit) {
         viewModel.load()
@@ -63,15 +65,7 @@ fun LicensePlatesSheetScreen(viewModel: LicensePlatesSheetViewModel) {
 
     var showAddLicensePlateDialog by remember { mutableStateOf(false) }
 
-    val bottomSheetState = rememberBottomSheetState(
-        initialValue = if (selectedItem != null) com.dokar.sheets.BottomSheetValue.Expanded else com.dokar.sheets.BottomSheetValue.Collapsed,
-        confirmValueChange = {
-            if (it == com.dokar.sheets.BottomSheetValue.Collapsed) {
-                viewModel.setSelectedItem(null)
-            }
-            true
-        },
-    )
+    val bottomSheetState = rememberBottomSheetState()
 
     val scope = rememberCoroutineScope()
 
@@ -102,7 +96,11 @@ fun LicensePlatesSheetScreen(viewModel: LicensePlatesSheetViewModel) {
 
     AddLicensePlateDialog(
         visible = showAddLicensePlateDialog,
-        onSuccessRequest = { showAddLicensePlateDialog = !showAddLicensePlateDialog },
+        salesOrderNo = viewModel.salesOrderNo,
+        onSuccessRequest = {
+            showAddLicensePlateDialog = !showAddLicensePlateDialog
+            viewModel.refresh()
+                           },
         onDismissRequest = { showAddLicensePlateDialog = !showAddLicensePlateDialog }
     )
 }
@@ -137,7 +135,6 @@ internal fun HeaderRow() {
     }
 }
 
-
 @Composable
 fun LicensePlatesTableContent(
     isLoading: Boolean = false,
@@ -157,7 +154,7 @@ fun LicensePlatesTableContent(
 
         if (!isLoading && items.isEmpty()) {
             item {
-                TableLoading()
+                TableNoRecords()
             }
         } else {
             items(
@@ -184,7 +181,10 @@ fun LicensePlateRowContent(
 
     val sdf = SimpleDateFormat("EEE MMM dd, h:mm aa")
 
-    Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp),
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp))
     {
@@ -199,8 +199,8 @@ fun LicensePlateRowContent(
                     text = sdf.format(item.dateCreated),
                     maxLines = 1,
                 )
-                Text("2")
-                Text("12.250 kg")
+                Text(item.totalCount.toString())
+                Text(item.quantityDescription)
             }
         }
         IconButton(modifier = Modifier.size(24.dp), onClick = {
@@ -222,11 +222,16 @@ internal fun ActionBottomSheet(state: com.dokar.sheets.BottomSheetState, viewMod
 
     val coroutineScope = rememberCoroutineScope()
 
+    val showLinesSheetState = rememberBottomSheetState()
+
     fun closeSheet() {
         coroutineScope.launch {
             state.collapse()
-            viewModel.setSelectedItem(null)
         }
+    }
+
+    selectedItem?.let {
+        LicensePlateLinesBottomSheet(showLinesSheetState, it.no)
     }
 
     BottomSheet(
@@ -271,18 +276,22 @@ internal fun ActionBottomSheet(state: com.dokar.sheets.BottomSheetState, viewMod
                     imageVector = Icons.Filled.List,
                     onclick = {
                         closeSheet()
+                        coroutineScope.launch {
+                            showLinesSheetState.expand(animate = true)
+                        }
+
+
                     })
             }
         }
     }
-
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable
 internal fun PreviewLicensePlateRowContent() {
     var licensePlate = LicensePlate("LP000008", "Chilled Chep", false, "00094214090000112345",
-        Date(2023,12,4,12,22,0)
+        Date(2023,12,4,12,22,0),12.5, 2, 12
     )
     LicensePlateRowContent(licensePlate)
 }
@@ -292,9 +301,9 @@ internal fun PreviewLicensePlateRowContent() {
 internal fun PreviewLicensePlatesTableContent() {
     var items = arrayListOf(
         LicensePlate("LP000008", "Chilled Chep", false, "00094214090000112345",
-            Date(2023,12,4,12,22,0)),
+            Date(2023,12,4,12,22,0), 12.5, 2, 12),
         LicensePlate("LP000009", "Chilled Chep", false, "00094214090000112345",
-            Date(2023,12,4,12,22,0)))
+            Date(2023,12,4,12,22,0),12.5, 2, 12))
 
     LicensePlatesTableContent(false, items)
 }

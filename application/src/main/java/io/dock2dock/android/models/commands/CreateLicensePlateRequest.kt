@@ -1,13 +1,14 @@
 package io.dock2dock.android.models.commands
 
-import java.text.DecimalFormat
-
 data class CreateLicensePlateRequest(
     val salesOrderNo: String,
     var handlingUnitId: String)
 
+data class CreateLicensePlateResponse(
+    val licensePlateNo: String)
+
 data class CompleteLicensePlateRequest(
-    val licensePlateId: String,
+    val licensePlateNo: String,
     val printerId: String)
 
 data class MoveContentBetweenLicencePlatesRequest(
@@ -15,6 +16,6 @@ data class MoveContentBetweenLicencePlatesRequest(
     val newLicensePlateNo: String,
     val no: String,
     val description: String,
-    val quantity: DecimalFormat,
+    val quantity: Double,
     val uOM: String,
     val units: Long?)

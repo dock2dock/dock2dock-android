@@ -16,12 +16,17 @@ import io.dock2dock.android.SERVER_NETWORK_ERROR
 import io.dock2dock.android.UNAUTHORISED_NETWORK_ERROR
 import io.dock2dock.android.clients.PublicApiClient
 import io.dock2dock.android.configuration.Dock2DockConfiguration
+import io.dock2dock.android.eventBus.Dock2DockEventBus
+import io.dock2dock.android.events.LicensePlateSetToActiveEvent
 import io.dock2dock.android.models.Dock2DockErrorCode
 import io.dock2dock.android.models.HttpErrorMapper
+import io.dock2dock.android.models.commands.CreateLicensePlateRequest
 import io.dock2dock.android.models.query.CrossdockHandlingUnit
 import kotlinx.coroutines.launch
 
 internal class AddLicensePlateDialogViewModel(
+    private val salesOrderNo: String,
+    private val onSuccess: () -> Unit,
 ): ViewModel() {
     private val publicApiClient = ApiService.getRetrofitClient<PublicApiClient>()
 
@@ -47,14 +52,17 @@ internal class AddLicensePlateDialogViewModel(
     var handlingUnitIdIsError by mutableStateOf(false)
         private set
 
-    var printerIdIsError by mutableStateOf(false)
-        private set
-
     //validation message
     val handlingUnitIdErrorMessage = "Handling Unit is a required field"
 
     private fun validateHandlingUnitId() {
         handlingUnitIdIsError = handlingUnit?.id.isNullOrEmpty()
+    }
+
+    private fun validateForm(): Boolean {
+        validateHandlingUnitId()
+
+        return !handlingUnitIdIsError
     }
 
     fun onHandlingUnitValueChanged(value: CrossdockHandlingUnit) {
@@ -88,6 +96,39 @@ internal class AddLicensePlateDialogViewModel(
             }.onException {
                 onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
             }
+        }
+    }
+
+    fun onSubmit() {
+        if (!validateForm()) {
+            return
+        }
+        viewModelScope.launch {
+            _isLoading.value = true
+            var request = CreateLicensePlateRequest(salesOrderNo, handlingUnit?.id ?: "")
+            val response = publicApiClient.createLicensePlate(request)
+            response.onSuccess {
+                var activeEvent = LicensePlateSetToActiveEvent(this.data.licensePlateNo)
+
+                viewModelScope.launch {
+                    Dock2DockEventBus.publish(activeEvent)
+                }
+                onSuccess()
+            }.onError {
+                map(HttpErrorMapper) {
+                    when(this.code) {
+                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange(
+                            UNAUTHORISED_NETWORK_ERROR
+                        )
+                        else -> {
+                            onLoadErrorChange(SERVER_NETWORK_ERROR)
+                        }
+                    }
+                }
+            }.onException {
+                onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
+            }
+            _isLoading.value = false
         }
     }
 }

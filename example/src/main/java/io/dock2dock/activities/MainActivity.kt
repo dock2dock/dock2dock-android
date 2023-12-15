@@ -36,8 +36,6 @@ class MainActivity : AppCompatActivity() {
             LicensePlateScreen(viewModel = licensePlateViewModel)
         }
 
-        licensePlateViewModel.refresh("LP000006")
-
         setupFragment()
     }
 

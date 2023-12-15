@@ -10,8 +10,12 @@ import io.dock2dock.android.ApiService
 import io.dock2dock.android.SERVER_NETWORK_ERROR
 import io.dock2dock.android.UNAUTHORISED_NETWORK_ERROR
 import io.dock2dock.android.clients.PublicApiClient
+import io.dock2dock.android.configuration.Dock2DockConfiguration
+import io.dock2dock.android.eventBus.Dock2DockEventBus
+import io.dock2dock.android.events.LicensePlateSetToActiveEvent
 import io.dock2dock.android.models.Dock2DockErrorCode
 import io.dock2dock.android.models.HttpErrorMapper
+import io.dock2dock.android.models.commands.CompleteLicensePlateRequest
 import io.dock2dock.android.models.query.LicensePlate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,13 +23,19 @@ import kotlinx.coroutines.launch
 
 class LicensePlateViewModel : ViewModel()
 {
+    init {
+        subscribeToActiveLicensePlateUpdatedEvent()
+    }
+
     private val publicApiClient = ApiService.getRetrofitClient<PublicApiClient>()
 
     private val _licensePlate = MutableStateFlow<LicensePlate?>(null)
 
-    val refreshing = MutableStateFlow(false)
+    private val refreshing = MutableStateFlow(false)
 
     private val errorMessage = MutableStateFlow<String?>(null)
+
+    private val dock2dockConfiguration = Dock2DockConfiguration.instance()
 
     val licensePlate: StateFlow<LicensePlate?>
         get() = _licensePlate
@@ -64,5 +74,46 @@ class LicensePlateViewModel : ViewModel()
 
     fun clearLicensePlate() {
         _licensePlate.value = null
+    }
+
+    fun complete() {
+        val defaultPrinterId = dock2dockConfiguration.getDefaultPrinter()?.let { it } ?: run {
+            errorMessage.value = "Please select default printer under Dock2Dock settings"
+            return@complete
+        }
+
+        viewModelScope.launch {
+            var request = CompleteLicensePlateRequest(licensePlate.value?.no ?: "",  defaultPrinterId)
+            val response = publicApiClient.completeLicensePlate(request)
+            response.onSuccess {
+                clearLicensePlate()
+//                var activeEvent = LicensePlateSetToActiveEvent(this.data.licensePlateNo)
+//
+//                viewModelScope.launch {
+//                    Dock2DockEventBus.publish(activeEvent)
+//                }
+//                onSuccess()
+            }.onError {
+                map(HttpErrorMapper) {
+                    when(this.code) {
+                        Dock2DockErrorCode.Unauthorised -> errorMessage.value = UNAUTHORISED_NETWORK_ERROR
+                        else -> {
+                            errorMessage.value = SERVER_NETWORK_ERROR
+                        }
+                    }
+                }
+            }.onException {
+                errorMessage.value = "An error has occurred. Please retry or contact Dock2Dock support team."
+            }
+            //_isLoading.value = false
+        }
+    }
+
+    private fun subscribeToActiveLicensePlateUpdatedEvent() {
+        viewModelScope.launch {
+            Dock2DockEventBus.subscribe<LicensePlateSetToActiveEvent> { event ->
+                refresh(event.licensePlateNo)
+            }
+        }
     }
 }
