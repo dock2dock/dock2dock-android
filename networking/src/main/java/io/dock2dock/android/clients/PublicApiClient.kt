@@ -48,5 +48,8 @@ interface PublicApiClient
 
     @POST("/LicensePlate/Complete")
     suspend fun completeLicensePlate(@Body body: CompleteLicensePlateRequest): ApiResponse<Unit>
+
+    @POST("/LicensePlate/Reprint")
+    suspend fun reprintLicensePlate(@Body body: ReprintLicensePlateRequest): ApiResponse<Unit>
 }
 

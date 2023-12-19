@@ -16,6 +16,7 @@ import io.dock2dock.android.events.LicensePlateSetToActiveEvent
 import io.dock2dock.android.models.Dock2DockErrorCode
 import io.dock2dock.android.models.HttpErrorMapper
 import io.dock2dock.android.models.commands.CompleteLicensePlateRequest
+import io.dock2dock.android.models.commands.ReprintLicensePlateRequest
 import io.dock2dock.android.models.query.LicensePlate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,6 +41,8 @@ class LicensePlateViewModel : ViewModel()
     val licensePlate: StateFlow<LicensePlate?>
         get() = _licensePlate
 
+    var onLicensePlateChanged: (LicensePlate?) -> Unit = {}
+
     private fun getLicensePlate(barcode: String) {
         errorMessage.value = ""
         viewModelScope.launch {
@@ -47,6 +50,7 @@ class LicensePlateViewModel : ViewModel()
             val response = publicApiClient.getLicensePlate(barcode)
             response.onSuccess {
                 _licensePlate.value = this.data
+                onLicensePlateChanged(_licensePlate.value)
             }.onError {
                 map(HttpErrorMapper) {
                     when(this.code) {
@@ -74,6 +78,7 @@ class LicensePlateViewModel : ViewModel()
 
     fun clearLicensePlate() {
         _licensePlate.value = null
+        onLicensePlateChanged(null)
     }
 
     fun complete() {
@@ -87,12 +92,34 @@ class LicensePlateViewModel : ViewModel()
             val response = publicApiClient.completeLicensePlate(request)
             response.onSuccess {
                 clearLicensePlate()
-//                var activeEvent = LicensePlateSetToActiveEvent(this.data.licensePlateNo)
-//
-//                viewModelScope.launch {
-//                    Dock2DockEventBus.publish(activeEvent)
-//                }
-//                onSuccess()
+            }.onError {
+                map(HttpErrorMapper) {
+                    when(this.code) {
+                        Dock2DockErrorCode.Unauthorised -> errorMessage.value = UNAUTHORISED_NETWORK_ERROR
+                        else -> {
+                            errorMessage.value = SERVER_NETWORK_ERROR
+                        }
+                    }
+                }
+            }.onException {
+                errorMessage.value = "An error has occurred. Please retry or contact Dock2Dock support team."
+            }
+            //_isLoading.value = false
+        }
+    }
+
+
+    fun reprint(printSsccBarcode: Boolean) {
+        val defaultPrinterId = dock2dockConfiguration.getDefaultPrinter()?.let { it } ?: run {
+            errorMessage.value = "Please select default printer under Dock2Dock settings"
+            return@reprint
+        }
+
+        viewModelScope.launch {
+            var request = ReprintLicensePlateRequest(licensePlate.value?.no ?: "",  defaultPrinterId, printSsccBarcode)
+            val response = publicApiClient.reprintLicensePlate(request)
+            response.onSuccess {
+
             }.onError {
                 map(HttpErrorMapper) {
                     when(this.code) {

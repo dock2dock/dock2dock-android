@@ -31,6 +31,9 @@ class MainActivity : AppCompatActivity() {
         title = "Track Order"
 
         licensePlateViewModel = LicensePlateViewModel()
+        licensePlateViewModel.onLicensePlateChanged = {
+            //do something with license plate
+        }
 
         findViewById<ComposeView>(R.id.license_plate_compose_view).setContent {
             LicensePlateScreen(viewModel = licensePlateViewModel)

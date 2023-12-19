@@ -65,11 +65,11 @@ fun LicensePlateScreen(
                     showLinesSheetState.expand(animate = true)
                 }
             },
-            onComplete = { viewModel.complete() }
+            onComplete = { viewModel.complete() },
+            onReprint = { viewModel.reprint(false) }
         )
         LicensePlateLinesBottomSheet(showLinesSheetState, lp.no)
     }
-
 }
 
 @Composable

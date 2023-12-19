@@ -11,6 +11,11 @@ data class CompleteLicensePlateRequest(
     val licensePlateNo: String,
     val printerId: String)
 
+data class ReprintLicensePlateRequest(
+    val licensePlateNo: String,
+    val printerId: String,
+    val printSsccBarcode: Boolean)
+
 data class MoveContentBetweenLicencePlatesRequest(
     val oldLicensePlateNo: String,
     val newLicensePlateNo: String,

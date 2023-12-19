@@ -252,14 +252,20 @@ internal fun ActionBottomSheet(state: com.dokar.sheets.BottomSheetState, viewMod
                     name = "Reprint Manifest",
                     imageVector = Icons.Filled.Print,
                     onclick = {
-                        closeSheet()
+                        selectedItem?.let {
+                            viewModel.reprintLicensePlate(it, false)
+                            closeSheet()
+                        }
                     })
                 if (!selectedItem?.ssccBarcode.isNullOrEmpty()) {
                     BottomSheetActionRow(
-                        name = "Reprint Manifest & SSCC Label",
+                        name = "Reprint LP & SSCC Label",
                         imageVector = Icons.Filled.Print,
                         onclick = {
-                            closeSheet()
+                            selectedItem?.let {
+                                viewModel.reprintLicensePlate(it, true)
+                                closeSheet()
+                            }
                         })
                 }
                 BottomSheetActionRow(
@@ -279,8 +285,6 @@ internal fun ActionBottomSheet(state: com.dokar.sheets.BottomSheetState, viewMod
                         coroutineScope.launch {
                             showLinesSheetState.expand(animate = true)
                         }
-
-
                     })
             }
         }
