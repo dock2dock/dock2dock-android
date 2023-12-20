@@ -10,6 +10,7 @@
     <LinearLayout
             android:layout_width="match_parent"
             android:orientation="vertical"
+
             android:layout_height="match_parent">
         <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/appbar"
@@ -172,12 +173,14 @@
 
         <RelativeLayout
                 android:layout_width="match_parent"
+                android:layout_weight="1"
                 android:layout_height="wrap_content">
             <androidx.viewpager.widget.ViewPager
                     android:id="@+id/viewPager"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
             <ProgressBar
                     android:id="@+id/progressBar"
                     android:layout_width="wrap_content"
@@ -185,6 +188,10 @@
                     android:layout_centerInParent="true"
                     android:visibility="gone" />
         </RelativeLayout>
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/license_plate_compose_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 
