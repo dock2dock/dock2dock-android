@@ -1,6 +1,7 @@
 package io.dock2dock.android.components
 
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -47,7 +48,7 @@ fun Dock2DockTextField(
         onValueChange = {
             valueChanged(it)
         },
-        modifier = Modifier.defaultMinSize(minHeight = 32.dp),
+        modifier = Modifier.defaultMinSize(minHeight = 32.dp).fillMaxWidth(),
         shape = RoundedCornerShape(0),
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = keyboardType,

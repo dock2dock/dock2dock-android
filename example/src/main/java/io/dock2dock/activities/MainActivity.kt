@@ -2,6 +2,7 @@ package io.dock2dock.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import io.dock2dock.activities.databinding.ActivityPickItemBinding
 import io.dock2dock.adapters.FragmentModel
 import io.dock2dock.adapters.PagerAdapter
@@ -16,7 +17,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPickItemBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Dock2DockConfiguration.init(this, BuildConfig.Dock2Dock_ApiKey, "https://api.nonprod.dock2dock.io/")
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        Dock2DockConfiguration.init(this, BuildConfig.Dock2Dock_ApiKey, "http://localhost:3000/")
 
         binding = ActivityPickItemBinding.inflate(layoutInflater)
         val view = binding.root
@@ -29,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fragAdapter: PagerAdapter
 
     var formatter = SimpleDateFormat("E dd MMMM")
-    private val salesOrderNo = "42202"
+    private val salesOrderNo = "SO1002"
 
     private fun setupFragment() {
         fragAdapter = PagerAdapter(supportFragmentManager)

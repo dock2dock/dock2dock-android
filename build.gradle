@@ -4,8 +4,8 @@ import io.dock2dock.android.Configuration
 buildscript {
     apply from: 'dependencies.gradle'
     ext {
-        compose_ui_version = '1.4.1'
-        kotlinVersion = '1.8.0'
+        compose_ui_version = '1.4.2'
+        kotlinVersion = '1.8.10'
     }
 
     repositories {
