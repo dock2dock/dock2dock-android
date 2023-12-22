@@ -2,26 +2,27 @@ package io.dock2dock.android.dialogs
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import io.dock2dock.android.components.BasicDropdownMenuItem
 import io.dock2dock.android.components.ButtonVariant
 import io.dock2dock.android.components.Dock2DockNumberTextField
@@ -44,13 +45,21 @@ internal fun DialogPrintCrossdockLabel(visible: Boolean,
     if (visible) {
         val viewModel = DialogPrintCrossdockLabelViewModel(
             salesOrderNo = salesOrderNo,
-            onSuccess = onSuccessRequest)
-        Dialog(onDismissRequest = {
-            onDismissRequest()
-        })
-        {
+            onSuccess = onSuccessRequest
+        )
+
+        Dialog(
+            properties = DialogProperties(
+                dismissOnClickOutside = false,
+                decorFitsSystemWindows = false,
+                usePlatformDefaultWidth = false
+            ),
+            onDismissRequest = { onDismissRequest() }
+        ) {
+
             DialogPrintCrossdockLabelContent(viewModel, onDismissRequest)
         }
+
     }
 }
 
@@ -61,18 +70,13 @@ internal fun DialogPrintCrossdockLabelContent(viewModel: DialogPrintCrossdockLab
 
     val errorMessage by viewModel.loadError.observeAsState("")
 
-    LaunchedEffect(key1 = Unit) {
-        viewModel.load()
-    }
+    val scrollState = rememberScrollState()
 
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        shape = RoundedCornerShape(size = 8.dp)
+        modifier = Modifier.imePadding().fillMaxSize(),
+        color = Color.White
     ) {
-
-        Column(modifier = Modifier.padding(all = 24.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
 
             Dock2DockDialogHeader(title = "Print Crossdock Label", onDismissRequest)
 
@@ -80,9 +84,12 @@ internal fun DialogPrintCrossdockLabelContent(viewModel: DialogPrintCrossdockLab
                 ValidationErrorMessage(errorMessage)
             }
 
-            Column(modifier = Modifier
-                .verticalScroll(rememberScrollState(), true)
-                .weight(1f, false)) {
+            Column(
+                Modifier
+                    .weight(1f, true)
+                    .verticalScroll(scrollState)
+            ) {
+
                 FormItem("Sales Order No") {
                     Dock2DockTextField(
                         readOnly = true,
@@ -108,18 +115,6 @@ internal fun DialogPrintCrossdockLabelContent(viewModel: DialogPrintCrossdockLab
                     }
                 }
 
-                FormItem(title = "Quantity") {
-                    Dock2DockNumberTextField(
-                        value = viewModel.quantity,
-                        valueChanged = {
-                            viewModel.onQuantityValueChanged(it)
-                        },
-                        errorMessage = viewModel.quantityValidationMessage,
-                        isError = viewModel.quantityIsError,
-                        placeholderText = "Quantity"
-                    )
-                }
-
                 FormItem(title = "Printer") {
                     FluentDropdown(
                         options = viewModel.printers,
@@ -133,6 +128,19 @@ internal fun DialogPrintCrossdockLabelContent(viewModel: DialogPrintCrossdockLab
                         }) {
                         SubTitleDropdownMenuItem(it.name, it.location)
                     }
+
+                }
+
+                FormItem(title = "Quantity") {
+                    Dock2DockNumberTextField(
+                        value = viewModel.quantity,
+                        valueChanged = {
+                            viewModel.onQuantityValueChanged(it)
+                        },
+                        errorMessage = viewModel.quantityValidationMessage,
+                        isError = viewModel.quantityIsError,
+                        placeholderText = "Quantity"
+                    )
                 }
             }
             Dock2DockDialogFooter {
@@ -141,19 +149,21 @@ internal fun DialogPrintCrossdockLabelContent(viewModel: DialogPrintCrossdockLab
                         onDismissRequest()
                     },
                     shape = RectangleShape,
+                    modifier = Modifier.weight(1f).heightIn(min = 32.dp),
                     border = BorderStroke(1.dp, PrimaryDark),
                     colors = ButtonDefaults.buttonColors(
                         contentColor = PrimaryDark,
                         backgroundColor = Transparent
-                    ),
-                    modifier = Modifier.weight(1f)) {
+                    )
+                ) {
                     Text("Cancel")
                 }
                 PrimaryButton(
                     text = "Print",
                     modifier = Modifier.weight(1f),
                     variant = ButtonVariant.Primary,
-                    isLoading = isLoading) {
+                    isLoading = isLoading
+                ) {
                     viewModel.onSubmit()
                 }
             }
