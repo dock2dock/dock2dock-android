@@ -117,9 +117,11 @@ internal class AddLicensePlateDialogViewModel(
             }.onError {
                 map(HttpErrorMapper) {
                     when(this.code) {
-                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange(
-                            UNAUTHORISED_NETWORK_ERROR
-                        )
+                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange(UNAUTHORISED_NETWORK_ERROR)
+                        Dock2DockErrorCode.BadRequest,
+                        Dock2DockErrorCode.UnprocessableEntity,
+                        Dock2DockErrorCode.NotFound,
+                        Dock2DockErrorCode.Validation -> onLoadErrorChange(this.message)
                         else -> {
                             onLoadErrorChange(SERVER_NETWORK_ERROR)
                         }
