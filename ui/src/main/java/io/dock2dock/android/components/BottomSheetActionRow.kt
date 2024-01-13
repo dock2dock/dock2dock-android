@@ -1,6 +1,7 @@
 package io.dock2dock.android.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentColor
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -18,7 +20,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BottomSheetActionRow(contentColor: Color = Color.Black, name: String, imageVector: ImageVector, onclick: () -> Unit) {
+fun BottomSheetActionRow(contentColor: Color = Color.Black, name: String, description: String? = null, imageVector: ImageVector, onclick: () -> Unit) {
     Row(modifier = Modifier
         .fillMaxWidth()
         .clickable {
@@ -33,7 +35,15 @@ fun BottomSheetActionRow(contentColor: Color = Color.Black, name: String, imageV
                 contentDescription = "contentDescription"
             )
             Spacer(modifier = Modifier.width(12.dp))
-            Text(text = name)
+            Column {
+                Text(text = name)
+                if (description?.isNotEmpty() == true) {
+                    Text(text = description,
+                        style = MaterialTheme.typography.caption,
+                        color = Color.Gray
+                    )
+                }
+            }
         }
 
     }

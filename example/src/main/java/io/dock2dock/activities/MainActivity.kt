@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         fragAdapter = PagerAdapter(supportFragmentManager)
 
         var licensePlatesFragment = LicensePlatesFragment(salesOrderNo) {
-            licensePlateViewModel.refresh(it.no)
+            licensePlateViewModel.load(it.no)
         }
 
         val fragments = arrayListOf(
