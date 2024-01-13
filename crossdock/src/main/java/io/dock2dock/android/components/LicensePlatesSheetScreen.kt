@@ -2,7 +2,6 @@ package io.dock2dock.android.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,9 +18,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarDuration
-import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -29,8 +25,6 @@ import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -48,107 +42,55 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dokar.sheets.BottomSheet
 import com.dokar.sheets.rememberBottomSheetState
-import io.dock2dock.android.dialogs.SettingsDialog
 import io.dock2dock.android.dialogs.licensePlate.AddLicensePlateDialog
-import io.dock2dock.android.models.Constants.SnackBarDurationVeryShort
 import io.dock2dock.android.models.query.LicensePlate
 import io.dock2dock.android.ui.theme.PrimaryOxfordBlue
 import io.dock2dock.android.viewModels.LicensePlatesSheetViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 
 @Composable
 fun LicensePlatesSheetScreen(
-    viewModel: LicensePlatesSheetViewModel,
+    viewModel: LicensePlatesSheetViewModel
 ) {
 
     LaunchedEffect(key1 = Unit) {
         viewModel.load()
     }
 
-
-
     val licensePlates by viewModel.licensePlates.collectAsState(listOf())
     val loading by viewModel.refreshing.collectAsState(false)
     val selectedItem by viewModel.selectedItem.collectAsState(null)
-    val successMessage by viewModel.successMessage.collectAsState(null)
-    val isSnackBarShowing by viewModel.isSnackBarShowing.collectAsState(false)
 
     var showAddLicensePlateDialog by remember { mutableStateOf(false) }
-
-    var showSettingsDialog by remember { mutableStateOf(false) }
 
     val bottomSheetState = rememberBottomSheetState()
 
     val scope = rememberCoroutineScope()
 
-    val scaffoldState = rememberScaffoldState()
-
-    if (isSnackBarShowing) {
-        LaunchedEffect(isSnackBarShowing) {
-            try {
-                val job = launch {
-                    when (scaffoldState.snackbarHostState.showSnackbar(
-                        successMessage ?: "", duration = SnackbarDuration.Indefinite
-                    )) {
-                        SnackbarResult.Dismissed -> {
-                        }
-
-                        else -> {
-
-                        }
-                    }
-                }
-                delay(SnackBarDurationVeryShort)
-                job.cancel()
-            } finally {
-                viewModel.onDismissSnackBar()
+    Column {
+        Row(modifier = Modifier.padding(8.dp, 0.dp),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically) {
+            PrimaryButton(text = "Add", variant = ButtonVariant.Primary) {
+                showAddLicensePlateDialog = true
+            }
+            Spacer(Modifier.weight(1f))
+            IconButton(onClick = {
+                viewModel.load()
+            }) {
+                Icon(Icons.Filled.Refresh,
+                    "contentDescription")
+            }
+        }
+        LicensePlatesTableContent(loading, licensePlates) {
+            viewModel.setSelectedItem(it)
+            scope.launch {
+                bottomSheetState.expand(animate = true)
             }
         }
     }
-
-    Scaffold(scaffoldState = scaffoldState) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
-            Column {
-                Row(
-                    modifier = Modifier.padding(8.dp, 0.dp),
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    PrimaryButton(text = "Add", variant = ButtonVariant.Primary) {
-                        showAddLicensePlateDialog = true
-                    }
-                    Spacer(Modifier.weight(1f))
-                    IconButton(onClick = {
-                        viewModel.load()
-                    }) {
-                        Icon(
-                            Icons.Filled.Refresh,
-                            "contentDescription"
-                        )
-                    }
-                    IconButton(onClick = {
-                        showSettingsDialog = true
-                    }) {
-                        Icon(
-                            Icons.Filled.Settings,
-                            "contentDescription"
-                        )
-                    }
-
-                }
-                LicensePlatesTableContent(loading, licensePlates) {
-                    viewModel.setSelectedItem(it)
-                    scope.launch {
-                        bottomSheetState.expand(animate = true)
-                    }
-                }
-            }
-        }
-    }
-
 
     ActionBottomSheet(bottomSheetState, viewModel)
 
@@ -160,11 +102,6 @@ fun LicensePlatesSheetScreen(
             viewModel.refresh()
                            },
         onDismissRequest = { showAddLicensePlateDialog = !showAddLicensePlateDialog }
-    )
-
-    SettingsDialog(
-        visible = showSettingsDialog,
-        onDismissRequest = { showSettingsDialog = !showSettingsDialog }
     )
 }
 
@@ -254,21 +191,16 @@ fun LicensePlateRowContent(
         Column(Modifier.weight(1f)) {
             Text(text = item.description,
                 fontWeight = FontWeight.Bold)
-            Row(Modifier.fillMaxWidth()) {
+            Row(Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(
                     style = MaterialTheme.typography.caption,
                     color = Color.Gray,
                     text = sdf.format(item.dateCreated),
                     maxLines = 1,
-                    modifier = Modifier.width(200.dp)
                 )
-                Text(
-                    text = item.totalCount.toString(),
-                    modifier = Modifier.width(80.dp)
-                )
-                Text(
-                    text = item.quantityDescription,
-                )
+                Text(item.totalCount.toString())
+                Text(item.quantityDescription)
             }
         }
         IconButton(modifier = Modifier.size(24.dp), onClick = {
@@ -284,9 +216,7 @@ fun LicensePlateRowContent(
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
-internal fun ActionBottomSheet(
-    state: com.dokar.sheets.BottomSheetState,
-    viewModel: LicensePlatesSheetViewModel) {
+internal fun ActionBottomSheet(state: com.dokar.sheets.BottomSheetState, viewModel: LicensePlatesSheetViewModel) {
 
     val selectedItem: LicensePlate? by viewModel.selectedItem.collectAsState(null)
 
@@ -320,7 +250,6 @@ internal fun ActionBottomSheet(
             Column(modifier = Modifier.padding(top = 8.dp)) {
                 BottomSheetActionRow(
                     name = "Reprint Manifest",
-                    description = "Labels will be printed to the default printer. Go to settings to change the printer.",
                     imageVector = Icons.Filled.Print,
                     onclick = {
                         selectedItem?.let {
@@ -331,7 +260,6 @@ internal fun ActionBottomSheet(
                 if (!selectedItem?.ssccBarcode.isNullOrEmpty()) {
                     BottomSheetActionRow(
                         name = "Reprint LP & SSCC Label",
-                        description = "Labels will be printed to the default printer. Go to settings to change the printer.",
                         imageVector = Icons.Filled.Print,
                         onclick = {
                             selectedItem?.let {
@@ -350,7 +278,7 @@ internal fun ActionBottomSheet(
                         }
                     })
                 BottomSheetActionRow(
-                    name = "Show License Plate Lines",
+                    name = "Show Lines",
                     imageVector = Icons.Filled.List,
                     onclick = {
                         closeSheet()

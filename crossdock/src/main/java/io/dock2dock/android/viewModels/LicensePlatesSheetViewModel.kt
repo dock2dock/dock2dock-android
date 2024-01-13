@@ -1,5 +1,6 @@
 package io.dock2dock.android.viewModels
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.skydoves.sandwich.map
 import com.skydoves.sandwich.onError
@@ -21,7 +22,7 @@ import kotlinx.coroutines.launch
 class LicensePlatesSheetViewModel(
     val salesOrderNo: String,
     val onLicensePlateSetActive: ((LicensePlate) -> Unit) = {}
-): BaseViewModel()
+) : ViewModel()
 {
     private val publicApiClient = ApiService.getRetrofitClient<PublicApiClient>()
 
@@ -38,8 +39,6 @@ class LicensePlatesSheetViewModel(
 
     private val _selectedItem: MutableStateFlow<LicensePlate?> = MutableStateFlow(null)
     val selectedItem: StateFlow<LicensePlate?> get() = _selectedItem
-
-
 
     private fun getLicensePlates() {
         errorMessage.value = ""
@@ -95,12 +94,7 @@ class LicensePlatesSheetViewModel(
             var request = ReprintLicensePlateRequest(licensePlate.no,  defaultPrinterId, printSsccBarcode)
             val response = publicApiClient.reprintLicensePlate(request)
             response.onSuccess {
-                _successMessage.value = if (printSsccBarcode) {
-                    "License plate ${licensePlate.no} and SSCC label have been reprinted"
-                } else {
-                    "License plate ${licensePlate.no} has been reprinted"
-                }
-                _isSnackBarShowing.value = true
+
             }.onError {
                 map(HttpErrorMapper) {
                     when(this.code) {

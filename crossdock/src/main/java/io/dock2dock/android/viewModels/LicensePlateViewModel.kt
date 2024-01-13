@@ -1,5 +1,6 @@
 package io.dock2dock.android.viewModels
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.skydoves.sandwich.map
 import com.skydoves.sandwich.onError
@@ -21,7 +22,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class LicensePlateViewModel: BaseViewModel()
+class LicensePlateViewModel : ViewModel()
 {
     init {
         subscribeToActiveLicensePlateUpdatedEvent()
@@ -71,13 +72,7 @@ class LicensePlateViewModel: BaseViewModel()
         }
     }
 
-    fun refresh() {
-        _licensePlate.value?.let {
-            getLicensePlate(it.no)
-        }
-    }
-
-    fun load(barcode: String) {
+    fun refresh(barcode: String) {
         getLicensePlate(barcode)
     }
 
@@ -121,8 +116,7 @@ class LicensePlateViewModel: BaseViewModel()
         }
 
         viewModelScope.launch {
-            var licensePlateNo = licensePlate.value?.no ?: ""
-            var request = ReprintLicensePlateRequest(licensePlateNo,  defaultPrinterId, printSsccBarcode)
+            var request = ReprintLicensePlateRequest(licensePlate.value?.no ?: "",  defaultPrinterId, printSsccBarcode)
             val response = publicApiClient.reprintLicensePlate(request)
             response.onSuccess {
 
@@ -145,7 +139,7 @@ class LicensePlateViewModel: BaseViewModel()
     private fun subscribeToActiveLicensePlateUpdatedEvent() {
         viewModelScope.launch {
             Dock2DockEventBus.subscribe<LicensePlateSetToActiveEvent> { event ->
-                load(event.licensePlateNo)
+                refresh(event.licensePlateNo)
             }
         }
     }

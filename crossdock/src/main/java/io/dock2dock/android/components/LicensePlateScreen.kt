@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -58,7 +59,7 @@ fun LicensePlateScreen(
         LicensePlateContent(
             licensePlate = lp,
             onClose = { viewModel.clearLicensePlate() },
-            onRefresh = { viewModel.refresh() },
+            onRefresh = { viewModel.refresh(lp.no) },
             onViewLines = {
                 coroutineScope.launch {
                     showLinesSheetState.expand(animate = true)
@@ -72,7 +73,7 @@ fun LicensePlateScreen(
 }
 
 @Composable
-fun LicensePlateContent(
+internal fun LicensePlateContent(
     licensePlate: LicensePlate,
     onClose: (() -> Unit) = {},
     onRefresh: (() -> Unit) = {},
@@ -103,7 +104,7 @@ fun LicensePlateContent(
                 Text(text = licensePlate.no, modifier = Modifier.align(Alignment.CenterVertically))
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("LINES", color = Color.LightGray, fontSize = 10.sp)
+                    Text("COUNT", color = Color.LightGray, fontSize = 10.sp)
                     Text(text = licensePlate.totalCount.toString())
                 }
 
@@ -128,12 +129,18 @@ fun LicensePlateContent(
                             Icons.Filled.List,
                             "contentDescription")
                     }
-
                     IconButton(modifier = Modifier.size(24.dp), onClick = {
                         onRefresh()
                     }) {
                         Icon(
                             Icons.Filled.Sync,
+                            "contentDescription")
+                    }
+                    IconButton(modifier = Modifier.size(24.dp), onClick = {
+                        onReprint()
+                    }) {
+                        Icon(
+                            Icons.Filled.Print,
                             "contentDescription")
                     }
                 }
@@ -146,6 +153,5 @@ fun LicensePlateContent(
 @Composable
 internal fun PreviewLicensePlateContent() {
     val licensePlate = LicensePlate("LP000008", "Chilled Chep", false, "000942190400001123456", Date(2023,12,4,12,22,0), 12.5, 2, 12)
-
     LicensePlateContent(licensePlate)
 }
