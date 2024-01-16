@@ -65,7 +65,7 @@ fun LicensePlatesSheetScreen(
 ) {
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.load()
+        viewModel.refresh()
     }
 
     val licensePlates by viewModel.licensePlates.collectAsState(listOf())
@@ -119,7 +119,7 @@ fun LicensePlatesSheetScreen(
                     }
                     Spacer(Modifier.weight(1f))
                     IconButton(onClick = {
-                        viewModel.load()
+                        viewModel.refresh()
                     }) {
                         Icon(
                             Icons.Filled.Refresh,
