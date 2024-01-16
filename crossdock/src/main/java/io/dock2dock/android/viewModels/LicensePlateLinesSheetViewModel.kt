@@ -1,7 +1,6 @@
 package io.dock2dock.android.viewModels
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.skydoves.sandwich.map
 import com.skydoves.sandwich.onError
@@ -18,18 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class LicensePlateLinesSheetViewModelFactory(private val licensePlateId: String) : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(LicensePlateLinesSheetViewModel::class.java)) {
-            return LicensePlateLinesSheetViewModel(licensePlateId) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}
-
-class LicensePlateLinesSheetViewModel(
-    private val licensePlateNo: String): ViewModel() {
+class LicensePlateLinesSheetViewModel: ViewModel() {
     private val publicApiClient = ApiService.getRetrofitClient<PublicApiClient>()
 
     private val _licensePlateLines = MutableStateFlow<List<LicensePlateLine>>(listOf())
@@ -43,8 +31,9 @@ class LicensePlateLinesSheetViewModel(
     val licensePlateLines: StateFlow<List<LicensePlateLine>>
         get() = _licensePlateLines
 
-    private fun getLicensePlateLines() {
+    private fun getLicensePlateLines(licensePlateNo: String) {
         errorMessage.value = ""
+        _licensePlateLines.value = listOf()
         viewModelScope.launch {
             _isLoading.value = true
             val response =
@@ -74,7 +63,7 @@ class LicensePlateLinesSheetViewModel(
         }
     }
 
-    internal fun load() {
-        getLicensePlateLines()
+    internal fun load(licensePlateNo: String) {
+        getLicensePlateLines(licensePlateNo)
     }
 }

@@ -45,11 +45,11 @@ fun LicensePlateLinesBottomSheet(state: BottomSheetState, licensePlateNo: String
 @Composable
 fun LicensePlateLinesScreen(licensePlateNo: String) {
     val viewModel = viewModel {
-        LicensePlateLinesSheetViewModel(licensePlateNo)
+        LicensePlateLinesSheetViewModel()
     }
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.load()
+        viewModel.load(licensePlateNo)
     }
 
     val items by viewModel.licensePlateLines.collectAsState(listOf())
