@@ -186,7 +186,7 @@ internal fun HeaderRow() {
             )
             Text(
                 modifier = Modifier
-                    .width(80.dp),
+                    .width(60.dp),
                 text = "Lines",
                 fontWeight = FontWeight.Bold
             )
@@ -264,7 +264,7 @@ fun LicensePlateRowContent(
                 )
                 Text(
                     text = item.totalCount.toString(),
-                    modifier = Modifier.width(80.dp)
+                    modifier = Modifier.width(60.dp)
                 )
                 Text(
                     text = item.quantityDescription,
