@@ -69,10 +69,6 @@ class LicensePlatesSheetViewModel(
         }
     }
 
-    internal fun load() {
-        getLicensePlates()
-    }
-
     internal fun refresh() {
         getLicensePlates()
     }

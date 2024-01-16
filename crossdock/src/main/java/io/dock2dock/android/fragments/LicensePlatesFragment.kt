@@ -17,17 +17,31 @@ class LicensePlatesFragment(
     private val salesOrderNo: String,
     private val onLicensePlateSetActive: ((LicensePlate) -> Unit) = {}
 ): Fragment() {
+
+    private lateinit var viewModel: LicensePlatesSheetViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        viewModel = LicensePlatesSheetViewModel(salesOrderNo, onLicensePlateSetActive)
+        super.onCreate(savedInstanceState)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                var viewModel = LicensePlatesSheetViewModel(salesOrderNo, onLicensePlateSetActive)
                 LicensePlatesSheetScreen(viewModel)
             }
         }
     }
+
+    fun refresh() {
+        viewModel.refresh()
+    }
+
+
 }
