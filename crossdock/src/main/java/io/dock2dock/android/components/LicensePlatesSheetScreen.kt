@@ -68,11 +68,8 @@ fun LicensePlatesSheetScreen(
         viewModel.load()
     }
 
-
-
     val licensePlates by viewModel.licensePlates.collectAsState(listOf())
     val loading by viewModel.refreshing.collectAsState(false)
-    val selectedItem by viewModel.selectedItem.collectAsState(null)
     val successMessage by viewModel.successMessage.collectAsState(null)
     val isSnackBarShowing by viewModel.isSnackBarShowing.collectAsState(false)
 
@@ -292,7 +289,14 @@ internal fun ActionBottomSheet(
 
     val coroutineScope = rememberCoroutineScope()
 
-    val showLinesSheetState = rememberBottomSheetState()
+    val showLinesSheetState = rememberBottomSheetState(
+        confirmValueChange = {
+            if (it == com.dokar.sheets.BottomSheetValue.Collapsed) {
+                viewModel.setSelectedItem(null)
+            }
+            true
+        },
+    )
 
     fun closeSheet() {
         coroutineScope.launch {
