@@ -87,6 +87,7 @@ internal class CrossdockLabelDataTableViewModel(
                     }
                 }
             }.onException {
+                print("Error getting sales order. ${this.message}")
                 _errorMessage.value = SERVER_NETWORK_ERROR
             }
             onIsLoadingChange(false)

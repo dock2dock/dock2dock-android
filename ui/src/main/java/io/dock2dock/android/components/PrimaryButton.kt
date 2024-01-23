@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
@@ -71,7 +72,7 @@ fun PrimaryButton(text: String,
         onClick = onClick,
         shape = RectangleShape,
         enabled = true,
-        modifier = modifier,
+        modifier = modifier.heightIn(min = 32.dp),
         colors = getButtonColors(variant = variant),
     ) {
         if (isLoading) {
