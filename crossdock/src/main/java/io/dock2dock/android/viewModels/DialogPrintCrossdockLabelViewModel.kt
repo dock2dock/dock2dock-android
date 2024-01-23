@@ -51,7 +51,7 @@ internal class DialogPrintCrossdockLabelViewModel(val onSuccess: () -> Unit,
 
     private val dock2dockConfiguration = Dock2DockConfiguration.instance()
 
-    fun load() {
+    init {
         getHandlingUnits()
         getPrinters()
     }
