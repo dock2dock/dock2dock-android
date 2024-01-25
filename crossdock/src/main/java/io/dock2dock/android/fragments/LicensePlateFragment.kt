@@ -7,18 +7,19 @@ import android.view.ViewGroup
 import androidx.annotation.RestrictTo
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import io.dock2dock.android.components.CrossdockLabelDataTable
+import io.dock2dock.android.components.LicensePlateLauncher
+import io.dock2dock.android.viewModels.LicensePlateViewModel
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-class CrossdockLabelsFragment(private val salesOrderNo: String): Fragment() {
+class LicensePlateFragment(val viewModel: LicensePlateViewModel): Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val crossdockLabelDataTable = CrossdockLabelDataTable(salesOrderNo)
+        val licensePlateScreen = LicensePlateLauncher(viewModel)
         return ComposeView(requireContext()).apply {
             setContent {
-                crossdockLabelDataTable.launch()
+                licensePlateScreen.launch()
             }
         }
     }

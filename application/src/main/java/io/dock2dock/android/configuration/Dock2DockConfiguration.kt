@@ -60,7 +60,6 @@ internal constructor(
         private fun getUrl(apiUrl: String? = null): String {
             return apiUrl ?: PUBLIC_API_BASEURL
         }
-
-
     }
 }
+
