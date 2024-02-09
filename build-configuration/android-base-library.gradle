@@ -8,6 +8,7 @@ apply plugin: "com.vanniktech.maven.publish"
 
 
 android {
+    namespace DOCK2DOCK_ANDROID_NAMESPACE
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 

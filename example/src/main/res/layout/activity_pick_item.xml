@@ -5,7 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MainActivity">
+        tools:context="io.dock2dock.example.activities.MainActivity">
 
     <LinearLayout
             android:layout_width="match_parent"
@@ -71,29 +71,12 @@
                                     android:textColor="@color/white"
                                     android:textSize="12sp" />
                             <TextView
-                                    android:id="@+id/customerNameId"
+                                    android:id="@+id/addressId"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/white"
                                     android:textStyle="bold" />
-                            <TextView
-                                    android:id="@+id/address1Id"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:textColor="@color/white"
-                                    android:textStyle="bold" />
-                            <TextView
-                                    android:id="@+id/address2Id"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:textColor="@color/white"
-                                    android:textStyle="bold" />
-                            <TextView
-                                    android:id="@+id/address3Id"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:textColor="@color/white"
-                                    android:textStyle="bold" />
+
                         </LinearLayout>
                     </LinearLayout>
 
