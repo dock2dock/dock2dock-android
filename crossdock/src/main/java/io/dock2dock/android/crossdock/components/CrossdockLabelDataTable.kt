@@ -136,7 +136,7 @@ internal fun CrossdockLabelDataTableUI(viewModel: CrossdockLabelDataTableViewMod
             verticalAlignment = Alignment.CenterVertically) {
 
             if (salesOrderNotFound) {
-                Text(text = "Crossdock sales order not found",
+                Text(text = "Cross-dock sales order not found",
                     color = ColorError,
                     fontSize = 14.sp)
             }
@@ -174,7 +174,7 @@ internal fun CrossdockLabelDataTableUI(viewModel: CrossdockLabelDataTableViewMod
         ) {
             viewModel.setSelectedItem(it)
             scope.launch {
-                //bottomSheetState.expand(animate = true)
+                bottomSheetState.expand(animate = true)
             }
         }
     }
@@ -262,13 +262,12 @@ internal fun TableRow(
     }
 
     val sdf = SimpleDateFormat("EEE MMM dd, h:mm aa")
-    var dateAsString = sdf.format(item.dateCreated)
+    val dateAsString = sdf.format(item.dateCreated)
 
     Row(
         modifier = modifier.padding(8.dp, 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val modifier = Modifier
         Column(modifier = modifier.width(200.dp)) {
             Text(
                 text = item.barcode,
@@ -396,7 +395,7 @@ internal fun CrossdockLabelActionBottomSheet(state: com.dokar.sheets.BottomSheet
         cancelText = "Cancel",
         show = showConfirmDialog,
         title = "Are you sure you want to delete this?",
-        contentText = "This action can only be reversed before the sales orders has been shipped",
+        contentText = "This action can only be reversed before the sales orders has been shipped.",
         onDismiss = {
             showConfirmDialog = false
             closeSheet()

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentColor
@@ -20,6 +21,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -33,6 +37,7 @@ import io.dock2dock.android.application.configuration.Dock2DockConfiguration
 import io.dock2dock.android.crossdock.viewModels.LicensePlateSettingsViewModel
 import io.dock2dock.android.ui.components.BasicDropdownMenuItem
 import io.dock2dock.android.ui.components.FluentDropdown
+import io.dock2dock.android.ui.dialogs.ErrorDialog
 import io.dock2dock.android.ui.theme.PrimaryOrangeWeb
 import io.dock2dock.android.ui.theme.PrimaryOxfordBlue
 import io.dock2dock.android.ui.theme.PrimaryWhite
@@ -40,11 +45,24 @@ import io.dock2dock.android.ui.theme.PrimaryWhite
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Composable
 fun LicensePlateSettingsScreen(viewModel: LicensePlateSettingsViewModel) {
+
+    val errorMessage by viewModel.errorMessage.collectAsState("")
+    val showErrorDialog by viewModel.showErrorDialog.observeAsState(false)
+
+    ErrorDialog(
+        show = showErrorDialog,
+        message = errorMessage,
+        onDismiss = viewModel::onCloseErrorDialog,
+        onConfirm = viewModel::onCloseErrorDialog
+    )
+
     LicensePlateSettingsContent(viewModel)
 }
 
 @Composable
 fun LicensePlateSettingsContent(viewModel: LicensePlateSettingsViewModel) {
+    val isOnAddLoading by viewModel.onAddIsLoading.collectAsState(false)
+
     CompositionLocalProvider(LocalContentColor provides Color.White) {
         Column(
             Modifier
@@ -84,7 +102,9 @@ fun LicensePlateSettingsContent(viewModel: LicensePlateSettingsViewModel) {
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Checkbox(
-                            modifier = Modifier.size(20.dp).scale(0.7f),
+                            modifier = Modifier
+                                .size(20.dp)
+                                .scale(0.7f),
                             colors = CheckboxDefaults.colors(
                                 checkedColor = PrimaryOrangeWeb,
                                 uncheckedColor = PrimaryWhite
@@ -95,13 +115,12 @@ fun LicensePlateSettingsContent(viewModel: LicensePlateSettingsViewModel) {
                             }
                         )
                         Text(
-                            "Print cross-dock label",
+                            "Create cross-dock label",
                             fontSize = 12.sp,
                             style = MaterialTheme.typography.caption
                         )
                     }
                 }
-
 
                 Row(
                     Modifier.align(Alignment.CenterVertically),
@@ -111,11 +130,21 @@ fun LicensePlateSettingsContent(viewModel: LicensePlateSettingsViewModel) {
                     IconButton(modifier = Modifier.size(24.dp), onClick = {
                         viewModel.onAdd()
                     }) {
-                        Icon(
-                            tint = Color.White,
-                            imageVector = Icons.Filled.AddCircle,
-                            contentDescription = "contentDescription"
-                        )
+                        if (isOnAddLoading) {
+                            CircularProgressIndicator(
+                                strokeWidth = 2.dp,
+                                color = PrimaryWhite,
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .align(Alignment.CenterVertically)
+                            )
+                        } else {
+                            Icon(
+                                tint = Color.White,
+                                imageVector = Icons.Filled.AddCircle,
+                                contentDescription = "contentDescription"
+                            )
+                        }
                     }
                 }
 

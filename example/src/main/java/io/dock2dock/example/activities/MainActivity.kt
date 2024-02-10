@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
             FragmentModel(PickItemFragment(), "Lines"),
             FragmentModel(StagingItemFragment(), "Staging"),
             FragmentModel(licensePlatesFragment, "LP"),
-            FragmentModel(CrossdockLabelsFragment(salesOrderNo), "Crossdock")
+            FragmentModel(CrossdockLabelsFragment(salesOrderNo), "Cross-dock")
         )
 
         fragAdapter.fragments = fragments

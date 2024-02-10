@@ -58,7 +58,6 @@ internal class CrossdockLabelDataTableViewModel(
         _selectedItem.value = label
     }
 
-
     private val publicApiClient = getRetrofitClient<PublicApiClient>()
 
     init {
@@ -72,7 +71,7 @@ internal class CrossdockLabelDataTableViewModel(
             val response = publicApiClient.getSalesOrder(salesOrderNo)
             response.onSuccess {
 
-                var salesOrderEvent = Dock2DockSalesOrderRetrievedEvent(this.data.no, this.data.isCrossdock)
+                val salesOrderEvent = Dock2DockSalesOrderRetrievedEvent(this.data.no, this.data.isCrossdock)
 
                 viewModelScope.launch {
                     Dock2DockEventBus.publish(salesOrderEvent)
@@ -97,7 +96,7 @@ internal class CrossdockLabelDataTableViewModel(
                 }
             }.onException {
                 print("Error getting sales order. ${this.message}")
-                _errorMessage.value = SERVER_NETWORK_ERROR
+                _errorMessage.value = "Unable to retrieve sales order $salesOrderNo. $SERVER_NETWORK_ERROR"
             }
             onIsLoadingChange(false)
             _showErrorDialog.value = errorMessage.value?.isNotEmpty()

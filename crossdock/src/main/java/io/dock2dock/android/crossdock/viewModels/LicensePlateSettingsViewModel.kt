@@ -3,6 +3,8 @@ package io.dock2dock.android.crossdock.viewModels
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.skydoves.sandwich.map
@@ -16,9 +18,14 @@ import io.dock2dock.android.application.events.Dock2DockSalesOrderRetrievedEvent
 import io.dock2dock.android.application.events.LicensePlateSetToActiveEvent
 import io.dock2dock.android.application.models.commands.CreateLicensePlateRequest
 import io.dock2dock.android.application.models.query.CrossdockHandlingUnit
+import io.dock2dock.android.crossdock.SERVER_NETWORK_ERROR
+import io.dock2dock.android.crossdock.UNAUTHORISED_NETWORK_ERROR
 import io.dock2dock.android.networking.ApiService
 import io.dock2dock.android.networking.clients.PublicApiClient
+import io.dock2dock.android.networking.models.Dock2DockErrorCode
 import io.dock2dock.android.networking.models.HttpErrorMapper
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class LicensePlateSettingsViewModel(val salesOrderNo: String): ViewModel() {
@@ -33,6 +40,23 @@ class LicensePlateSettingsViewModel(val salesOrderNo: String): ViewModel() {
     var printCrossdockLabel by mutableStateOf(false)
 
     var showPrintCrossdockLabel by mutableStateOf(true)
+
+    private val _showErrorDialog = MutableLiveData(false)
+    val showErrorDialog: LiveData<Boolean> = _showErrorDialog
+
+    private val _onAddIsLoading = MutableStateFlow(false)
+
+    val onAddIsLoading: StateFlow<Boolean>
+        get() = _onAddIsLoading
+
+    private val _errorMessage = MutableStateFlow("")
+
+    val errorMessage: StateFlow<String>
+        get() = _errorMessage
+
+    fun onCloseErrorDialog() {
+        _showErrorDialog.value = false
+    }
 
     init {
         subscribeToSalesOrderRetrievedEvent()
@@ -83,7 +107,7 @@ class LicensePlateSettingsViewModel(val salesOrderNo: String): ViewModel() {
 
     fun onAdd() {
         viewModelScope.launch {
-            //_isLoading.value = true
+            _onAddIsLoading.value = true
             val request = CreateLicensePlateRequest(salesOrderNo, selectedHandlingUnitId ?: "", printCrossdockLabel)
             val response = publicApiClient.createLicensePlate(request)
             response.onSuccess {
@@ -95,22 +119,19 @@ class LicensePlateSettingsViewModel(val salesOrderNo: String): ViewModel() {
             }.onError {
                 map(HttpErrorMapper) {
                     when(this.code) {
-//                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange(
-//                            UNAUTHORISED_NETWORK_ERROR
-//                        )
-//                        Dock2DockErrorCode.BadRequest,
-//                        Dock2DockErrorCode.UnprocessableEntity,
-//                        Dock2DockErrorCode.NotFound,
-//                        Dock2DockErrorCode.Validation -> onLoadErrorChange(this.message)
-//                        else -> {
-//                            onLoadErrorChange(SERVER_NETWORK_ERROR)
-//                        }
+                        Dock2DockErrorCode.Unauthorised -> _errorMessage.value = UNAUTHORISED_NETWORK_ERROR
+                        Dock2DockErrorCode.BadRequest,
+                        Dock2DockErrorCode.UnprocessableEntity,
+                        Dock2DockErrorCode.NotFound,
+                        Dock2DockErrorCode.Validation -> _errorMessage.value = this.message
+                        else -> _errorMessage.value = SERVER_NETWORK_ERROR
                     }
                 }
             }.onException {
-                //onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
+                _errorMessage.value = "Unable to add new license plate. Please retry or contact Dock2Dock support team."
             }
-            //_isLoading.value = false
+            _onAddIsLoading.value = false
+            _showErrorDialog.value = _errorMessage.value.isNotEmpty()
         }
     }
 
