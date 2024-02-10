@@ -47,8 +47,8 @@ The examples shown below are using Kotlin.
 ### Configuration
 
 ```
-import io.dock2dock.android.fragments.*
-import io.dock2dock.android.configuration.*
+import io.dock2dock.android.example.fragments.*
+import io.dock2dock.android.application.configuration.*
 
 class MainActivity : AppCompatActivity() 
 {
