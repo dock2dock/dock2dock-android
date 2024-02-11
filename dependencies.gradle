@@ -1,3 +1,7 @@
+ext.versions = [
+        androidGradlePlugin         : '8.2.2'
+        ]
+
 ext.configs = [
         androidLibrary: "${project.rootDir}/build-configuration/android-base-library.gradle",
         androidApplication: "${project.rootDir}/build-configuration/android-base-application.gradle",
