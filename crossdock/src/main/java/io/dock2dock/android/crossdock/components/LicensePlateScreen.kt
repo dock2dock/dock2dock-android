@@ -1,6 +1,5 @@
 package io.dock2dock.android.crossdock.components
 
-import androidx.annotation.RestrictTo
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -46,7 +45,6 @@ internal data class LicensePlateLauncher(
     }
 }
 
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Composable
 fun LicensePlateScreen(
     viewModel: LicensePlateViewModel
