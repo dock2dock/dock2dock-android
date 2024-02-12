@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.CircularProgressIndicator
@@ -66,7 +66,7 @@ fun LicensePlateSettingsContent(viewModel: LicensePlateSettingsViewModel) {
     CompositionLocalProvider(LocalContentColor provides Color.White) {
         Column(
             Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(1f)
                 .zIndex(1f)
                 .background(color = PrimaryOxfordBlue)
                 .padding(horizontal = 12.dp, vertical = 12.dp),
@@ -75,29 +75,28 @@ fun LicensePlateSettingsContent(viewModel: LicensePlateSettingsViewModel) {
 
             Text("License Plate")
 
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(modifier = Modifier.fillMaxWidth(1f),
+                horizontalArrangement = Arrangement.SpaceBetween) {
 
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-
-                    FluentDropdown(
-                        modifier = Modifier.width(180.dp),
-                        options = viewModel.handlingUnits,
-                        selectedTextExpression = { it.name },
-                        selectedText = viewModel.selectedHandlingUnitText,
-                        placeholderText = "--None selected--",
-                        darkTheme = true,
-                        selectedItemChanged = {
-                            viewModel.onSelectedHandlingUnitChanged(it)
-                        }
-                    )
-                    {
-                        BasicDropdownMenuItem(it.name)
+                FluentDropdown(
+                    modifier = Modifier.widthIn(max = 170.dp).padding(end = 4.dp),
+                    options = viewModel.handlingUnits,
+                    selectedTextExpression = { it.name },
+                    selectedText = viewModel.selectedHandlingUnitText,
+                    placeholderText = "None selected",
+                    darkTheme = true,
+                    selectedItemChanged = {
+                        viewModel.onSelectedHandlingUnitChanged(it)
                     }
+                )
+                {
+                    BasicDropdownMenuItem(it.name)
                 }
 
                 if (viewModel.showPrintCrossdockLabel) {
                     Row(
-                        Modifier.align(Alignment.CenterVertically),
+                        Modifier.align(Alignment.CenterVertically)
+                            .padding(end = 4.dp).weight(1f),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
@@ -116,35 +115,30 @@ fun LicensePlateSettingsContent(viewModel: LicensePlateSettingsViewModel) {
                         )
                         Text(
                             "Create cross-dock label",
-                            fontSize = 12.sp,
+                            fontSize = 11.sp,
                             style = MaterialTheme.typography.caption
                         )
                     }
                 }
 
-                Row(
-                    Modifier.align(Alignment.CenterVertically),
-                    horizontalArrangement = Arrangement.spacedBy(20.dp)
-                ) {
-
-                    IconButton(modifier = Modifier.size(24.dp), onClick = {
-                        viewModel.onAdd()
-                    }) {
-                        if (isOnAddLoading) {
-                            CircularProgressIndicator(
-                                strokeWidth = 2.dp,
-                                color = PrimaryWhite,
-                                modifier = Modifier
-                                    .size(18.dp)
-                                    .align(Alignment.CenterVertically)
-                            )
-                        } else {
-                            Icon(
-                                tint = Color.White,
-                                imageVector = Icons.Filled.AddCircle,
-                                contentDescription = "contentDescription"
-                            )
-                        }
+                IconButton(onClick = {
+                    viewModel.onAdd()
+                }) {
+                    if (isOnAddLoading) {
+                        CircularProgressIndicator(
+                            strokeWidth = 2.dp,
+                            color = PrimaryWhite,
+                            modifier = Modifier
+                                .size(18.dp)
+                                .align(Alignment.CenterVertically)
+                        )
+                    } else {
+                        Icon(
+                            tint = Color.White,
+                            modifier = Modifier.size(24.dp),
+                            imageVector = Icons.Filled.AddCircle,
+                            contentDescription = "contentDescription"
+                        )
                     }
                 }
 
@@ -153,11 +147,22 @@ fun LicensePlateSettingsContent(viewModel: LicensePlateSettingsViewModel) {
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFF, widthDp = 400)
+@Preview(showBackground = true, backgroundColor = 0xFFFFFF, widthDp = 330)
 @Composable
-internal fun PreviewLicensePlateSettingsContent() {
+internal fun PreviewLicensePlateSettingsContent_ShowPrintCrossdockLabel() {
     val context = LocalContext.current
     Dock2DockConfiguration.init(context, "")
     val viewModel = LicensePlateSettingsViewModel("SO1002")
+    viewModel.showPrintCrossdockLabel = true
+    LicensePlateSettingsScreen(viewModel)
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFF, widthDp = 330)
+@Composable
+internal fun PreviewLicensePlateSettingsContent_HidePrintCrossdockLabel() {
+    val context = LocalContext.current
+    Dock2DockConfiguration.init(context, "")
+    val viewModel = LicensePlateSettingsViewModel("SO1002")
+    viewModel.showPrintCrossdockLabel = false
     LicensePlateSettingsScreen(viewModel)
 }
