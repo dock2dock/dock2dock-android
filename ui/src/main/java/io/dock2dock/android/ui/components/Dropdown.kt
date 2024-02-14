@@ -3,7 +3,6 @@ package io.dock2dock.android.ui.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -102,10 +101,8 @@ fun <T> FluentDropdown(modifier: Modifier = Modifier,
             readOnly = true,
             isError = isError,
             trailingIcon = {
-                Row {
-                    Icon(icon, "contentDescription",
-                        Modifier.clickable { expanded = !expanded })
-                }
+                Icon(icon, "contentDescription",
+                    Modifier.clickable { expanded = !expanded })
             }
         )
         if (isError) {

@@ -39,7 +39,7 @@ class LicensePlateSettingsViewModel(val salesOrderNo: String): ViewModel() {
 
     var printCrossdockLabel by mutableStateOf(false)
 
-    var showPrintCrossdockLabel by mutableStateOf(true)
+    var showPrintCrossdockLabel by mutableStateOf(false)
 
     private val _showErrorDialog = MutableLiveData(false)
     val showErrorDialog: LiveData<Boolean> = _showErrorDialog
@@ -107,8 +107,19 @@ class LicensePlateSettingsViewModel(val salesOrderNo: String): ViewModel() {
 
     fun onAdd() {
         viewModelScope.launch {
+            _errorMessage.value = ""
+
+            val selectedHandlingUnit = selectedHandlingUnitId ?: ""
+
+            if (selectedHandlingUnit.isEmpty()) {
+                _errorMessage.value = "Please select handling unit"
+                _showErrorDialog.value = true
+                return@launch
+            }
+
             _onAddIsLoading.value = true
-            val request = CreateLicensePlateRequest(salesOrderNo, selectedHandlingUnitId ?: "", printCrossdockLabel)
+
+            val request = CreateLicensePlateRequest(salesOrderNo, selectedHandlingUnit, printCrossdockLabel)
             val response = publicApiClient.createLicensePlate(request)
             response.onSuccess {
                 val activeEvent = LicensePlateSetToActiveEvent(this.data.licensePlateNo)
