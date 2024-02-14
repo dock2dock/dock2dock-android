@@ -12,8 +12,8 @@ internal class UserPreferencesStorage(context: Context) {
         return getString(key, "") ?: ""
     }
 
-    fun getBoolean(key: String): Boolean = prefs.run {
-        return getBoolean(key, false)
+    fun getBoolean(key: String, defaultValue: Boolean): Boolean = prefs.run {
+        return getBoolean(key, defaultValue)
     }
 
     fun clear() = prefs.edit().clear().apply()

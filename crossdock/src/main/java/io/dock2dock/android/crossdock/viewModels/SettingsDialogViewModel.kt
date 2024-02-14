@@ -13,6 +13,8 @@ import com.skydoves.sandwich.onSuccess
 import io.dock2dock.android.application.configuration.Dock2DockConfiguration
 import io.dock2dock.android.application.eventBus.Dock2DockEventBus
 import io.dock2dock.android.application.events.Dock2DockDefaultHandlingUnitChangedEvent
+import io.dock2dock.android.application.events.Dock2DockLpPrintCrossdockLabelChangedEvent
+import io.dock2dock.android.application.events.Dock2DockShowLPQuickCreateViewChangedEvent
 import io.dock2dock.android.application.models.query.CrossdockHandlingUnit
 import io.dock2dock.android.application.models.query.Printer
 import io.dock2dock.android.networking.ApiService
@@ -31,18 +33,23 @@ internal class SettingsDialogViewModel: ViewModel() {
 
     var selectedPrinterText by mutableStateOf("")
 
+    var showLpQuickCreateView by mutableStateOf(false)
+    var lpPrintCrossdockLabel by mutableStateOf(false)
+
     private val dock2dockConfiguration = Dock2DockConfiguration.instance()
 
     fun load() {
         getHandlingUnits()
         getPrinters()
+        showLpQuickCreateView = dock2dockConfiguration.getShowLPQuickCreateViewSetting()
+        lpPrintCrossdockLabel = dock2dockConfiguration.getPrintCrossdockLabelSetting()
     }
 
     fun onHandlingUnitValueChanged(value: CrossdockHandlingUnit) {
         dock2dockConfiguration.updateDefaultHandlingUnit(value.id)
         selectedHandlingUnitText = value.name
 
-        var handlingUnitChangedEvent = Dock2DockDefaultHandlingUnitChangedEvent(value)
+        val handlingUnitChangedEvent = Dock2DockDefaultHandlingUnitChangedEvent(value)
 
         viewModelScope.launch {
             Dock2DockEventBus.publish(handlingUnitChangedEvent)
@@ -52,6 +59,28 @@ internal class SettingsDialogViewModel: ViewModel() {
     fun onPrinterValueChanged(value: Printer) {
         dock2dockConfiguration.updatePrinter(value.id)
         selectedPrinterText = value.name
+    }
+
+    fun onShowLpQuickCreateViewChanged(value: Boolean) {
+        dock2dockConfiguration.updateShowLPQuickCreateViewSetting(value)
+        showLpQuickCreateView = value
+
+        val eventChangedEvent = Dock2DockShowLPQuickCreateViewChangedEvent(value)
+
+        viewModelScope.launch {
+            Dock2DockEventBus.publish(eventChangedEvent)
+        }
+    }
+
+    fun onLpPrintCrossdockLabelChanged(value: Boolean) {
+        dock2dockConfiguration.updatePrintCrossdockLabelSetting(value)
+        lpPrintCrossdockLabel = value
+
+        val eventChangedEvent = Dock2DockLpPrintCrossdockLabelChangedEvent(value)
+
+        viewModelScope.launch {
+            Dock2DockEventBus.publish(eventChangedEvent)
+        }
     }
 
     private fun getHandlingUnits() {

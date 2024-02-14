@@ -7,10 +7,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import io.dock2dock.android.ui.theme.PrimaryOrangeWeb
 import io.dock2dock.android.ui.theme.PrimaryPlatinum
-import io.dock2dock.android.ui.theme.PrimaryWhite
 
 @Composable
 fun Dock2DockSwitch(checked: Boolean,
@@ -22,9 +22,9 @@ fun Dock2DockSwitch(checked: Boolean,
         },
         colors = SwitchDefaults.colors(
             checkedThumbColor = PrimaryOrangeWeb,
-            checkedTrackColor = PrimaryPlatinum,
-            uncheckedThumbColor = PrimaryWhite,
-            uncheckedTrackColor = PrimaryPlatinum,
+            checkedTrackColor = Color.DarkGray,
+            uncheckedThumbColor = PrimaryPlatinum,
+            uncheckedTrackColor = Color.DarkGray,
         ),
     )
 }
