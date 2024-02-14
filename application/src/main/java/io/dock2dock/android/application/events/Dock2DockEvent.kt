@@ -14,3 +14,11 @@ data class Dock2DockSalesOrderRetrievedEvent(
 data class Dock2DockDefaultHandlingUnitChangedEvent(
     val handlingUnit: CrossdockHandlingUnit
 )
+
+data class Dock2DockShowLPQuickCreateViewChangedEvent(
+    val value: Boolean
+)
+
+data class Dock2DockLpPrintCrossdockLabelChangedEvent(
+    val value: Boolean
+)

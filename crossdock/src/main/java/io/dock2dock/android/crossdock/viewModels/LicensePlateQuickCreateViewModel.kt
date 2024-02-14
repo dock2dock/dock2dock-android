@@ -14,6 +14,7 @@ import com.skydoves.sandwich.onSuccess
 import io.dock2dock.android.application.configuration.Dock2DockConfiguration
 import io.dock2dock.android.application.eventBus.Dock2DockEventBus
 import io.dock2dock.android.application.events.Dock2DockDefaultHandlingUnitChangedEvent
+import io.dock2dock.android.application.events.Dock2DockLpPrintCrossdockLabelChangedEvent
 import io.dock2dock.android.application.events.Dock2DockSalesOrderRetrievedEvent
 import io.dock2dock.android.application.events.LicensePlateSetToActiveEvent
 import io.dock2dock.android.application.models.commands.CreateLicensePlateRequest
@@ -28,7 +29,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class LicensePlateSettingsViewModel(val salesOrderNo: String): ViewModel() {
+class LicensePlateQuickCreateViewModel(val salesOrderNo: String): ViewModel() {
 
     private val publicApiClient = ApiService.getRetrofitClient<PublicApiClient>()
     var handlingUnits by mutableStateOf(listOf<CrossdockHandlingUnit>())
@@ -61,6 +62,7 @@ class LicensePlateSettingsViewModel(val salesOrderNo: String): ViewModel() {
     init {
         subscribeToSalesOrderRetrievedEvent()
         subscribeToHandlingUnitChangedEvent()
+        subscribeToLpPrintCrossdockLabelChangedEvent()
         getHandlingUnits()
         printCrossdockLabel = dock2dockConfiguration.getPrintCrossdockLabelSetting()
     }
@@ -159,6 +161,14 @@ class LicensePlateSettingsViewModel(val salesOrderNo: String): ViewModel() {
             Dock2DockEventBus.subscribe<Dock2DockDefaultHandlingUnitChangedEvent> {
                 selectedHandlingUnitText = it.handlingUnit.name
                 selectedHandlingUnitId = it.handlingUnit.id
+            }
+        }
+    }
+
+    private fun subscribeToLpPrintCrossdockLabelChangedEvent() {
+        viewModelScope.launch {
+            Dock2DockEventBus.subscribe<Dock2DockLpPrintCrossdockLabelChangedEvent> {
+                printCrossdockLabel = it.value
             }
         }
     }

@@ -33,7 +33,15 @@ internal constructor(
     }
 
     fun getPrintCrossdockLabelSetting(): Boolean {
-        return userPreferences.getBoolean(DEFAULT_PRINT_CROSSDOCK_LBL_SETTING)
+        return userPreferences.getBoolean(DEFAULT_PRINT_CROSSDOCK_LBL_SETTING, true)
+    }
+
+    fun updateShowLPQuickCreateViewSetting(value: Boolean) {
+        userPreferences.update(DEFAULT_SHOW_LP_QUICK_CREATE_VIEW_SETTING, value)
+    }
+
+    fun getShowLPQuickCreateViewSetting(): Boolean {
+        return userPreferences.getBoolean(DEFAULT_SHOW_LP_QUICK_CREATE_VIEW_SETTING, true)
     }
 
     companion object {
@@ -42,6 +50,7 @@ internal constructor(
         private const val DEFAULT_HANDLING_UNIT = "default_handling_unit"
         private const val DEFAULT_PRINTER = "default_printer"
         private const val DEFAULT_PRINT_CROSSDOCK_LBL_SETTING = "default_print_crossdock_label"
+        private const val DEFAULT_SHOW_LP_QUICK_CREATE_VIEW_SETTING = "default_show_lp_quick_create_view_settings"
         private const val PUBLIC_API_BASEURL = "https://api.dock2dock.io/"
 
         @JvmStatic

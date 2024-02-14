@@ -23,8 +23,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.dock2dock.android.application.configuration.Dock2DockConfiguration
 import io.dock2dock.android.crossdock.viewModels.SettingsDialogViewModel
 import io.dock2dock.android.ui.components.BasicDropdownMenuItem
+import io.dock2dock.android.ui.components.Dock2DockSwitch
 import io.dock2dock.android.ui.components.FluentDropdown
 import io.dock2dock.android.ui.components.FormItem
+import io.dock2dock.android.ui.components.FormItemLayout
+import io.dock2dock.android.ui.components.FormSectionHeader
 import io.dock2dock.android.ui.components.SubTitleDropdownMenuItem
 import io.dock2dock.android.ui.theme.PrimaryOxfordBlue
 import io.dock2dock.android.ui.theme.PrimaryWhite
@@ -74,6 +77,7 @@ internal fun SettingsDialogUI(viewModel: SettingsDialogViewModel = viewModel(), 
         ) { paddingValues ->
             Column(modifier = Modifier.padding(paddingValues).padding(24.dp)) {
 
+                FormSectionHeader("Defaults") {
                     FormItem("Default Handling Unit") {
                         FluentDropdown(
                             options = viewModel.handlingUnits,
@@ -102,6 +106,21 @@ internal fun SettingsDialogUI(viewModel: SettingsDialogViewModel = viewModel(), 
                             SubTitleDropdownMenuItem(it.name, it.location)
                         }
                     }
+                }
+
+                FormSectionHeader("License Plate") {
+                    FormItem("Show quick create view", FormItemLayout.Horizontal) {
+                        Dock2DockSwitch(viewModel.showLpQuickCreateView) {
+                            viewModel.onShowLpQuickCreateViewChanged(it)
+                        }
+
+                    }
+                    FormItem("Print cross-dock label", FormItemLayout.Horizontal) {
+                        Dock2DockSwitch(viewModel.lpPrintCrossdockLabel) {
+                            viewModel.onLpPrintCrossdockLabelChanged(it)
+                        }
+                    }
+                }
             }
         }
     }
