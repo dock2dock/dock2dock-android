@@ -7,6 +7,7 @@ import com.skydoves.sandwich.onException
 import com.skydoves.sandwich.onSuccess
 import io.dock2dock.android.application.configuration.Dock2DockConfiguration
 import io.dock2dock.android.application.eventBus.Dock2DockEventBus
+import io.dock2dock.android.application.events.Dock2DockShowLPQuickCreateViewChangedEvent
 import io.dock2dock.android.application.events.LicensePlateSetToActiveEvent
 import io.dock2dock.android.application.models.commands.CompleteLicensePlateRequest
 import io.dock2dock.android.application.models.commands.ReprintLicensePlateRequest
@@ -23,10 +24,18 @@ import kotlinx.coroutines.launch
 
 class LicensePlateViewModel(val salesOrderNo: String): BaseViewModel()
 {
-    var lpSettingsViewModel: LicensePlateSettingsViewModel
+    var lpSettingsViewModel: LicensePlateQuickCreateViewModel
+    private val dock2dockConfiguration = Dock2DockConfiguration.instance()
+    private var _showLPQuickCreateView = MutableStateFlow(false)
+
+    val showLPQuickCreateView: StateFlow<Boolean>
+        get() = _showLPQuickCreateView
+
     init {
         subscribeToActiveLicensePlateUpdatedEvent()
-        lpSettingsViewModel = LicensePlateSettingsViewModel(salesOrderNo)
+        subscribeToShowLpQuickCreateViewUpdatedEvent()
+        lpSettingsViewModel = LicensePlateQuickCreateViewModel(salesOrderNo)
+        _showLPQuickCreateView.value = dock2dockConfiguration.getShowLPQuickCreateViewSetting()
     }
 
     private val publicApiClient = ApiService.getRetrofitClient<PublicApiClient>()
@@ -36,10 +45,6 @@ class LicensePlateViewModel(val salesOrderNo: String): BaseViewModel()
     private val refreshing = MutableStateFlow(false)
 
     private val errorMessage = MutableStateFlow<String?>(null)
-
-    private val dock2dockConfiguration = Dock2DockConfiguration.instance()
-
-
 
     val licensePlate: StateFlow<LicensePlate?>
         get() = _licensePlate
@@ -125,8 +130,8 @@ class LicensePlateViewModel(val salesOrderNo: String): BaseViewModel()
         }
 
         viewModelScope.launch {
-            var licensePlateNo = licensePlate.value?.no ?: ""
-            var request = ReprintLicensePlateRequest(licensePlateNo,  defaultPrinterId, printSsccBarcode)
+            val licensePlateNo = licensePlate.value?.no ?: ""
+            val request = ReprintLicensePlateRequest(licensePlateNo,  defaultPrinterId, printSsccBarcode)
             val response = publicApiClient.reprintLicensePlate(request)
             response.onSuccess {
 
@@ -150,6 +155,14 @@ class LicensePlateViewModel(val salesOrderNo: String): BaseViewModel()
         viewModelScope.launch {
             Dock2DockEventBus.subscribe<LicensePlateSetToActiveEvent> { event ->
                 load(event.licensePlateNo)
+            }
+        }
+    }
+
+    private fun subscribeToShowLpQuickCreateViewUpdatedEvent() {
+        viewModelScope.launch {
+            Dock2DockEventBus.subscribe<Dock2DockShowLPQuickCreateViewChangedEvent> { event ->
+                _showLPQuickCreateView.value = event.value
             }
         }
     }

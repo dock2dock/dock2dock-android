@@ -51,6 +51,7 @@ fun LicensePlateScreen(
     viewModel: LicensePlateViewModel
 ) {
     val licensePlate by viewModel.licensePlate.collectAsState(null)
+    val showLPQuickCreateView by viewModel.showLPQuickCreateView.collectAsState(false)
 
     val showLinesSheetState = rememberBottomSheetState()
 
@@ -71,7 +72,7 @@ fun LicensePlateScreen(
         )
         LicensePlateLinesBottomSheet(showLinesSheetState, lp.no)
     } ?: run {
-        LicensePlateSettingsScreen(viewModel.lpSettingsViewModel)
+        LicensePlateQuickCreateScreen(showLPQuickCreateView, viewModel.lpSettingsViewModel)
     }
 }
 
@@ -93,11 +94,12 @@ fun LicensePlateContent(
 
     CompositionLocalProvider(LocalContentColor provides Color.White) {
         Row {
-            Column(Modifier
-                .fillMaxWidth()
-                .zIndex(1f)
-                .background(color = PrimaryOxfordBlue)
-                .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 0.dp)
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .zIndex(1f)
+                    .background(color = PrimaryOxfordBlue)
+                    .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 0.dp)
             ) {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Column {

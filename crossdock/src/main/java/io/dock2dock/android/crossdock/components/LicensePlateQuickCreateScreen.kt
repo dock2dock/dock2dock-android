@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import io.dock2dock.android.application.configuration.Dock2DockConfiguration
-import io.dock2dock.android.crossdock.viewModels.LicensePlateSettingsViewModel
+import io.dock2dock.android.crossdock.viewModels.LicensePlateQuickCreateViewModel
 import io.dock2dock.android.ui.components.BasicDropdownMenuItem
 import io.dock2dock.android.ui.components.FluentDropdown
 import io.dock2dock.android.ui.dialogs.ErrorDialog
@@ -44,7 +44,7 @@ import io.dock2dock.android.ui.theme.PrimaryWhite
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @Composable
-fun LicensePlateSettingsScreen(viewModel: LicensePlateSettingsViewModel) {
+fun LicensePlateQuickCreateScreen(visible: Boolean, viewModel: LicensePlateQuickCreateViewModel) {
 
     val errorMessage by viewModel.errorMessage.collectAsState("")
     val showErrorDialog by viewModel.showErrorDialog.observeAsState(false)
@@ -56,11 +56,13 @@ fun LicensePlateSettingsScreen(viewModel: LicensePlateSettingsViewModel) {
         onConfirm = viewModel::onCloseErrorDialog
     )
 
-    LicensePlateSettingsContent(viewModel)
+    if (visible) {
+        LicensePlateQuickCreateContent(viewModel)
+    }
 }
 
 @Composable
-fun LicensePlateSettingsContent(viewModel: LicensePlateSettingsViewModel) {
+fun LicensePlateQuickCreateContent(viewModel: LicensePlateQuickCreateViewModel) {
     val isOnAddLoading by viewModel.onAddIsLoading.collectAsState(false)
 
     CompositionLocalProvider(LocalContentColor provides Color.White) {
@@ -152,9 +154,9 @@ fun LicensePlateSettingsContent(viewModel: LicensePlateSettingsViewModel) {
 internal fun PreviewLicensePlateSettingsContent_ShowPrintCrossdockLabel() {
     val context = LocalContext.current
     Dock2DockConfiguration.init(context, "")
-    val viewModel = LicensePlateSettingsViewModel("SO1002")
+    val viewModel = LicensePlateQuickCreateViewModel("SO1002")
     viewModel.showPrintCrossdockLabel = true
-    LicensePlateSettingsScreen(viewModel)
+    LicensePlateQuickCreateScreen(true, viewModel)
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF, widthDp = 330)
@@ -162,7 +164,7 @@ internal fun PreviewLicensePlateSettingsContent_ShowPrintCrossdockLabel() {
 internal fun PreviewLicensePlateSettingsContent_HidePrintCrossdockLabel() {
     val context = LocalContext.current
     Dock2DockConfiguration.init(context, "")
-    val viewModel = LicensePlateSettingsViewModel("SO1002")
+    val viewModel = LicensePlateQuickCreateViewModel("SO1002")
     viewModel.showPrintCrossdockLabel = false
-    LicensePlateSettingsScreen(viewModel)
+    LicensePlateQuickCreateScreen(true, viewModel)
 }
