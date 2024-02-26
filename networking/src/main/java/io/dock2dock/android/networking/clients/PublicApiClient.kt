@@ -28,7 +28,7 @@ interface PublicApiClient
     suspend fun getPrinters(@Query("\$orderBy") orderBy: String): ApiResponse<ODataResponse<Printer>>
 
     @GET("/CrossdockHandlingUnit/")
-    suspend fun getCrossdockHandlingUnits(): ApiResponse<ODataResponse<CrossdockHandlingUnit>>
+    suspend fun getCrossdockHandlingUnits(@Query("\$orderBy") orderBy: String = "Name asc"): ApiResponse<ODataResponse<CrossdockHandlingUnit>>
 
     @GET("/LicensePlate/{no}")
     suspend fun getLicensePlate(@Path("no") no: String): ApiResponse<LicensePlate>
