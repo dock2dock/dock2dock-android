@@ -12,8 +12,9 @@ dependencies {
     implementation(Dependencies.googleMaterial)
     implementation(Dependencies.googleGson)
     implementation(Dependencies.androidxLifecycleRunTimeKtx)
-    implementation files('libs/DataCollection.aar')
     implementation(Dependencies.androidxLifecycleCommon)
+
+    api project(":honeywell")
 
     testImplementation(Dependencies.jUnit)
     androidTestImplementation(Dependencies.androidxTestJunit)
