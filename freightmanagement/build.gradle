@@ -1,0 +1,43 @@
+import io.dock2dock.android.Dependencies
+import io.dock2dock.android.Configuration
+
+apply from: configs.androidLibrary
+
+apply plugin: 'signing'
+apply plugin: 'maven-publish'
+
+dependencies {
+    implementation(Dependencies.androidxCoreKtx)
+    implementation(Dependencies.androidxAppCompact)
+    implementation(Dependencies.androidxLifecycleViewModelCompose)
+    implementation(Dependencies.androidxLifecycleRunTimeKtx)
+    implementation(Dependencies.androidxActivity)
+    implementation(Dependencies.androidxComposeUi)
+    implementation(Dependencies.androidxComposeUiTooling)
+    implementation(Dependencies.androidxComposeMaterial)
+    implementation(Dependencies.androidxComposeRuntimeLivedata)
+    implementation(Dependencies.androidxMaterialIconsExtended)
+    implementation(Dependencies.androidxLifecycleRuntimeCompose)
+    implementation(Dependencies.composeRuntime)
+    implementation(Dependencies.dokar3Sheets)
+    implementation(Dependencies.googleMaterial)
+    implementation(Dependencies.skydovesSandwich)
+
+    testImplementation(Dependencies.jUnit)
+    androidTestImplementation(Dependencies.androidxTestJunit)
+    androidTestImplementation(Dependencies.androidxTestEspresso)
+
+    implementation(project(":ui"))
+    implementation(project(":networking"))
+    api(project(":application"))
+}
+
+ext {
+    artifactId = "dock2dock-android"
+    artifactName = "dock2dock-android"
+    artifactDescrption = "Dock2Dock Android SDK"
+    publishVersion = rootVersionName
+    groupId = Configuration.artifactGroup
+}
+
+apply from: "${rootDir}/deploy/deploy.gradle"

@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dokar.sheets.BottomSheet
 import com.dokar.sheets.rememberBottomSheetState
 import io.dock2dock.android.application.models.query.CrossdockLabel
@@ -71,13 +72,13 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 
-internal data class CrossdockLabelDataTable(val salesOrderNo: String) {
-
-    @Composable
-    fun launch() {
-        val viewModel = CrossdockLabelDataTableViewModel(salesOrderNo)
-        return CrossdockLabelDataTableUI(viewModel)
+@Composable
+fun CrossdockLabelDataTable(salesOrderNo: String) {
+    val viewModel = viewModel {
+        CrossdockLabelDataTableViewModel(salesOrderNo)
     }
+
+    CrossdockLabelDataTableUI(viewModel = viewModel)
 }
 
 @OptIn(ExperimentalMaterialApi::class)

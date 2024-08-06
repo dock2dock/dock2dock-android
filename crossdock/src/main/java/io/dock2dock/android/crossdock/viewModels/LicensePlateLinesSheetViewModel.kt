@@ -7,8 +7,8 @@ import com.skydoves.sandwich.onError
 import com.skydoves.sandwich.onException
 import com.skydoves.sandwich.onSuccess
 import io.dock2dock.android.application.models.query.LicensePlateLine
-import io.dock2dock.android.crossdock.SERVER_NETWORK_ERROR
-import io.dock2dock.android.crossdock.UNAUTHORISED_NETWORK_ERROR
+import io.dock2dock.android.networking.SERVER_NETWORK_ERROR
+import io.dock2dock.android.networking.UNAUTHORISED_NETWORK_ERROR
 import io.dock2dock.android.networking.ApiService
 import io.dock2dock.android.networking.clients.PublicApiClient
 import io.dock2dock.android.networking.models.Dock2DockErrorCode
