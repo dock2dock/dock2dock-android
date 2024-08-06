@@ -1,2 +1,17 @@
+apply from: configs.androidLibrary
+
+apply plugin: 'signing'
+apply plugin: 'maven-publish'
+
 configurations.maybeCreate("default")
 artifacts.add("default", file('DataCollection.aar'))
+
+ext {
+    artifactId = "honeywell"
+    artifactName = "Honeywell"
+    artifactDescrption = "The honeywell module of Dock2Dock Android SDK"
+    publishVersion = rootVersionName
+    groupId = io.dock2dock.android.Configuration.artifactGroup
+}
+
+apply from: "${rootDir}/deploy/deploy.gradle"
