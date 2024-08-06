@@ -22,3 +22,4 @@ data class Dock2DockShowLPQuickCreateViewChangedEvent(
 data class Dock2DockLpPrintCrossdockLabelChangedEvent(
     val value: Boolean
 )
+

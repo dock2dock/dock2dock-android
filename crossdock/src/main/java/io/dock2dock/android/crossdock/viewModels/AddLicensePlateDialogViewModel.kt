@@ -16,8 +16,8 @@ import io.dock2dock.android.application.eventBus.Dock2DockEventBus
 import io.dock2dock.android.application.events.LicensePlateSetToActiveEvent
 import io.dock2dock.android.application.models.commands.CreateLicensePlateRequest
 import io.dock2dock.android.application.models.query.CrossdockHandlingUnit
-import io.dock2dock.android.crossdock.SERVER_NETWORK_ERROR
-import io.dock2dock.android.crossdock.UNAUTHORISED_NETWORK_ERROR
+import io.dock2dock.android.networking.SERVER_NETWORK_ERROR
+import io.dock2dock.android.networking.UNAUTHORISED_NETWORK_ERROR
 import io.dock2dock.android.networking.ApiService
 import io.dock2dock.android.networking.clients.PublicApiClient
 import io.dock2dock.android.networking.models.Dock2DockErrorCode
@@ -117,7 +117,9 @@ internal class AddLicensePlateDialogViewModel(
             }.onError {
                 map(HttpErrorMapper) {
                     when(this.code) {
-                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange(UNAUTHORISED_NETWORK_ERROR)
+                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange(
+                            UNAUTHORISED_NETWORK_ERROR
+                        )
                         Dock2DockErrorCode.BadRequest,
                         Dock2DockErrorCode.UnprocessableEntity,
                         Dock2DockErrorCode.NotFound,

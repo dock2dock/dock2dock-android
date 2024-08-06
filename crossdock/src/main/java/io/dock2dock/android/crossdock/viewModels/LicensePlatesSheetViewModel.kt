@@ -8,9 +8,9 @@ import com.skydoves.sandwich.onSuccess
 import io.dock2dock.android.application.configuration.Dock2DockConfiguration
 import io.dock2dock.android.application.models.commands.ReprintLicensePlateRequest
 import io.dock2dock.android.application.models.query.LicensePlate
-import io.dock2dock.android.crossdock.SERVER_NETWORK_ERROR
-import io.dock2dock.android.crossdock.UNAUTHORISED_NETWORK_ERROR
 import io.dock2dock.android.networking.ApiService
+import io.dock2dock.android.networking.SERVER_NETWORK_ERROR
+import io.dock2dock.android.networking.UNAUTHORISED_NETWORK_ERROR
 import io.dock2dock.android.networking.clients.PublicApiClient
 import io.dock2dock.android.networking.models.Dock2DockErrorCode
 import io.dock2dock.android.networking.models.HttpErrorMapper
@@ -82,7 +82,7 @@ class LicensePlatesSheetViewModel(
     }
 
     internal fun reprintLicensePlate(licensePlate: LicensePlate, printSsccBarcode: Boolean) {
-        val defaultPrinterId = dock2dockConfiguration.getDefaultPrinter()?.let { it } ?: run {
+        val defaultPrinterId = dock2dockConfiguration.getDefaultPrinter() ?: run {
             errorMessage.value = "Please select default printer under Dock2Dock settings"
             return@reprintLicensePlate
         }
