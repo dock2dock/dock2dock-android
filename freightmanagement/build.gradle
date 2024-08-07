@@ -33,9 +33,9 @@ dependencies {
 }
 
 ext {
-    artifactId = "dock2dock-android"
-    artifactName = "dock2dock-android"
-    artifactDescrption = "Dock2Dock Android SDK"
+    artifactId = "freightmanagement"
+    artifactName = "Freight Management"
+    artifactDescrption = "The freight management module of Dock2Dock Android SDK"
     publishVersion = rootVersionName
     groupId = Configuration.artifactGroup
 }

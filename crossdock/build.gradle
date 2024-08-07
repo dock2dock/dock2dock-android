@@ -33,9 +33,9 @@ dependencies {
 }
 
 ext {
-    artifactId = "dock2dock-android"
-    artifactName = "dock2dock-android"
-    artifactDescrption = "Dock2Dock Android SDK"
+    artifactId = "crossdock"
+    artifactName = "Crossdock"
+    artifactDescrption = "The crossdock module of Dock2Dock Android SDK"
     publishVersion = rootVersionName
     groupId = Configuration.artifactGroup
 }
