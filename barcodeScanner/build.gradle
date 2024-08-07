@@ -14,7 +14,7 @@ dependencies {
     implementation(Dependencies.androidxLifecycleRunTimeKtx)
     implementation(Dependencies.androidxLifecycleCommon)
 
-    implementation files('libs/DataCollection.aar')
+    //implementation files('libs/DataCollection.aar')
     compileOnly files('libs/DataCollection.aar')
 
     testImplementation(Dependencies.jUnit)
