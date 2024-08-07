@@ -13,6 +13,7 @@ object Versions {
     internal const val ANDROIDX_TEST_ESPRESSO = "3.5.1"
     internal const val DOKAR3_SHEETS = "0.5.4"
     internal const val GOOGLE_MATERIAL = "1.8.0"
+    internal const val GOOGLE_MATERIAL_ICONS_EXTENDED = "1.6.8"
     internal const val J_UNIT = "4.13.2"
     internal const val GOOGLE_GSON = "2.10"
 
@@ -29,7 +30,7 @@ object Dependencies {
     const val androidxComposeUiTooling = "androidx.compose.ui:ui-tooling-preview:${Versions.ANDROIDX_COMPOSE}"
     const val androidxComposeMaterial = "androidx.compose.material:material:${Versions.ANDROIDX_COMPOSE_MATERIAL}"
     const val androidxComposeRuntimeLivedata = "androidx.compose.runtime:runtime-livedata:${Versions.ANDROIDX_COMPOSE}"
-    const val androidxMaterialIconsExtended = "androidx.compose.material:material-icons-extended:${Versions.ANDROIDX_COMPOSE}"
+    const val androidxMaterialIconsExtended = "androidx.compose.material:material-icons-extended:${Versions.GOOGLE_MATERIAL_ICONS_EXTENDED}"
     const val androidxLifecycleRuntimeCompose = "androidx.lifecycle:lifecycle-runtime-compose:${Versions.ANDROIDX_LIFECYCLE_RUNTIME_COMPOSE}"
     const val androidxTestJunit = "androidx.test.ext:junit:${Versions.ANDROIDX_TEST_JUNIT}"
     const val androidxTestEspresso = "androidx.test.espresso:espresso-core:${Versions.ANDROIDX_TEST_ESPRESSO}"

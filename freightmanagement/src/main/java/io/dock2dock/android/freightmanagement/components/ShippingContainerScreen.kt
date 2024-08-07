@@ -14,22 +14,33 @@ import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.filled.ProductionQuantityLimits
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Scale
 import androidx.compose.material.icons.filled.Tag
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,11 +60,15 @@ import io.dock2dock.android.ui.components.TableRowDivider
 import io.dock2dock.android.ui.dialogs.ErrorDialog
 import io.dock2dock.android.ui.theme.ColorError
 import io.dock2dock.android.ui.theme.ColorSuccess
+import io.dock2dock.android.ui.theme.PrimaryDark
 import io.dock2dock.android.ui.theme.PrimaryOxfordBlue
 import io.dock2dock.android.ui.theme.PrimaryPlatinum
 import io.dock2dock.android.ui.theme.PrimaryWhite
 import io.dock2dock.android.ui.theme.WhiteSmoke
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Date
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun ShippingContainerScreen(viewModel: ShippingContainerViewModel) {
@@ -78,9 +93,28 @@ fun ShippingContainerScreen(viewModel: ShippingContainerViewModel) {
         PrimaryOxfordBlue
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val localCoroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(Unit) {
+        viewModel.deleteMode.collect {
+            if (deleteMode) {
+                localCoroutineScope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = "Scan barcode to remove",
+                        duration = SnackbarDuration.Short
+                    )
+                }
+            } else {
+                snackbarHostState.currentSnackbarData?.dismiss()
+            }
+        }
+    }
+
     shippingContainer?.let { shipContainer ->
         val notCompleted = !shipContainer.completed && shipContainer.quantity > 0
         Scaffold(
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             floatingActionButtonPosition = FabPosition.End,
             floatingActionButton = {
                 Column {
@@ -90,7 +124,7 @@ fun ShippingContainerScreen(viewModel: ShippingContainerViewModel) {
                             onClick = { viewModel.onDeleteModeChanged() }
                         ) {
                             Icon(
-                                Icons.Filled.Delete,
+                                Icons.Filled.Remove,
                                 "Floating action button.",
                                 tint = deleteModeColor
                             )
@@ -136,7 +170,7 @@ fun ShippingContainerScreen(viewModel: ShippingContainerViewModel) {
             }
         ) {
             Column(modifier = Modifier.padding(it)) {
-                Header(shippingContainer = shipContainer)
+                Header(shippingContainer = shipContainer, deleteMode)
 
                 LazyColumn {
 
@@ -171,8 +205,46 @@ fun ShippingContainerScreen(viewModel: ShippingContainerViewModel) {
     )
 }
 
+
+
 @Composable
-fun Header(shippingContainer: ShippingContainer) {
+fun Header(shippingContainer: ShippingContainer, deleteMode: Boolean) {
+
+    var oldQtyValue by remember { mutableIntStateOf(0) }
+    var initialised by remember { mutableStateOf(false) }
+
+    val quantity = shippingContainer.quantity
+
+    var quantityViewBackgroundColor by remember { mutableStateOf(WhiteSmoke) }
+    var quantityViewForegroundColor by remember { mutableStateOf( PrimaryDark) }
+
+    fun setQuantityViewColor() {
+        if (quantity > oldQtyValue) {
+            quantityViewBackgroundColor = ColorSuccess
+            quantityViewForegroundColor = PrimaryWhite
+        } else if (quantity < oldQtyValue) {
+            quantityViewBackgroundColor = Color.Red
+            quantityViewForegroundColor = PrimaryWhite
+        }
+    }
+
+    fun resetQuantityViewColor() {
+        quantityViewBackgroundColor = WhiteSmoke
+        quantityViewForegroundColor = PrimaryDark
+    }
+
+    LaunchedEffect(shippingContainer.quantity) {
+
+        if (!initialised) {
+            initialised = true
+            return@LaunchedEffect
+        }
+
+        setQuantityViewColor()
+        delay(1.seconds)
+        resetQuantityViewColor()
+        oldQtyValue = quantity
+    }
 
     data class HeaderInfo(val text: String, val value: String)
 
@@ -190,19 +262,21 @@ fun Header(shippingContainer: ShippingContainer) {
                             .padding(horizontal = 8.dp, vertical = 8.dp)
                             .fillMaxWidth()
                             .weight(1f)
-                            .background(WhiteSmoke)
+                            .background(quantityViewBackgroundColor)
                             .padding(horizontal = 8.dp, vertical = 8.dp),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                    Text(
-                        text = it.value,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = it.text
-                    )
+                    CompositionLocalProvider(LocalContentColor provides quantityViewForegroundColor) {
+                        Text(
+                            text = it.value,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight . Bold
+                        )
+                        Text(
+                            text = it.text
+                        )
+                    }
                 }
             }
         }
@@ -216,13 +290,14 @@ fun Header(shippingContainer: ShippingContainer) {
             )
             if (shippingContainer.completed) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Completed", style = MaterialTheme.typography.caption,)
+                    Text("Completed", style = MaterialTheme.typography.caption)
                     Spacer(modifier = Modifier.padding(end = 4.dp))
                     Icon(Icons.Filled.CheckCircle, contentDescription = null, tint = ColorSuccess)
                 }
             }
         }
-        if (!shippingContainer.completed) {
+        val showSubtitle = !shippingContainer.completed && !deleteMode
+        if (showSubtitle) {
             Spacer(modifier = Modifier.padding(top = 4.dp))
             Text(
                 text = "Scan package barcodes to add to shipping container",
@@ -372,7 +447,7 @@ internal fun PreviewHeader() {
         listOf()
     )
 
-    Header(shippingContainer)
+    Header(shippingContainer, false)
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF, widthDp = 350)
