@@ -236,6 +236,7 @@ fun Header(shippingContainer: ShippingContainer, deleteMode: Boolean) {
     LaunchedEffect(shippingContainer.quantity) {
 
         if (!initialised) {
+            oldQtyValue = quantity
             initialised = true
             return@LaunchedEffect
         }
