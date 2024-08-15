@@ -13,7 +13,7 @@ dependencies {
     implementation(Dependencies.androidxLifecycleRunTimeKtx)
     implementation(Dependencies.androidxActivity)
     implementation(Dependencies.androidxComposeUi)
-    implementation(Dependencies.androidxComposeUiTooling)
+    implementation(Dependencies.androidxComposeUiToolingPreview)
     implementation(Dependencies.androidxComposeMaterial)
     implementation(Dependencies.androidxComposeRuntimeLivedata)
     implementation(Dependencies.androidxMaterialIconsExtended)
@@ -28,6 +28,7 @@ dependencies {
     androidTestImplementation(Dependencies.androidxTestEspresso)
 
     implementation(project(":ui"))
+    implementation(project(":settings-ui"))
     implementation(project(":networking"))
     api(project(":application"))
 }

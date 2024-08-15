@@ -53,7 +53,7 @@ import com.dokar.sheets.rememberBottomSheetState
 import io.dock2dock.android.application.models.query.CrossdockLabel
 import io.dock2dock.android.crossdock.dialogs.DialogPrintCrossdockLabel
 import io.dock2dock.android.crossdock.dialogs.DialogReprintCrossdockLabel
-import io.dock2dock.android.crossdock.dialogs.SettingsDialog
+import io.dock2dock.settings.ui.dialog.SettingsDialog
 import io.dock2dock.android.crossdock.viewModels.CrossdockLabelDataTableViewModel
 import io.dock2dock.android.ui.components.BottomSheetActionRow
 import io.dock2dock.android.ui.components.ButtonVariant

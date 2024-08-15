@@ -27,7 +27,7 @@ object Dependencies {
     const val androidxLifecycleRunTimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.ANDROIDX_LIFECYCLE_RUNTIME_KTX}"
     const val androidxActivity = "androidx.activity:activity-compose:${Versions.ANDROIDX_ACTIVITY}"
     const val androidxComposeUi = "androidx.compose.ui:ui:${Versions.ANDROIDX_COMPOSE}"
-    const val androidxComposeUiTooling = "androidx.compose.ui:ui-tooling-preview:${Versions.ANDROIDX_COMPOSE}"
+    const val androidxComposeUiToolingPreview = "androidx.compose.ui:ui-tooling-preview:${Versions.ANDROIDX_COMPOSE}"
     const val androidxComposeMaterial = "androidx.compose.material:material:${Versions.ANDROIDX_COMPOSE_MATERIAL}"
     const val androidxComposeRuntimeLivedata = "androidx.compose.runtime:runtime-livedata:${Versions.ANDROIDX_COMPOSE}"
     const val androidxMaterialIconsExtended = "androidx.compose.material:material-icons-extended:${Versions.GOOGLE_MATERIAL_ICONS_EXTENDED}"

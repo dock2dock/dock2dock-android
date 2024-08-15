@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -41,6 +42,7 @@ import io.dock2dock.android.ui.dialogs.ErrorDialog
 import io.dock2dock.android.ui.theme.ColorSuccess
 import io.dock2dock.android.ui.theme.PrimaryOxfordBlue
 import io.dock2dock.android.ui.theme.PrimaryPlatinum
+import io.dock2dock.settings.ui.dialog.SettingsDialog
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -55,10 +57,19 @@ fun ShippingContainersScreen(onShippingContainerClicked: (String) -> Unit) {
 
     var showAddDialog by remember { mutableStateOf(false) }
 
+    var showSettingsDialog by remember { mutableStateOf(false) }
+
     Scaffold(
         floatingActionButtonPosition = FabPosition.End,
         floatingActionButton = {
             Column {
+                FloatingActionButton(
+                    backgroundColor = PrimaryPlatinum,
+                    onClick = { showSettingsDialog = !showSettingsDialog }
+                ) {
+                    Icon(Icons.Filled.Settings, "Floating action button.", tint = PrimaryOxfordBlue)
+                }
+                Spacer(modifier = Modifier.padding(top = 8.dp))
                 FloatingActionButton(
                     backgroundColor = PrimaryPlatinum,
                     onClick = { viewModel.refresh() }
@@ -99,6 +110,11 @@ fun ShippingContainersScreen(onShippingContainerClicked: (String) -> Unit) {
         message = errorMessage,
         onDismiss = viewModel::onCloseErrorDialog,
         onConfirm = viewModel::onCloseErrorDialog
+    )
+
+    SettingsDialog(
+        visible = showSettingsDialog,
+        onDismissRequest = { showSettingsDialog = !showSettingsDialog }
     )
 }
 

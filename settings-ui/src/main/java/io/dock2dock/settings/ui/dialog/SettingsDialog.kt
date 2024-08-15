@@ -1,4 +1,4 @@
-package io.dock2dock.android.crossdock.dialogs
+package io.dock2dock.settings.ui.dialog
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,7 +21,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.dock2dock.android.application.configuration.Dock2DockConfiguration
-import io.dock2dock.android.crossdock.viewModels.SettingsDialogViewModel
 import io.dock2dock.android.ui.components.BasicDropdownMenuItem
 import io.dock2dock.android.ui.components.Dock2DockSwitch
 import io.dock2dock.android.ui.components.FluentDropdown
@@ -31,9 +30,10 @@ import io.dock2dock.android.ui.components.FormSectionHeader
 import io.dock2dock.android.ui.components.SubTitleDropdownMenuItem
 import io.dock2dock.android.ui.theme.PrimaryOxfordBlue
 import io.dock2dock.android.ui.theme.PrimaryWhite
+import io.dock2dock.settings.ui.viewModels.SettingsDialogViewModel
 
 @Composable
-internal fun SettingsDialog(visible: Boolean, onDismissRequest: () -> Unit,) {
+public fun SettingsDialog(visible: Boolean, onDismissRequest: () -> Unit) {
     if (visible) {
         Dialog(properties = DialogProperties(usePlatformDefaultWidth = false),
             onDismissRequest = {

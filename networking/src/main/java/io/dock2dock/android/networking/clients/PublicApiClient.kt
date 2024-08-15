@@ -65,7 +65,7 @@ interface PublicApiClient
     suspend fun reprintShippingContainer(@Body body: ReprintShippingContainerRequest): ApiResponse<Unit>
 
     @GET("/FreightShippingContainer/")
-    suspend fun getShippingContainers(@Query("\$orderBy") orderBy: String = "DateCreated desc"): ApiResponse<ODataResponse<ShippingContainer>>
+    suspend fun getShippingContainers(@Query("\$orderBy") orderBy: String = "DateCreated desc", @Query("\$top") top: Int = 25): ApiResponse<ODataResponse<ShippingContainer>>
 
     @GET("/FreightShippingContainer/{id}/?\$expand=ConsignmentPackages")
     suspend fun getShippingContainer(@Path("id") id: String): ApiResponse<ShippingContainer>

@@ -1,0 +1,34 @@
+apply from: configs.androidLibrary
+
+apply plugin: 'signing'
+apply plugin: 'maven-publish'
+
+dependencies {
+    implementation(io.dock2dock.android.Dependencies.androidxCoreKtx)
+    implementation(io.dock2dock.android.Dependencies.androidxAppCompact)
+    implementation(io.dock2dock.android.Dependencies.androidxComposeMaterial)
+    implementation(io.dock2dock.android.Dependencies.androidxLifecycleViewModelCompose)
+    implementation(io.dock2dock.android.Dependencies.androidxMaterialIconsExtended)
+    implementation(io.dock2dock.android.Dependencies.googleMaterial)
+    implementation(io.dock2dock.android.Dependencies.skydovesSandwich)
+    implementation(io.dock2dock.android.Dependencies.androidxComposeUiToolingPreview)
+
+
+    testImplementation(io.dock2dock.android.Dependencies.jUnit)
+    androidTestImplementation(io.dock2dock.android.Dependencies.androidxTestJunit)
+    androidTestImplementation(io.dock2dock.android.Dependencies.androidxTestEspresso)
+
+    implementation(project(":ui"))
+    implementation(project(":networking"))
+    api(project(":application"))
+}
+
+ext {
+    artifactId = "settings-ui"
+    artifactName = "Settings UI"
+    artifactDescrption = "The settings UI module of Dock2Dock Android SDK"
+    publishVersion = rootVersionName
+    groupId = io.dock2dock.android.Configuration.artifactGroup
+}
+
+apply from: "${rootDir}/deploy/deploy.gradle"

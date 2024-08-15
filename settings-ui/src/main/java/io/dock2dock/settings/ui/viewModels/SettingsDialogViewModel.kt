@@ -1,4 +1,4 @@
-package io.dock2dock.android.crossdock.viewModels
+package io.dock2dock.settings.ui.viewModels
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
