@@ -26,7 +26,7 @@ import io.dock2dock.android.application.models.responses.CreateShippingContainer
 import io.dock2dock.android.freightmanagement.viewModels.CreateShippingContainerDialogViewModel
 import io.dock2dock.android.ui.components.BasicDropdownMenuItem
 import io.dock2dock.android.ui.components.ButtonVariant
-import io.dock2dock.android.ui.components.FluentDropdown
+import io.dock2dock.android.ui.components.Dock2DockDropdown
 import io.dock2dock.android.ui.components.FormItem
 import io.dock2dock.android.ui.components.PrimaryButton
 import io.dock2dock.android.ui.components.ValidationErrorMessage
@@ -90,7 +90,7 @@ internal fun CreateShippingContainerDialogContent(viewModel: CreateShippingConta
             ) {
 
                 FormItem("Consignment Product") {
-                    FluentDropdown(
+                    Dock2DockDropdown(
                         options = viewModel.consignmentProducts,
                         selectedTextExpression = { it.name },
                         selectedText = viewModel.consignmentProductName,

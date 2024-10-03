@@ -432,7 +432,7 @@ internal fun PreviewTableRowHeader() {
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable
 internal fun PreviewTableRow() {
-    var label = CrossdockLabel(
+    val label = CrossdockLabel(
         "7cafc3ae-edb1-42f7-820d-0d9003242dfd",
         "00090022680000000021",
         false,

@@ -18,7 +18,9 @@ import io.dock2dock.android.barcodeScanner.models.HoneywellBarcodeReader
 import io.dock2dock.android.barcodeScanner.models.IBarcodeReader
 import io.dock2dock.android.barcodeScanner.models.IBarcodeReaderListener
 import io.dock2dock.android.barcodeScanner.models.IBarcodeTriggerListener
+import io.dock2dock.android.freightmanagement.components.PrintConsignmentItemScreen
 import io.dock2dock.example.BuildConfig
+import io.dock2dock.example.components.ConsignmentHeaderPageScreen
 import io.dock2dock.example.components.HomeScreen
 import io.dock2dock.example.components.SalesOrderScreen
 import io.dock2dock.example.components.ShippingContainerPageScreen
@@ -34,7 +36,7 @@ class MainActivity : ComponentActivity(),
     private lateinit var barcodeReader: IBarcodeReader
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Dock2DockConfiguration.init(this, BuildConfig.Dock2Dock_ApiKey, "http://localhost:3000")
+        Dock2DockConfiguration.init(this, BuildConfig.Dock2Dock_ApiKey, "http://localhost:3001")
         initialiseBarcodeReader()
         setContent {
             Dock2DockApp()
@@ -106,6 +108,17 @@ fun Dock2DockApp() {
         }
         composable(route = "SalesOrder") {
             SalesOrderScreen(navController)
+        }
+
+        composable(route = "ConsignmentHeader") {
+            ConsignmentHeaderPageScreen(navController)
+        }
+        composable(route = "consignmentHeader/{consignmentHeaderNo}/printShippingLabels") { backStackEntry ->
+            backStackEntry.arguments?.getString("consignmentHeaderNo")?.let {
+                PrintConsignmentItemScreen(it) {
+                    navController.navigateUp()
+                }
+            }
         }
     }
 }

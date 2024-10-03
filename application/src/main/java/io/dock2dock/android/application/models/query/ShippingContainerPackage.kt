@@ -2,8 +2,8 @@ package io.dock2dock.android.application.models.query
 
 import java.util.Date
 
-data class ConsignmentPackage(
-    val id: String,
+data class ShippingContainerPackage(
+    val consignmentPackageId: String,
     val barcode: String,
     val customerName: String,
     val consignmentProductName: String,

@@ -1,5 +1,6 @@
 package io.dock2dock.example.components
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,48 +24,59 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import io.dock2dock.android.freightmanagement.activities.ConsignmentManifestsActivity
 
 @Composable
 fun HomeScreen(
     navController: NavController
 ) {
 
-    Scaffold(
-        topBar = {
-            DefaultTopAppBar(
-                title = "Home",
-                navController = navController
-            )
-        },
-    ) { paddingValues ->
-        Box(
+    val context = LocalContext.current
+
+    Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
         ) {
-            LazyVerticalGrid(
-                modifier = Modifier.padding(16.dp),
-                columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                item {
-                    MenuItemContent("Sales Order", Icons.Filled.LocalShipping) {
-                        navController.navigate("SalesOrder")
-                    }
+        LazyVerticalGrid(
+            modifier = Modifier.padding(16.dp),
+            columns = GridCells.Fixed(2),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            item {
+                MenuItemContent("Sales Order", Icons.Filled.LocalShipping) {
+                    navController.navigate("SalesOrder")
                 }
-                item {
-                    MenuItemContent(
-                        "Shipping Containers",
-                        Icons.AutoMirrored.Filled.Assignment
-                    ) {
-                        navController.navigate("ShippingContainers")
-                    }
+            }
+            item {
+                MenuItemContent(
+                    "Shipping Containers",
+                    Icons.AutoMirrored.Filled.Assignment
+                ) {
+                    navController.navigate("ShippingContainers")
+                }
+            }
+            item {
+                MenuItemContent(
+                    "Consignment Header",
+                    Icons.Filled.LocalShipping
+                ) {
+                    navController.navigate("ConsignmentHeader")
+                }
+            }
+            item {
+                MenuItemContent(
+                    "Consignment Manifests",
+                    Icons.Filled.LocalShipping
+                ) {
+                    context.startActivity(Intent(context, ConsignmentManifestsActivity::class.java))
                 }
             }
         }
+
     }
 }
 

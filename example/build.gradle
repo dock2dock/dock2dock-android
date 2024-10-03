@@ -28,4 +28,5 @@ dependencies {
     implementation project(':freightmanagement')
     implementation project(path: ':crossdock')
     implementation project(path: ':barcodeScanner')
+    implementation project(path: ':ui')
 }

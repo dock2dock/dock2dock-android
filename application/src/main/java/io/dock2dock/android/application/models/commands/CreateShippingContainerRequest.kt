@@ -18,3 +18,16 @@ data class CompleteShippingContainerRequest(
 data class ReprintShippingContainerRequest(
     val shippingContainerId: String,
     val printerId: String)
+
+data class PrintConsignmentItemShippingLabelsRequest(
+    val consignmentHeaderItemId: String,
+    val printerId: String,
+    val quantity: Int,
+    val deliveryInstructions: String?)
+
+data class PrintConsignmentManifestItemShippingLabelsRequest(
+    val consignmentManifestId: String,
+    val consignmentProductId: String,
+    val printerId: String,
+    val quantity: Int,
+    val deliveryInstructions: String?)

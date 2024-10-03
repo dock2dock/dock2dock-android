@@ -15,7 +15,7 @@ fun ShippingContainersPageScreen(
 
     Scaffold(
         topBar = {
-            DefaultTopAppBar(
+            io.dock2dock.android.ui.components.DefaultTopAppBar(
                 title = "Shipping Containers",
                 navController = navController
             )

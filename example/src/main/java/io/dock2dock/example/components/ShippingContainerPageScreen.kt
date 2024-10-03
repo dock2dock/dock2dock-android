@@ -29,7 +29,7 @@ fun ShippingContainerPageScreen(
     val title = "Shipping Container - ${shippingContainer?.barcode ?: ""}"
     Scaffold(
         topBar = {
-            DefaultTopAppBar(
+            io.dock2dock.android.ui.components.DefaultTopAppBar(
                 title = title,
                 navController = navController
             )

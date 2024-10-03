@@ -54,7 +54,7 @@ fun Dock2DockTextField(
     valueChanged: ((String) -> Unit) = {},
     placeholderText: String = "") {
 
-    var cursorColor: Color = if (keyboardType == KeyboardType.Number) {
+    val cursorColor: Color = if (keyboardType == KeyboardType.Number) {
         Color.Transparent
     } else {
         Color.Black
@@ -77,6 +77,57 @@ fun Dock2DockTextField(
                 keyboardController?.hide()
             }
         ),
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            unfocusedBorderColor = PrimaryDark,
+            focusedBorderColor = PrimaryOxfordBlue,
+            cursorColor = cursorColor
+        ),
+        readOnly = readOnly,
+        isError = isError,
+        placeholder = { Text(placeholderText) })
+
+    if (isError) {
+        ValidationErrorMessage(errorMessage = errorMessage ?: "")
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun Dock2DockTextArea(
+    value: String,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    errorMessage: String? = null,
+    isError: Boolean = false,
+    readOnly: Boolean = false,
+    valueChanged: ((String) -> Unit) = {},
+    placeholderText: String = "") {
+
+    val cursorColor: Color = if (keyboardType == KeyboardType.Number) {
+        Color.Transparent
+    } else {
+        Color.Black
+    }
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    Dock2DockOutlinedTextField(value = value,
+        onValueChange = {
+            valueChanged(it)
+        },
+        modifier = Modifier
+            .defaultMinSize(minHeight = 32.dp)
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(0),
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = keyboardType,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                keyboardController?.hide()
+            }
+        ),
+        singleLine = false,
         colors = TextFieldDefaults.outlinedTextFieldColors(
             unfocusedBorderColor = PrimaryDark,
             focusedBorderColor = PrimaryOxfordBlue,
@@ -158,7 +209,7 @@ fun Dock2DockOutlinedTextField(
     maxLines: Int = Int.MAX_VALUE,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = MaterialTheme.shapes.small,
-    colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors()
+    colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(),
 ) {
     // If color is not provided via the text style, use content color as a default
     val textColor = textStyle.color.takeOrElse {

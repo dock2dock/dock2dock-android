@@ -25,7 +25,7 @@ fun SalesOrderScreen(
 
     Scaffold(
         topBar = {
-            DefaultTopAppBar(
+            io.dock2dock.android.ui.components.DefaultTopAppBar(
                 title = "Sales Order $salesOrderNumber",
                 navController = navController
             )

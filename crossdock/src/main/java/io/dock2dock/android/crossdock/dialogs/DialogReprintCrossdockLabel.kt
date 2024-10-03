@@ -24,7 +24,7 @@ import io.dock2dock.android.application.models.query.CrossdockLabel
 import io.dock2dock.android.crossdock.viewModels.ReprintCrossdockLabelViewModel
 import io.dock2dock.android.ui.components.ButtonVariant
 import io.dock2dock.android.ui.components.Dock2DockTextField
-import io.dock2dock.android.ui.components.FluentDropdown
+import io.dock2dock.android.ui.components.Dock2DockDropdown
 import io.dock2dock.android.ui.components.FormItem
 import io.dock2dock.android.ui.components.PrimaryButton
 import io.dock2dock.android.ui.components.SubTitleDropdownMenuItem
@@ -91,7 +91,7 @@ internal fun DialogReprintCrossdockLabelContent(viewModel: ReprintCrossdockLabel
                 }
 
                 FormItem(title = "Printer") {
-                    FluentDropdown(
+                    Dock2DockDropdown(
                         options = viewModel.printers,
                         selectedTextExpression = { it.name },
                         selectedText = viewModel.printerName,

@@ -15,7 +15,7 @@ import io.dock2dock.android.application.models.commands.AddPackageToShippingCont
 import io.dock2dock.android.application.models.commands.CompleteShippingContainerRequest
 import io.dock2dock.android.application.models.commands.RemovePackageFromShippingContainerRequest
 import io.dock2dock.android.application.models.commands.ReprintShippingContainerRequest
-import io.dock2dock.android.application.models.query.ConsignmentPackage
+import io.dock2dock.android.application.models.query.ShippingContainerPackage
 import io.dock2dock.android.application.models.query.ShippingContainer
 import io.dock2dock.android.networking.ApiService
 import io.dock2dock.android.networking.SERVER_NETWORK_ERROR
@@ -53,10 +53,10 @@ class ShippingContainerViewModel(private val shippingContainerId: String, privat
     val shippingContainer: StateFlow<ShippingContainer?>
         get() = _shippingContainer
 
-    private val _consignmentPackages = MutableStateFlow<List<ConsignmentPackage>>(listOf())
+    private val _shippingContainerPackages = MutableStateFlow<List<ShippingContainerPackage>>(listOf())
 
-    val consignmentPackages: StateFlow<List<ConsignmentPackage>>
-        get() = _consignmentPackages
+    val shippingContainerPackages: StateFlow<List<ShippingContainerPackage>>
+        get() = _shippingContainerPackages
 
     fun onCloseErrorDialog() {
         _errorMessage.value = ""
@@ -78,7 +78,7 @@ class ShippingContainerViewModel(private val shippingContainerId: String, privat
             val response = publicApiClient.getShippingContainer(shippingContainerId)
             response.onSuccess {
                 _shippingContainer.value = this.data
-                _consignmentPackages.value = this.data.consignmentPackages
+                _shippingContainerPackages.value = this.data.shippingContainerPackages
             }.onError {
                 map(HttpErrorMapper) {
                     when(this.code) {
@@ -181,7 +181,7 @@ class ShippingContainerViewModel(private val shippingContainerId: String, privat
             val request = AddPackageToShippingContainerRequest(shippingContainerId, barcode)
             val response = publicApiClient.addPackageToShippingContainer(request)
             response.onSuccess {
-                val consignmentPackage = ConsignmentPackage(
+                val shippingContainerPackage = ShippingContainerPackage(
                     "",
                     this.data.consignmentPackageBarcode,
                     this.data.customerName,
@@ -192,8 +192,8 @@ class ShippingContainerViewModel(private val shippingContainerId: String, privat
                     false,
                     Date()
                 )
-                _consignmentPackages.value += consignmentPackage
-                updateShippingContainerQty(1, consignmentPackage.quantity)
+                _shippingContainerPackages.value += shippingContainerPackage
+                updateShippingContainerQty(1, shippingContainerPackage.quantity)
             }.onError {
                 map(HttpErrorMapper) {
                     when(this.code) {
@@ -222,10 +222,10 @@ class ShippingContainerViewModel(private val shippingContainerId: String, privat
             val request = RemovePackageFromShippingContainerRequest(shippingContainerId, barcode)
             val response = publicApiClient.removePackageFromShippingContainer(request)
             response.onSuccess {
-                val consignmentPackage = consignmentPackages.value.firstOrNull { it.barcode == barcode }
+                val consignmentPackage = shippingContainerPackages.value.firstOrNull { it.barcode == barcode }
 
                 if (consignmentPackage != null) {
-                    _consignmentPackages.value -= consignmentPackage
+                    _shippingContainerPackages.value -= consignmentPackage
                     updateShippingContainerQty(-1, -consignmentPackage.quantity)
                 }
             }.onError {

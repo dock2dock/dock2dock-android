@@ -23,6 +23,7 @@ import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Business
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.filled.ProductionQuantityLimits
@@ -51,7 +52,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.dock2dock.android.application.models.query.ConsignmentPackage
+import io.dock2dock.android.application.models.query.ShippingContainerPackage
 import io.dock2dock.android.application.models.query.ShippingContainer
 import io.dock2dock.android.freightmanagement.viewModels.ShippingContainerViewModel
 import io.dock2dock.android.ui.components.TableLoading
@@ -67,14 +68,17 @@ import io.dock2dock.android.ui.theme.PrimaryWhite
 import io.dock2dock.android.ui.theme.WhiteSmoke
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 import java.util.Date
+import java.util.Locale
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun ShippingContainerScreen(viewModel: ShippingContainerViewModel) {
     val shippingContainer by viewModel.shippingContainer.collectAsState(null)
 
-    val consignmentPackages by viewModel.consignmentPackages.collectAsState(listOf())
+    val consignmentPackages by viewModel.shippingContainerPackages.collectAsState(listOf())
     val isLoading by viewModel.isLoading.observeAsState(false)
     val deleteMode by viewModel.deleteMode.collectAsState(false)
 
@@ -168,7 +172,7 @@ fun ShippingContainerScreen(viewModel: ShippingContainerViewModel) {
                     }
                 }
             }
-        ) {
+        ) { it ->
             Column(modifier = Modifier.padding(it)) {
                 Header(shippingContainer = shipContainer, deleteMode)
 
@@ -180,7 +184,7 @@ fun ShippingContainerScreen(viewModel: ShippingContainerViewModel) {
                         }
                     } else {
                         items(
-                            items = consignmentPackages,
+                            items = consignmentPackages.sortedByDescending { p -> p.dateCreated },
                             key = { item -> item.barcode }
                         ) { item ->
                             ConsignmentPackageTableRow(
@@ -309,7 +313,7 @@ fun Header(shippingContainer: ShippingContainer, deleteMode: Boolean) {
 }
 
 @Composable
-internal fun ConsignmentPackageTableRow(item: ConsignmentPackage, modifier: Modifier = Modifier) {
+internal fun ConsignmentPackageTableRow(item: ShippingContainerPackage, modifier: Modifier = Modifier) {
 
     val barcodeShortener =
         if (item.barcode.length > 30) {
@@ -347,11 +351,15 @@ internal fun ConsignmentPackageTableRow(item: ConsignmentPackage, modifier: Modi
 }
 
 @Composable
-fun ConsignmentPackageDescriptionContent(item: ConsignmentPackage) {
+fun ConsignmentPackageDescriptionContent(item: ShippingContainerPackage) {
     val productNameIconId = "productNameIconId"
     val businessIconId = "businessIconId"
     val qtyIconId = "qtyIconId"
     val consignmentIconId = "consignmentIconId"
+    val dateCreatedId = "dateCreatedId"
+
+    val sdf = SimpleDateFormat("EEE MMM dd, h:mm aa")
+    val dateAsString = sdf.format(item.dateCreated)
 
     val text = buildAnnotatedString {
         appendInlineContent(productNameIconId, "[icon]")
@@ -361,6 +369,10 @@ fun ConsignmentPackageDescriptionContent(item: ConsignmentPackage) {
         appendInlineContent(businessIconId, "[icon]")
         append(" ")
         append(item.customerName)
+        append(" · ")
+        appendInlineContent(dateCreatedId, "[icon]")
+        append(" ")
+        append(dateAsString)
         append(" · ")
         appendInlineContent(qtyIconId, "[icon]")
         append(" ")
@@ -394,6 +406,18 @@ fun ConsignmentPackageDescriptionContent(item: ConsignmentPackage) {
                 )
             ) {
                 Icon(Icons.Filled.Business,"")
+            }
+        ),
+        Pair(
+            dateCreatedId,
+            InlineTextContent(
+                Placeholder(
+                    width = 12.sp,
+                    height = 12.sp,
+                    placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+                )
+            ) {
+                Icon(Icons.Filled.CalendarMonth,"")
             }
         ),
         Pair(
@@ -454,7 +478,7 @@ internal fun PreviewHeader() {
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF, widthDp = 350)
 @Composable
 internal fun ConsignmentPackageTableRowPreview() {
-    val consignmentPackage = ConsignmentPackage(
+    val shippingContainerPackage = ShippingContainerPackage(
         "7cafc3ae-edb1-42f7-820d-0d9003242dfd",
         "00090022680000000021",
         "New World Rolleston",
@@ -466,5 +490,5 @@ internal fun ConsignmentPackageTableRowPreview() {
         Date()
     )
 
-    ConsignmentPackageTableRow(consignmentPackage)
+    ConsignmentPackageTableRow(shippingContainerPackage)
 }

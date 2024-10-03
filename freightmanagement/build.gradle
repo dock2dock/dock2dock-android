@@ -22,6 +22,8 @@ dependencies {
     implementation(Dependencies.dokar3Sheets)
     implementation(Dependencies.googleMaterial)
     implementation(Dependencies.skydovesSandwich)
+    implementation(Dependencies.androidxNavigationRuntimeKtx)
+    implementation(Dependencies.androidxNavigationCompose)
 
     testImplementation(Dependencies.jUnit)
     androidTestImplementation(Dependencies.androidxTestJunit)

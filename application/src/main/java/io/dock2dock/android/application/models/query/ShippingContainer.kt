@@ -16,7 +16,7 @@ data class ShippingContainer(
     val consignmentManifestNo:String?,
     val lastUpdatedDate: Date,
     val dateCreated: Date,
-    val consignmentPackages: List<ConsignmentPackage>) {
+    val shippingContainerPackages: List<ShippingContainerPackage>) {
 
     val weightDescription: String
         get() {

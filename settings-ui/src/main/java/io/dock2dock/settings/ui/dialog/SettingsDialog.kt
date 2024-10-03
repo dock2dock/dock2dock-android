@@ -23,7 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.dock2dock.android.application.configuration.Dock2DockConfiguration
 import io.dock2dock.android.ui.components.BasicDropdownMenuItem
 import io.dock2dock.android.ui.components.Dock2DockSwitch
-import io.dock2dock.android.ui.components.FluentDropdown
+import io.dock2dock.android.ui.components.Dock2DockDropdown
 import io.dock2dock.android.ui.components.FormItem
 import io.dock2dock.android.ui.components.FormItemLayout
 import io.dock2dock.android.ui.components.FormSectionHeader
@@ -79,7 +79,7 @@ internal fun SettingsDialogUI(viewModel: SettingsDialogViewModel = viewModel(), 
 
                 FormSectionHeader("Defaults") {
                     FormItem("Default Handling Unit") {
-                        FluentDropdown(
+                        Dock2DockDropdown(
                             options = viewModel.handlingUnits,
                             selectedTextExpression = { it.name },
                             selectedText = viewModel.selectedHandlingUnitText,
@@ -93,7 +93,7 @@ internal fun SettingsDialogUI(viewModel: SettingsDialogViewModel = viewModel(), 
                         }
                     }
                     FormItem("Default Printer") {
-                        FluentDropdown(
+                        Dock2DockDropdown(
                             options = viewModel.printers,
                             selectedTextExpression = { it.name },
                             selectedText = viewModel.selectedPrinterText,

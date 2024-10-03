@@ -67,10 +67,28 @@ interface PublicApiClient
     @GET("/FreightShippingContainer/")
     suspend fun getShippingContainers(@Query("\$orderBy") orderBy: String = "DateCreated desc", @Query("\$top") top: Int = 25): ApiResponse<ODataResponse<ShippingContainer>>
 
-    @GET("/FreightShippingContainer/{id}/?\$expand=ConsignmentPackages")
+    @GET("/FreightShippingContainer/{id}/?\$expand=ShippingContainerPackages")
     suspend fun getShippingContainer(@Path("id") id: String): ApiResponse<ShippingContainer>
 
     @GET("/FreightConsignmentProduct/")
     suspend fun getConsignmentProducts(@Query("\$orderBy") orderBy: String = "Name asc"): ApiResponse<ODataResponse<ConsignmentProduct>>
+
+    @GET("/FreightConsignmentItem/")
+    suspend fun getConsignmentHeaderItems(@Query("\$filter") filter: String): ApiResponse<ODataResponse<ConsignmentHeaderItem>>
+
+    @POST("/FreightConsignmentItem/printShippingLabels")
+    suspend fun consignmentHeaderItemPrintShippingLabels(@Body body: PrintConsignmentItemShippingLabelsRequest): ApiResponse<Unit>
+
+    @GET("/FreightConsignmentManifest/")
+    suspend fun getConsignmentManifests(@Query("\$orderBy") orderBy: String = "DateCreated desc", @Query("\$top") top: Int = 25): ApiResponse<ODataResponse<FreightConsignmentManifest>>
+
+    @GET("/FreightConsignmentManifest/{id}")
+    suspend fun getConsignmentManifest(@Path("id") id: String): ApiResponse<FreightConsignmentManifest>
+
+    @GET("/FreightConsignmentManifestItem/")
+    suspend fun getConsignmentManifestItems(@Query("\$filter") filter: String): ApiResponse<ODataResponse<ConsignmentManifestItem>>
+
+    @POST("/FreightConsignmentManifestItem/printShippingLabels")
+    suspend fun consignmentManifestItemPrintShippingLabels(@Body body: PrintConsignmentManifestItemShippingLabelsRequest): ApiResponse<Unit>
 }
 

@@ -16,6 +16,7 @@ object Versions {
     internal const val GOOGLE_MATERIAL_ICONS_EXTENDED = "1.6.8"
     internal const val J_UNIT = "4.13.2"
     internal const val GOOGLE_GSON = "2.10"
+    internal const val ANDROIDX_NAVIGATION = "2.8.1"
 
     internal const val SKYDOVES_SANDWICH = "1.3.3"
 }
@@ -41,6 +42,8 @@ object Dependencies {
     const val googleMaterial = "com.google.android.material:material:${Versions.GOOGLE_MATERIAL}"
     const val jUnit = "junit:junit:${Versions.J_UNIT}"
     const val skydovesSandwich = "com.github.skydoves:sandwich:${Versions.SKYDOVES_SANDWICH}"
+    const val androidxNavigationRuntimeKtx = "androidx.navigation:navigation-runtime-ktx:${Versions.ANDROIDX_NAVIGATION}"
+    const val androidxNavigationCompose = "androidx.navigation:navigation-compose:${Versions.ANDROIDX_NAVIGATION}"
 
 
 }
