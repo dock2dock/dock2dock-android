@@ -198,24 +198,24 @@ internal fun ConsignmentManifestTableRow(
         if (showPickupLocation) {
 
             Spacer(modifier = Modifier.padding(top = 4.dp))
-            IconAndText(item.pickupAddress.name, Icons.Filled.PinDrop)
+            IconAndText(text = item.pickupAddress.name, icon = Icons.Filled.PinDrop)
         }
         Spacer(modifier = Modifier.padding(top = 4.dp))
         Row(horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth(1f)
         ) {
-            IconAndText(item.carrierName, Icons.Filled.LocalShipping)
-            Spacer(modifier = Modifier.padding(top = 4.dp))
-            IconAndText(dateAsString, Icons.Filled.CalendarToday)
+            IconAndText(modifier = Modifier.weight(weight = 1f), text = item.carrierName, icon = Icons.Filled.LocalShipping)
+            Spacer(modifier = Modifier.padding(end = 6.dp))
+            IconAndText(text = dateAsString, icon = Icons.Filled.CalendarToday)
         }
         Spacer(modifier = Modifier.padding(top = 4.dp))
         Row(horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth(1f)
         ) {
-            ConsignmentManifestDescriptionContent(item)
-            Spacer(modifier = Modifier.padding(top = 1.dp))
+            ConsignmentManifestDescriptionContent(modifier = Modifier.weight(weight = 1f), item)
+            Spacer(modifier = Modifier.padding(end = 4.dp))
             Tag(text = item.preservationStateName, color = PrimaryOxfordBlue)
         }
     }
@@ -223,7 +223,9 @@ internal fun ConsignmentManifestTableRow(
 }
 
 @Composable
-fun IconAndText(text: String, icon: ImageVector) {
+fun IconAndText(modifier: Modifier = Modifier,
+                text: String,
+                icon: ImageVector) {
     val iconId = "iconId"
 
     val annotatedString = buildAnnotatedString {
@@ -249,11 +251,13 @@ fun IconAndText(text: String, icon: ImageVector) {
 
     Text(text = annotatedString,
         style = MaterialTheme.typography.caption,
-        inlineContent = inlineContent)
+        inlineContent = inlineContent,
+        modifier = modifier)
 }
 
 @Composable
-fun ConsignmentManifestDescriptionContent(item: FreightConsignmentManifest) {
+fun ConsignmentManifestDescriptionContent(modifier: Modifier,
+                                          item: FreightConsignmentManifest) {
     val boldStyle = SpanStyle(
         fontWeight = FontWeight.Bold
     )
@@ -283,12 +287,14 @@ fun ConsignmentManifestDescriptionContent(item: FreightConsignmentManifest) {
         append(item.runSheetNo ?: "")
     }
 
-    Text(text = text,
+    Text(modifier = modifier,
+        text = text,
         style = MaterialTheme.typography.caption,
+        fontSize = 11.sp,
         color = Color.Gray)
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFF)
+@Preview(showBackground = true, backgroundColor = 0xFFFFFF, widthDp = 400)
 @Composable
 internal fun PreviewConsignmentManifestTableRow_CrossEnabled() {
     val manifest = FreightConsignmentManifest(
@@ -302,9 +308,9 @@ internal fun PreviewConsignmentManifestTableRow_CrossEnabled() {
         "Chilled",
         false,
         "RS1023",
-        2,
-        48.4,
-        4,
+        20,
+        148.4,
+        14,
         "fssi",
         "Foodstuffs South Island",
         "7cafc3ae-edb1-42f7-820d-0d9003242dfd",
