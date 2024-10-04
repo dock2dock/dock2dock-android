@@ -45,6 +45,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import io.dock2dock.android.application.models.query.FreightAddress
 import io.dock2dock.android.application.models.query.FreightConsignmentManifest
+import io.dock2dock.android.freightmanagement.model.ConsignmentManifestStatus
+import io.dock2dock.android.freightmanagement.model.PreservationState
 import io.dock2dock.android.freightmanagement.viewModels.ConsignmentManifestsScreenViewModel
 import io.dock2dock.android.ui.components.DefaultTopAppBar
 import io.dock2dock.android.ui.components.TableLoading
@@ -192,7 +194,7 @@ internal fun ConsignmentManifestTableRow(
                     Spacer(modifier = Modifier.padding(end = 16.dp))
                 }
 
-                Tag(text = item.statusName, color = PrimaryOxfordBlue)
+                Tag(text = item.statusName, color = ConsignmentManifestStatus.getColor(item.statusId))
             }
         }
         if (showPickupLocation) {
@@ -216,7 +218,7 @@ internal fun ConsignmentManifestTableRow(
         ) {
             ConsignmentManifestDescriptionContent(modifier = Modifier.weight(weight = 1f), item)
             Spacer(modifier = Modifier.padding(end = 4.dp))
-            Tag(text = item.preservationStateName, color = PrimaryOxfordBlue)
+            Tag(text = item.preservationStateName, color = PreservationState.getColor(item.preservationStateId))
         }
     }
     TableRowDivider()
@@ -305,6 +307,7 @@ internal fun PreviewConsignmentManifestTableRow_CrossEnabled() {
         "IDL - Independent Distributors Limited",
         "Tsi (Crossdock)",
         Date(2024,9,25),
+        "chilled",
         "Chilled",
         false,
         "RS1023",

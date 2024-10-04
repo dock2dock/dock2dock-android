@@ -10,6 +10,7 @@ data class FreightConsignmentManifest(
     val carrierName: String,
     val carrierName2: String,
     val dispatchDate: Date,
+    val preservationStateId: String,
     val preservationStateName: String,
     val singleDestination: Boolean,
     val runSheetNo: String?,

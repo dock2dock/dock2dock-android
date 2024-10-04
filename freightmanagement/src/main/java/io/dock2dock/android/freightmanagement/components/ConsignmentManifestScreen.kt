@@ -27,6 +27,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import io.dock2dock.android.application.models.query.FreightAddress
 import io.dock2dock.android.application.models.query.FreightConsignmentManifest
+import io.dock2dock.android.freightmanagement.model.ConsignmentManifestStatus
+import io.dock2dock.android.freightmanagement.model.PreservationState
 import io.dock2dock.android.freightmanagement.viewModels.ConsignmentManifestScreenViewModel
 import io.dock2dock.android.ui.components.DefaultTopAppBar
 import io.dock2dock.android.ui.components.LoadingPleaseWait
@@ -109,7 +111,7 @@ fun ConsignmentManifestScreenContent(manifest: FreightConsignmentManifest) {
                 item {
                     Column {
                         FormItemTitle("Status")
-                        Tag(text = manifest.statusName, color = PrimaryOxfordBlue)
+                        Tag(text = manifest.statusName, color = ConsignmentManifestStatus.getColor(manifest.statusId))
                     }
                 }
                 item {
@@ -121,7 +123,7 @@ fun ConsignmentManifestScreenContent(manifest: FreightConsignmentManifest) {
                 item {
                     Column {
                         FormItemTitle("Preservation State")
-                        Tag(text = manifest.preservationStateName, color = PrimaryOxfordBlue)
+                        Tag(text = manifest.preservationStateName, color = PreservationState.getColor(manifest.preservationStateId))
                     }
                 }
                 item {
@@ -208,6 +210,7 @@ internal fun Preview_ConsignmentManifestScreenContent() {
         "IDL - Independent Distributors Limited",
         "Tsi (Crossdock)",
         Date(2024,9,25),
+        "chilled",
         "Chilled",
         false,
         "RS1023",
