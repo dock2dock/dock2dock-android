@@ -21,6 +21,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.dock2dock.android.application.configuration.Dock2DockConfiguration
+import io.dock2dock.android.application.models.query.Printer
 import io.dock2dock.android.ui.components.BasicDropdownMenuItem
 import io.dock2dock.android.ui.components.Dock2DockSwitch
 import io.dock2dock.android.ui.components.Dock2DockDropdown
@@ -78,7 +79,7 @@ internal fun SettingsDialogUI(viewModel: SettingsDialogViewModel = viewModel(), 
             Column(modifier = Modifier.padding(paddingValues).padding(24.dp)) {
 
                 FormSectionHeader("Defaults") {
-                    FormItem("Default Handling Unit") {
+                    FormItem("Handling Unit") {
                         Dock2DockDropdown(
                             options = viewModel.handlingUnits,
                             selectedTextExpression = { it.name },
@@ -92,7 +93,7 @@ internal fun SettingsDialogUI(viewModel: SettingsDialogViewModel = viewModel(), 
                             BasicDropdownMenuItem(it.name)
                         }
                     }
-                    FormItem("Default Printer") {
+                    FormItem("Printer") {
                         Dock2DockDropdown(
                             options = viewModel.printers,
                             selectedTextExpression = { it.name },
@@ -104,6 +105,20 @@ internal fun SettingsDialogUI(viewModel: SettingsDialogViewModel = viewModel(), 
                         )
                         {
                             SubTitleDropdownMenuItem(it.name, it.location)
+                        }
+                    }
+                    FormItem("Pickup Location") {
+                        Dock2DockDropdown(
+                            options = viewModel.pickupLocations,
+                            selectedTextExpression = { it.name },
+                            selectedText = viewModel.selectedPickupLocationText,
+                            placeholderText = "Please select your pickup location",
+                            selectedItemChanged = {
+                                viewModel.onPickupLocationValueChanged(it)
+                            }
+                        )
+                        {
+                            BasicDropdownMenuItem(it.name)
                         }
                     }
                 }

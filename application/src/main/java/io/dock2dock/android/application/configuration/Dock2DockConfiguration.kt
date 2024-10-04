@@ -24,6 +24,10 @@ internal constructor(
         userPreferences.update(DEFAULT_PRINTER, value)
     }
 
+    fun updatePickupAddress(value: String) {
+        userPreferences.update(DEFAULT_PICKUP_ADDRESS, value)
+    }
+
     fun getDefaultPrinter(): String? {
         return userPreferences.get(DEFAULT_PRINTER)
     }
@@ -34,6 +38,10 @@ internal constructor(
 
     fun getPrintCrossdockLabelSetting(): Boolean {
         return userPreferences.getBoolean(DEFAULT_PRINT_CROSSDOCK_LBL_SETTING, true)
+    }
+
+    fun getDefaultPickupAddress(): String? {
+        return userPreferences.get(DEFAULT_PICKUP_ADDRESS)
     }
 
     fun updateShowLPQuickCreateViewSetting(value: Boolean) {
@@ -49,6 +57,7 @@ internal constructor(
 
         private const val DEFAULT_HANDLING_UNIT = "default_handling_unit"
         private const val DEFAULT_PRINTER = "default_printer"
+        private const val DEFAULT_PICKUP_ADDRESS = "default_pickupAddress"
         private const val DEFAULT_PRINT_CROSSDOCK_LBL_SETTING = "default_print_crossdock_label"
         private const val DEFAULT_SHOW_LP_QUICK_CREATE_VIEW_SETTING = "default_show_lp_quick_create_view_settings"
         private const val PUBLIC_API_BASEURL = "https://api.dock2dock.io/"

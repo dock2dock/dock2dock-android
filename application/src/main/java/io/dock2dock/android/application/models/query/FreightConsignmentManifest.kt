@@ -21,8 +21,14 @@ data class FreightConsignmentManifest(
     val crossdockWarehouseLocationId: String?,
     val crossdockWarehouseLocationName: String?,
     val crossdockArrivalDate: Date?,
-    val dateCreated: Date
+    val dateCreated: Date,
+    val pickupAddress: FreightAddress
 ) {
     val crossdockEnabled: Boolean
         get() = crossdockPartnerIntegrationId?.isNotEmpty() ?: false
 }
+
+data class FreightAddress(
+    val id: String,
+    val name: String
+)

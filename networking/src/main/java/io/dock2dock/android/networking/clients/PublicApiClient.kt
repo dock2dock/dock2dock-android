@@ -80,7 +80,10 @@ interface PublicApiClient
     suspend fun consignmentHeaderItemPrintShippingLabels(@Body body: PrintConsignmentItemShippingLabelsRequest): ApiResponse<Unit>
 
     @GET("/FreightConsignmentManifest/")
-    suspend fun getConsignmentManifests(@Query("\$orderBy") orderBy: String = "DateCreated desc", @Query("\$top") top: Int = 25): ApiResponse<ODataResponse<FreightConsignmentManifest>>
+    suspend fun getConsignmentManifests(@Query("\$filter") filter: String? = null,
+                                        @Query("\$orderBy") orderBy: String = "DateCreated desc",
+                                        @Query("\$top") top: Int = 25,
+                                        @Query("\$expand") expand: String = "PickupAddress"): ApiResponse<ODataResponse<FreightConsignmentManifest>>
 
     @GET("/FreightConsignmentManifest/{id}")
     suspend fun getConsignmentManifest(@Path("id") id: String): ApiResponse<FreightConsignmentManifest>
@@ -90,5 +93,8 @@ interface PublicApiClient
 
     @POST("/FreightConsignmentManifestItem/printShippingLabels")
     suspend fun consignmentManifestItemPrintShippingLabels(@Body body: PrintConsignmentManifestItemShippingLabelsRequest): ApiResponse<Unit>
+
+    @GET("/FreightPickupLocation/")
+    suspend fun getFreightPickupLocations(@Query("\$filter") filter: String? = null): ApiResponse<ODataResponse<FreightPickupLocation>>
 }
 

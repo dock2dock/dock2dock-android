@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import io.dock2dock.android.application.models.query.FreightAddress
 import io.dock2dock.android.application.models.query.FreightConsignmentManifest
 import io.dock2dock.android.freightmanagement.viewModels.ConsignmentManifestScreenViewModel
 import io.dock2dock.android.ui.components.DefaultTopAppBar
@@ -219,6 +220,7 @@ internal fun Preview_ConsignmentManifestScreenContent() {
         "Hornby Temperature Control DC (DC08)",
         Date(2024,9,26, 16,0,0),
         Date(2024,9,25,11,0,0),
+        FreightAddress("", "Harris Farms Cheviot")
     )
 
     ConsignmentManifestScreenContent(manifest)

@@ -1,5 +1,9 @@
 package io.dock2dock.android.freightmanagement.viewModels
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +12,7 @@ import com.skydoves.sandwich.map
 import com.skydoves.sandwich.onError
 import com.skydoves.sandwich.onException
 import com.skydoves.sandwich.onSuccess
+import io.dock2dock.android.application.configuration.Dock2DockConfiguration
 import io.dock2dock.android.application.models.query.FreightConsignmentManifest
 import io.dock2dock.android.application.models.query.ShippingContainer
 import io.dock2dock.android.networking.ApiService
@@ -40,14 +45,18 @@ internal class ConsignmentManifestsScreenViewModel: ViewModel() {
     private val _selectedItem: MutableStateFlow<FreightConsignmentManifest?> = MutableStateFlow(null)
     val selectedItem: StateFlow<FreightConsignmentManifest?> get() = _selectedItem
 
+    var showPickupLocation: Boolean = false
+
     internal fun setSelectedItem(label: FreightConsignmentManifest?) {
         _selectedItem.value = label
     }
 
+    private val dock2dockConfiguration = Dock2DockConfiguration.instance()
     private val publicApiClient = ApiService.getRetrofitClient<PublicApiClient>()
 
     init {
         getManifests()
+        showPickupLocation = dock2dockConfiguration.getDefaultPickupAddress()?.isEmpty() ?: true
     }
 
     fun refresh() {
@@ -56,9 +65,17 @@ internal class ConsignmentManifestsScreenViewModel: ViewModel() {
 
     private fun getManifests() {
         _errorMessage.value = ""
+
+        val pickupAddressId = dock2dockConfiguration.getDefaultPickupAddress()
+
+        var filter: String? = null
+        if (pickupAddressId?.isNotEmpty() == true) {
+            filter = "pickupAddressId eq '$pickupAddressId'"
+        }
+
         viewModelScope.launch {
             onIsLoadingChange(true)
-            val response = publicApiClient.getConsignmentManifests()
+            val response = publicApiClient.getConsignmentManifests(filter)
             response.onSuccess {
                 _items.value = this.data.value
             }.onError {

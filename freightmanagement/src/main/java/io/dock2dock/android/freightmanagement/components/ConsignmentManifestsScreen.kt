@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
@@ -16,17 +18,21 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.LocalShipping
+import androidx.compose.material.icons.filled.PinDrop
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -37,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import io.dock2dock.android.application.models.query.FreightAddress
 import io.dock2dock.android.application.models.query.FreightConsignmentManifest
 import io.dock2dock.android.freightmanagement.viewModels.ConsignmentManifestsScreenViewModel
 import io.dock2dock.android.ui.components.DefaultTopAppBar
@@ -44,10 +51,10 @@ import io.dock2dock.android.ui.components.TableLoading
 import io.dock2dock.android.ui.components.TableNoRecords
 import io.dock2dock.android.ui.components.TableRowDivider
 import io.dock2dock.android.ui.components.Tag
+import io.dock2dock.android.ui.components.ValidationErrorMessage
 import io.dock2dock.android.ui.theme.PrimaryOrangeWeb
 import io.dock2dock.android.ui.theme.PrimaryOxfordBlue
 import io.dock2dock.android.ui.theme.PrimaryPlatinum
-import io.dock2dock.android.ui.theme.PrimaryWhite
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -62,7 +69,6 @@ fun ConsignmentManifestsScreen(
 
     val errorMessage by viewModel.errorMessage.observeAsState("")
     val isLoading by viewModel.isLoading.observeAsState(false)
-
 
     val canNavigateBack = navController.previousBackStackEntry != null
 
@@ -104,12 +110,18 @@ fun ConsignmentManifestsScreen(
         }
     )
     {
-        ConsignmentManifestsDataTable(
-            modifier = Modifier.padding(it),
-            isLoading = isLoading,
-            viewModel = viewModel
-        ) { consignmentManifest ->
-            navController.navigate("consignmentManifests/${consignmentManifest.id}")
+        Column {
+            if (errorMessage.isNotEmpty()) {
+                ValidationErrorMessage(errorMessage = errorMessage)
+            } else {
+                ConsignmentManifestsDataTable(
+                    modifier = Modifier.padding(it),
+                    isLoading = isLoading,
+                    viewModel = viewModel
+                ) { consignmentManifest ->
+                    navController.navigate("consignmentManifests/${consignmentManifest.id}")
+                }
+            }
         }
     }
 }
@@ -141,7 +153,8 @@ internal fun ConsignmentManifestsDataTable(isLoading: Boolean,
                     item = item,
                     modifier = Modifier.clickable {
                         onSelected(item)
-                    }
+                    },
+                    viewModel.showPickupLocation
                 )
             }
         }
@@ -152,7 +165,8 @@ internal fun ConsignmentManifestsDataTable(isLoading: Boolean,
 @Composable
 internal fun ConsignmentManifestTableRow(
     item: FreightConsignmentManifest,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showPickupLocation: Boolean
 ) {
 
     val sdf = SimpleDateFormat("E MMM dd, yyyy", Locale.ENGLISH)
@@ -181,21 +195,19 @@ internal fun ConsignmentManifestTableRow(
                 Tag(text = item.statusName, color = PrimaryOxfordBlue)
             }
         }
+        if (showPickupLocation) {
+
+            Spacer(modifier = Modifier.padding(top = 4.dp))
+            IconAndText(item.pickupAddress.name, Icons.Filled.PinDrop)
+        }
         Spacer(modifier = Modifier.padding(top = 4.dp))
         Row(horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth(1f)
         ) {
-            Text(
-                text = item.carrierName,
-            )
-            Spacer(modifier = Modifier.padding(top = 1.dp))
-            Text(
-                style = MaterialTheme.typography.caption,
-                color = Color.Gray,
-                text = dateAsString,
-                maxLines = 1,
-            )
+            IconAndText(item.carrierName, Icons.Filled.LocalShipping)
+            Spacer(modifier = Modifier.padding(top = 4.dp))
+            IconAndText(dateAsString, Icons.Filled.CalendarToday)
         }
         Spacer(modifier = Modifier.padding(top = 4.dp))
         Row(horizontalArrangement = Arrangement.SpaceBetween,
@@ -211,6 +223,36 @@ internal fun ConsignmentManifestTableRow(
 }
 
 @Composable
+fun IconAndText(text: String, icon: ImageVector) {
+    val iconId = "iconId"
+
+    val annotatedString = buildAnnotatedString {
+        appendInlineContent(iconId, "[icon]")
+        append(" ")
+        append(text)
+    }
+
+    val inlineContent = mapOf(
+        Pair(
+            iconId,
+            InlineTextContent(
+                Placeholder(
+                    width = 12.sp,
+                    height = 12.sp,
+                    placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+                )
+            ) {
+                Icon(icon,"")
+            }
+        )
+    )
+
+    Text(text = annotatedString,
+        style = MaterialTheme.typography.caption,
+        inlineContent = inlineContent)
+}
+
+@Composable
 fun ConsignmentManifestDescriptionContent(item: FreightConsignmentManifest) {
     val boldStyle = SpanStyle(
         fontWeight = FontWeight.Bold
@@ -218,7 +260,7 @@ fun ConsignmentManifestDescriptionContent(item: FreightConsignmentManifest) {
 
     val text = buildAnnotatedString {
         withStyle(style = boldStyle) {
-            append("QTY: ")
+            append("CONS: ")
         }
         append(item.consignmentHeaderCount.toString())
         append(" ")
@@ -269,7 +311,8 @@ internal fun PreviewConsignmentManifestTableRow_CrossEnabled() {
         "Hornby Temperature Control DC (DC08)",
         Date(2024,9,26, 11,0,0),
         Date(2024,9,25,11,0,0),
+        FreightAddress("fqwfwfqwf", "Harris Farms Cheviot")
     )
 
-    ConsignmentManifestTableRow(manifest)
+    ConsignmentManifestTableRow(manifest, showPickupLocation = true)
 }
