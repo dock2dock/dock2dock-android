@@ -2,15 +2,18 @@ package io.dock2dock.android.freightmanagement.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
@@ -177,7 +180,6 @@ fun ShippingContainerScreen(viewModel: ShippingContainerViewModel) {
                 Header(shippingContainer = shipContainer, deleteMode)
 
                 LazyColumn {
-
                     if (!isLoading && consignmentPackages.isEmpty()) {
                         item {
                             TableNoRecords()
@@ -194,11 +196,10 @@ fun ShippingContainerScreen(viewModel: ShippingContainerViewModel) {
                     }
                 }
             }
+            if (isLoading) {
+                ProgressBar()
+            }
         }
-    }
-
-    if (isLoading) {
-        TableLoading()
     }
 
     ErrorDialog(
@@ -450,6 +451,22 @@ fun ConsignmentPackageDescriptionContent(item: ShippingContainerPackage) {
         style = MaterialTheme.typography.caption,
         color = Color.Gray,
         inlineContent = inlineContent)
+}
+
+@Composable
+fun ProgressBar() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ){
+        Column(
+            modifier = Modifier.align(Alignment.Center),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            CircularProgressIndicator(color = PrimaryOxfordBlue)
+            Text(text = "Loading...")
+        }
+    }
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF, widthDp = 300, heightDp = 300)

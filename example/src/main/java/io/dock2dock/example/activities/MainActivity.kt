@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity(),
     private lateinit var barcodeReader: IBarcodeReader
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Dock2DockConfiguration.init(this, BuildConfig.Dock2Dock_ApiKey, "http://localhost:3001")
+        Dock2DockConfiguration.init(this, BuildConfig.Dock2Dock_ApiKey, "http://localhost:3020")
         initialiseBarcodeReader()
         setContent {
             Dock2DockApp()

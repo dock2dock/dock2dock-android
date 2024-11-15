@@ -58,7 +58,7 @@ internal class CreateShippingContainerDialogViewModel(val onSuccess: (CreateShip
 
     private fun getConsignmentProducts() {
         viewModelScope.launch {
-            val response = publicApiClient.getConsignmentProducts()
+            val response = publicApiClient.getConsignmentProducts(filter = "IsHiddenOnScanner eq false")
             response.onSuccess {
                 consignmentProducts = this.data.value
             }.onError {

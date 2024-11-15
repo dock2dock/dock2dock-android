@@ -178,6 +178,7 @@ class ShippingContainerViewModel(private val shippingContainerId: String, privat
 
     private fun addPackage(barcode: String) {
         viewModelScope.launch {
+            onIsLoadingChange(true)
             val request = AddPackageToShippingContainerRequest(shippingContainerId, barcode)
             val response = publicApiClient.addPackageToShippingContainer(request)
             response.onSuccess {
@@ -219,6 +220,7 @@ class ShippingContainerViewModel(private val shippingContainerId: String, privat
 
     private fun removePackage(barcode: String) {
         viewModelScope.launch {
+            onIsLoadingChange(true)
             val request = RemovePackageFromShippingContainerRequest(shippingContainerId, barcode)
             val response = publicApiClient.removePackageFromShippingContainer(request)
             response.onSuccess {
@@ -258,6 +260,12 @@ class ShippingContainerViewModel(private val shippingContainerId: String, privat
             weight = existingWeight + weight,
             quantity = existingQty + quantity
         )
+
+        shippingContainer.value?.let {
+            if (it.quantity <= 0) {
+                _deleteMode.value = false
+            }
+        }
     }
 
     //region Barcode

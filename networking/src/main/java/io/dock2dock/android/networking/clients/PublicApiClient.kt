@@ -71,7 +71,7 @@ interface PublicApiClient
     suspend fun getShippingContainer(@Path("id") id: String): ApiResponse<ShippingContainer>
 
     @GET("/FreightConsignmentProduct/")
-    suspend fun getConsignmentProducts(@Query("\$orderBy") orderBy: String = "Name asc"): ApiResponse<ODataResponse<ConsignmentProduct>>
+    suspend fun getConsignmentProducts(@Query("\$filter") filter: String? = null, @Query("\$orderBy") orderBy: String = "Name asc"): ApiResponse<ODataResponse<ConsignmentProduct>>
 
     @GET("/FreightConsignmentItem/")
     suspend fun getConsignmentHeaderItems(@Query("\$filter") filter: String): ApiResponse<ODataResponse<ConsignmentHeaderItem>>
