@@ -36,7 +36,7 @@ import androidx.compose.ui.zIndex
 import io.dock2dock.android.application.configuration.Dock2DockConfiguration
 import io.dock2dock.android.crossdock.viewModels.LicensePlateQuickCreateViewModel
 import io.dock2dock.android.ui.components.BasicDropdownMenuItem
-import io.dock2dock.android.ui.components.FluentDropdown
+import io.dock2dock.android.ui.components.Dock2DockDropdown
 import io.dock2dock.android.ui.dialogs.ErrorDialog
 import io.dock2dock.android.ui.theme.PrimaryOrangeWeb
 import io.dock2dock.android.ui.theme.PrimaryOxfordBlue
@@ -80,7 +80,7 @@ fun LicensePlateQuickCreateContent(viewModel: LicensePlateQuickCreateViewModel) 
             Row(modifier = Modifier.fillMaxWidth(1f),
                 horizontalArrangement = Arrangement.SpaceBetween) {
 
-                FluentDropdown(
+                Dock2DockDropdown(
                     modifier = Modifier.widthIn(max = 170.dp).padding(end = 4.dp),
                     options = viewModel.handlingUnits,
                     selectedTextExpression = { it.name },

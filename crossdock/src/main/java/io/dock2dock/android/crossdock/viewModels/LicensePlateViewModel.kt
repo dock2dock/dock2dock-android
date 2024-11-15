@@ -12,9 +12,9 @@ import io.dock2dock.android.application.events.LicensePlateSetToActiveEvent
 import io.dock2dock.android.application.models.commands.CompleteLicensePlateRequest
 import io.dock2dock.android.application.models.commands.ReprintLicensePlateRequest
 import io.dock2dock.android.application.models.query.LicensePlate
-import io.dock2dock.android.crossdock.SERVER_NETWORK_ERROR
-import io.dock2dock.android.crossdock.UNAUTHORISED_NETWORK_ERROR
 import io.dock2dock.android.networking.ApiService
+import io.dock2dock.android.networking.SERVER_NETWORK_ERROR
+import io.dock2dock.android.networking.UNAUTHORISED_NETWORK_ERROR
 import io.dock2dock.android.networking.clients.PublicApiClient
 import io.dock2dock.android.networking.models.Dock2DockErrorCode
 import io.dock2dock.android.networking.models.HttpErrorMapper
@@ -102,7 +102,7 @@ class LicensePlateViewModel(val salesOrderNo: String): BaseViewModel()
         }
 
         viewModelScope.launch {
-            var request = CompleteLicensePlateRequest(licensePlate.value?.no ?: "",  defaultPrinterId)
+            val request = CompleteLicensePlateRequest(licensePlate.value?.no ?: "",  defaultPrinterId)
             val response = publicApiClient.completeLicensePlate(request)
             response.onSuccess {
                 clearLicensePlate()

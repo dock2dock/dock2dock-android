@@ -1,4 +1,4 @@
-package io.dock2dock.android.crossdock.dialogs
+package io.dock2dock.settings.ui.dialog
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,19 +21,20 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.dock2dock.android.application.configuration.Dock2DockConfiguration
-import io.dock2dock.android.crossdock.viewModels.SettingsDialogViewModel
+import io.dock2dock.android.application.models.query.Printer
 import io.dock2dock.android.ui.components.BasicDropdownMenuItem
 import io.dock2dock.android.ui.components.Dock2DockSwitch
-import io.dock2dock.android.ui.components.FluentDropdown
+import io.dock2dock.android.ui.components.Dock2DockDropdown
 import io.dock2dock.android.ui.components.FormItem
 import io.dock2dock.android.ui.components.FormItemLayout
 import io.dock2dock.android.ui.components.FormSectionHeader
 import io.dock2dock.android.ui.components.SubTitleDropdownMenuItem
 import io.dock2dock.android.ui.theme.PrimaryOxfordBlue
 import io.dock2dock.android.ui.theme.PrimaryWhite
+import io.dock2dock.settings.ui.viewModels.SettingsDialogViewModel
 
 @Composable
-internal fun SettingsDialog(visible: Boolean, onDismissRequest: () -> Unit,) {
+public fun SettingsDialog(visible: Boolean, onDismissRequest: () -> Unit) {
     if (visible) {
         Dialog(properties = DialogProperties(usePlatformDefaultWidth = false),
             onDismissRequest = {
@@ -78,8 +79,8 @@ internal fun SettingsDialogUI(viewModel: SettingsDialogViewModel = viewModel(), 
             Column(modifier = Modifier.padding(paddingValues).padding(24.dp)) {
 
                 FormSectionHeader("Defaults") {
-                    FormItem("Default Handling Unit") {
-                        FluentDropdown(
+                    FormItem("Handling Unit") {
+                        Dock2DockDropdown(
                             options = viewModel.handlingUnits,
                             selectedTextExpression = { it.name },
                             selectedText = viewModel.selectedHandlingUnitText,
@@ -92,8 +93,8 @@ internal fun SettingsDialogUI(viewModel: SettingsDialogViewModel = viewModel(), 
                             BasicDropdownMenuItem(it.name)
                         }
                     }
-                    FormItem("Default Printer") {
-                        FluentDropdown(
+                    FormItem("Printer") {
+                        Dock2DockDropdown(
                             options = viewModel.printers,
                             selectedTextExpression = { it.name },
                             selectedText = viewModel.selectedPrinterText,
@@ -104,6 +105,20 @@ internal fun SettingsDialogUI(viewModel: SettingsDialogViewModel = viewModel(), 
                         )
                         {
                             SubTitleDropdownMenuItem(it.name, it.location)
+                        }
+                    }
+                    FormItem("Pickup Location") {
+                        Dock2DockDropdown(
+                            options = viewModel.pickupLocations,
+                            selectedTextExpression = { it.name },
+                            selectedText = viewModel.selectedPickupLocationText,
+                            placeholderText = "Please select your pickup location",
+                            selectedItemChanged = {
+                                viewModel.onPickupLocationValueChanged(it)
+                            }
+                        )
+                        {
+                            BasicDropdownMenuItem(it.name)
                         }
                     }
                 }

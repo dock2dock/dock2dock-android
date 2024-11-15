@@ -13,9 +13,9 @@ import io.dock2dock.android.application.events.Dock2DockSalesOrderRetrievedEvent
 import io.dock2dock.android.application.models.commands.DeleteCrossdockLabel
 import io.dock2dock.android.application.models.query.CrossdockLabel
 import io.dock2dock.android.application.models.query.CrossdockSalesOrder
-import io.dock2dock.android.crossdock.SERVER_NETWORK_ERROR
-import io.dock2dock.android.crossdock.UNAUTHORISED_NETWORK_ERROR
 import io.dock2dock.android.networking.ApiService.getRetrofitClient
+import io.dock2dock.android.networking.SERVER_NETWORK_ERROR
+import io.dock2dock.android.networking.UNAUTHORISED_NETWORK_ERROR
 import io.dock2dock.android.networking.clients.PublicApiClient
 import io.dock2dock.android.networking.models.Dock2DockErrorCode
 import io.dock2dock.android.networking.models.HttpErrorMapper

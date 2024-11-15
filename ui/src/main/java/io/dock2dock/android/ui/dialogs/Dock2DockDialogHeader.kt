@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -22,7 +23,7 @@ import androidx.compose.ui.unit.sp
 fun Dock2DockDialogHeader(title: String, close: (() -> Unit)) {
     Row(modifier = Modifier
         .fillMaxWidth()
-        .padding(0.dp, 0.dp, 0.dp, 16.dp),
+        .padding(0.dp, 16.dp, 16.dp, 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)) {
         IconButton(onClick = {
@@ -41,4 +42,12 @@ fun Dock2DockDialogHeader(title: String, close: (() -> Unit)) {
         )
 
     }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFF, widthDp = 300, heightDp = 300)
+@Composable
+internal fun Dock2DockDialogHeaderPreview() {
+
+
+    Dock2DockDialogHeader("Create Shipping Container", {})
 }

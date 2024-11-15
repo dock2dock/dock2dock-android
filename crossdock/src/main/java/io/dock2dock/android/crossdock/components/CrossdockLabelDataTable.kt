@@ -47,12 +47,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dokar.sheets.BottomSheet
 import com.dokar.sheets.rememberBottomSheetState
 import io.dock2dock.android.application.models.query.CrossdockLabel
 import io.dock2dock.android.crossdock.dialogs.DialogPrintCrossdockLabel
 import io.dock2dock.android.crossdock.dialogs.DialogReprintCrossdockLabel
-import io.dock2dock.android.crossdock.dialogs.SettingsDialog
+import io.dock2dock.settings.ui.dialog.SettingsDialog
 import io.dock2dock.android.crossdock.viewModels.CrossdockLabelDataTableViewModel
 import io.dock2dock.android.ui.components.BottomSheetActionRow
 import io.dock2dock.android.ui.components.ButtonVariant
@@ -71,13 +72,13 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 
-internal data class CrossdockLabelDataTable(val salesOrderNo: String) {
-
-    @Composable
-    fun launch() {
-        val viewModel = CrossdockLabelDataTableViewModel(salesOrderNo)
-        return CrossdockLabelDataTableUI(viewModel)
+@Composable
+fun CrossdockLabelDataTable(salesOrderNo: String) {
+    val viewModel = viewModel {
+        CrossdockLabelDataTableViewModel(salesOrderNo)
     }
+
+    CrossdockLabelDataTableUI(viewModel = viewModel)
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -431,7 +432,7 @@ internal fun PreviewTableRowHeader() {
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable
 internal fun PreviewTableRow() {
-    var label = CrossdockLabel(
+    val label = CrossdockLabel(
         "7cafc3ae-edb1-42f7-820d-0d9003242dfd",
         "00090022680000000021",
         false,

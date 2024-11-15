@@ -1,4 +1,5 @@
 import io.dock2dock.android.Configuration
+import io.dock2dock.android.Dependencies
 
 apply from: configs.androidLibrary
 
@@ -6,40 +7,36 @@ apply plugin: 'signing'
 apply plugin: 'maven-publish'
 
 dependencies {
-    implementation "androidx.compose.runtime:runtime:$compose_ui_version"
-    implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.appcompat:appcompat:1.6.0'
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation(Dependencies.androidxCoreKtx)
+    implementation(Dependencies.androidxAppCompact)
+    implementation(Dependencies.androidxLifecycleViewModelCompose)
+    implementation(Dependencies.androidxLifecycleRunTimeKtx)
+    implementation(Dependencies.androidxActivity)
+    implementation(Dependencies.androidxComposeUi)
+    implementation(Dependencies.androidxComposeUiToolingPreview)
+    implementation(Dependencies.androidxComposeMaterial)
+    implementation(Dependencies.androidxComposeRuntimeLivedata)
+    implementation(Dependencies.androidxMaterialIconsExtended)
+    implementation(Dependencies.androidxLifecycleRuntimeCompose)
+    implementation(Dependencies.composeRuntime)
+    implementation(Dependencies.dokar3Sheets)
+    implementation(Dependencies.googleMaterial)
+    implementation(Dependencies.skydovesSandwich)
 
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$compose_ui_version"
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
-    implementation 'androidx.activity:activity-compose:1.6.1'
-    implementation "androidx.compose.ui:ui:$compose_ui_version"
-    implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
-    implementation 'androidx.compose.material:material:1.3.1'
-    implementation "androidx.compose.runtime:runtime-livedata:$compose_ui_version"
+    testImplementation(Dependencies.jUnit)
+    androidTestImplementation(Dependencies.androidxTestJunit)
+    androidTestImplementation(Dependencies.androidxTestEspresso)
 
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-
-    implementation "com.github.skydoves:sandwich:1.3.3"
-
-    implementation "androidx.compose.material:material-icons-extended:$compose_ui_version"
-
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
-
-    implementation("io.github.dokar3:sheets:0.5.4")
-
-    implementation project(":ui")
-    implementation project(":networking")
-    api project(":application")
+    implementation(project(":ui"))
+    implementation(project(":settings-ui"))
+    implementation(project(":networking"))
+    api(project(":application"))
 }
 
 ext {
-    artifactId = "dock2dock-android"
-    artifactName = "dock2dock-android"
-    artifactDescrption = "Dock2Dock Android SDK"
+    artifactId = "crossdock"
+    artifactName = "Crossdock"
+    artifactDescrption = "The crossdock module of Dock2Dock Android SDK"
     publishVersion = rootVersionName
     groupId = Configuration.artifactGroup
 }

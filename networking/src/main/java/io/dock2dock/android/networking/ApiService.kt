@@ -14,6 +14,8 @@ import java.util.concurrent.TimeUnit
 
 
 object ApiService {
+    private const val TIMEOUT_SECONDS = 15L
+
     inline fun <reified T> getRetrofitClient(): T {
         val config = Dock2DockConfiguration.instance()
 
@@ -30,9 +32,8 @@ object ApiService {
         val androidNorEarlier = Build.VERSION.SDK_INT <= 25
 
         val builder = OkHttpClient().newBuilder()
-            .connectTimeout(4, TimeUnit.SECONDS)
-            .readTimeout(10, TimeUnit.SECONDS)
-            .writeTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .addInterceptor { chain ->
                 chain.request().newBuilder()
                     .addHeader("x-api-key", apiKey)
@@ -92,6 +93,7 @@ object ApiService {
             .addTrustedCertificate(isgCertificate as X509Certificate)
             .build()
     }
+
 
 
 }

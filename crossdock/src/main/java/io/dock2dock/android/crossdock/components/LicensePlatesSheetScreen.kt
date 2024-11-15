@@ -50,7 +50,7 @@ import com.dokar.sheets.BottomSheet
 import com.dokar.sheets.rememberBottomSheetState
 import io.dock2dock.android.application.models.Constants.SnackBarDurationVeryShort
 import io.dock2dock.android.application.models.query.LicensePlate
-import io.dock2dock.android.crossdock.dialogs.SettingsDialog
+import io.dock2dock.settings.ui.dialog.SettingsDialog
 import io.dock2dock.android.crossdock.dialogs.licensePlate.AddLicensePlateDialog
 import io.dock2dock.android.crossdock.viewModels.LicensePlatesSheetViewModel
 import io.dock2dock.android.ui.components.BottomSheetActionRow
@@ -165,7 +165,7 @@ fun LicensePlatesSheetScreen(
         onDismissRequest = { showAddLicensePlateDialog = !showAddLicensePlateDialog }
     )
 
-    SettingsDialog(
+    io.dock2dock.settings.ui.dialog.SettingsDialog(
         visible = showSettingsDialog,
         onDismissRequest = { showSettingsDialog = !showSettingsDialog }
     )

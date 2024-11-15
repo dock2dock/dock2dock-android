@@ -38,16 +38,16 @@ import io.dock2dock.android.ui.theme.PrimaryWhite
 import io.dock2dock.android.ui.views.NoRecordsFoundError
 
 @Composable
-fun <T> FluentDropdown(modifier: Modifier = Modifier,
-                       options: List<T>,
-                       selectedItemChanged: ((T) -> Unit)? = {},
-                       selectedTextExpression: (T) -> String,
-                       selectedText: String = "",
-                       darkTheme: Boolean = false,
-                       errorMessage: String? = null,
-                       isError: Boolean = false,
-                       placeholderText: String = "",
-                       itemTemplate: @Composable (T) -> Unit) {
+fun <T> Dock2DockDropdown(modifier: Modifier = Modifier,
+                          options: List<T>,
+                          selectedItemChanged: ((T) -> Unit)? = {},
+                          selectedTextExpression: (T) -> String,
+                          selectedText: String = "",
+                          darkTheme: Boolean = false,
+                          errorMessage: String? = null,
+                          isError: Boolean = false,
+                          placeholderText: String = "",
+                          itemTemplate: @Composable (T) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
 
     var selectedRememberText by remember { mutableStateOf(selectedText) }
@@ -73,6 +73,10 @@ fun <T> FluentDropdown(modifier: Modifier = Modifier,
         PrimaryWhite
     else
         PrimaryDark
+
+    fun onExpand() {
+        expanded = !expanded
+    }
 
     Column {
         Dock2DockOutlinedTextField(
@@ -102,7 +106,7 @@ fun <T> FluentDropdown(modifier: Modifier = Modifier,
             isError = isError,
             trailingIcon = {
                 Icon(icon, "contentDescription",
-                    Modifier.clickable { expanded = !expanded })
+                    Modifier.clickable { onExpand() })
             }
         )
         if (isError) {
@@ -163,7 +167,7 @@ fun FluentDropdownPreview() {
         TextField(value = selectedText, onValueChange = {
             selectedText = it
         })
-        FluentDropdown(
+        Dock2DockDropdown(
             options = listOf("Kotlin", "Java", "C#", "Swift"),
             selectedTextExpression = { it -> it },
             selectedText = selectedText,
