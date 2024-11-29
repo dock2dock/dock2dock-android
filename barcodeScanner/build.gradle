@@ -1,0 +1,33 @@
+import io.dock2dock.android.*
+
+apply from: configs.androidLibrary
+
+apply plugin: 'signing'
+apply plugin: 'maven-publish'
+
+dependencies {
+    implementation(Dependencies.composeRuntime)
+    implementation(Dependencies.androidxCoreKtx)
+    implementation(Dependencies.androidxAppCompact)
+    implementation(Dependencies.googleMaterial)
+    implementation(Dependencies.googleGson)
+    implementation(Dependencies.androidxLifecycleRunTimeKtx)
+    implementation(Dependencies.androidxLifecycleCommon)
+
+    debugImplementation files('libs/DataCollection.aar')
+    compileOnly files('libs/DataCollection.aar')
+
+    testImplementation(Dependencies.jUnit)
+    androidTestImplementation(Dependencies.androidxTestJunit)
+    androidTestImplementation(Dependencies.androidxTestEspresso)
+}
+
+ext {
+    artifactId = "barcodeScanner"
+    artifactName = "barcodeScanner"
+    artifactDescrption = "The barcode scanner module of Dock2Dock Android SDK"
+    publishVersion = rootVersionName
+    groupId = Configuration.artifactGroup
+}
+
+apply from: "${rootDir}/deploy/deploy.gradle"

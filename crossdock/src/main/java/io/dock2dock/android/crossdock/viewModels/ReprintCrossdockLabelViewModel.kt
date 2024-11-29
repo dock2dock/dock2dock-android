@@ -15,9 +15,9 @@ import io.dock2dock.android.application.configuration.Dock2DockConfiguration
 import io.dock2dock.android.application.models.commands.ReprintCrossdockLabel
 import io.dock2dock.android.application.models.query.CrossdockLabel
 import io.dock2dock.android.application.models.query.Printer
-import io.dock2dock.android.crossdock.SERVER_NETWORK_ERROR
-import io.dock2dock.android.crossdock.UNAUTHORISED_NETWORK_ERROR
 import io.dock2dock.android.networking.ApiService
+import io.dock2dock.android.networking.SERVER_NETWORK_ERROR
+import io.dock2dock.android.networking.UNAUTHORISED_NETWORK_ERROR
 import io.dock2dock.android.networking.clients.PublicApiClient
 import io.dock2dock.android.networking.models.Dock2DockErrorCode
 import io.dock2dock.android.networking.models.HttpErrorMapper
@@ -86,7 +86,9 @@ internal class ReprintCrossdockLabelViewModel(val onSuccess: () -> Unit,
             }.onError {
                 map(HttpErrorMapper) {
                     when(this.code) {
-                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange(UNAUTHORISED_NETWORK_ERROR)
+                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange(
+                            UNAUTHORISED_NETWORK_ERROR
+                        )
                         else -> {
                             onLoadErrorChange(SERVER_NETWORK_ERROR)
                         }
@@ -112,7 +114,9 @@ internal class ReprintCrossdockLabelViewModel(val onSuccess: () -> Unit,
             }.onError {
                 map(HttpErrorMapper) {
                     when(this.code) {
-                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange(UNAUTHORISED_NETWORK_ERROR)
+                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange(
+                            UNAUTHORISED_NETWORK_ERROR
+                        )
                         Dock2DockErrorCode.BadRequest,
                         Dock2DockErrorCode.UnprocessableEntity,
                         Dock2DockErrorCode.NotFound,

@@ -23,7 +23,7 @@ import androidx.compose.ui.window.Dialog
 import io.dock2dock.android.crossdock.viewModels.AddLicensePlateDialogViewModel
 import io.dock2dock.android.ui.components.BasicDropdownMenuItem
 import io.dock2dock.android.ui.components.ButtonVariant
-import io.dock2dock.android.ui.components.FluentDropdown
+import io.dock2dock.android.ui.components.Dock2DockDropdown
 import io.dock2dock.android.ui.components.FormItem
 import io.dock2dock.android.ui.components.PrimaryButton
 import io.dock2dock.android.ui.components.ValidationErrorMessage
@@ -79,7 +79,7 @@ internal fun AddLicensePlateDialogContent(viewModel: AddLicensePlateDialogViewMo
                 .weight(1f, false)) {
 
                 FormItem("Handling Unit") {
-                    FluentDropdown(
+                    Dock2DockDropdown(
                         options = viewModel.handlingUnits,
                         selectedTextExpression = { it.name },
                         selectedText = viewModel.handlingUnitName,

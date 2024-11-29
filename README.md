@@ -29,14 +29,42 @@ Table of contents
 
 ### Setup Dock2Dock
 
-Add `dock2dock-android` to your `build.gradle` dependencies.
+#### Cross-dock
+
+Add `io.dock2dock:crossdock:$latest` to your `build.gradle` dependencies.
 
 ```
 dependencies {
     // ...
     
-    // Dock2Dock Android SDK
-    implementation 'io.dock2dock:dock2dock-android:$latest'
+    // Dock2Dock Crossdock Android SDK
+    implementation 'io.dock2dock:crossdock:$latest'
+}
+```
+
+#### Freight Management
+
+Add `io.dock2dock:freightmanagement:$latest` to your `build.gradle` dependencies.
+
+```
+dependencies {
+    // ...
+    
+    // Dock2Dock Freight Management Android SDK
+    implementation 'io.dock2dock:freightmanagement:$latest'
+}
+```
+
+#### Barcode Scanner
+
+Add `io.dock2dock:barcodeScanner:$latest` to your `build.gradle` dependencies.
+
+```
+dependencies {
+    // ...
+    
+    // Dock2Dock Barcode Scanner Android SDK
+    implementation 'io.dock2dock:barcodeScanner:$latest'
 }
 ```
 
@@ -47,7 +75,6 @@ The examples shown below are using Kotlin.
 ### Configuration
 
 ```
-import io.dock2dock.android.example.fragments.*
 import io.dock2dock.android.application.configuration.*
 
 class MainActivity : AppCompatActivity() 

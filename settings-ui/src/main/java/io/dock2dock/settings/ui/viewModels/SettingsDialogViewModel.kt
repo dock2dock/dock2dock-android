@@ -1,4 +1,4 @@
-package io.dock2dock.android.crossdock.viewModels
+package io.dock2dock.settings.ui.viewModels
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,6 +16,7 @@ import io.dock2dock.android.application.events.Dock2DockDefaultHandlingUnitChang
 import io.dock2dock.android.application.events.Dock2DockLpPrintCrossdockLabelChangedEvent
 import io.dock2dock.android.application.events.Dock2DockShowLPQuickCreateViewChangedEvent
 import io.dock2dock.android.application.models.query.CrossdockHandlingUnit
+import io.dock2dock.android.application.models.query.FreightPickupLocation
 import io.dock2dock.android.application.models.query.Printer
 import io.dock2dock.android.networking.ApiService
 import io.dock2dock.android.networking.clients.PublicApiClient
@@ -28,8 +29,10 @@ internal class SettingsDialogViewModel: ViewModel() {
 
     var handlingUnits by mutableStateOf(listOf<CrossdockHandlingUnit>())
     var printers by mutableStateOf(listOf<Printer>())
+    var pickupLocations by mutableStateOf(listOf<FreightPickupLocation>())
 
     var selectedHandlingUnitText by mutableStateOf("")
+    var selectedPickupLocationText by mutableStateOf("")
 
     var selectedPrinterText by mutableStateOf("")
 
@@ -41,6 +44,7 @@ internal class SettingsDialogViewModel: ViewModel() {
     fun load() {
         getHandlingUnits()
         getPrinters()
+        getFreightPickupLocations()
         showLpQuickCreateView = dock2dockConfiguration.getShowLPQuickCreateViewSetting()
         lpPrintCrossdockLabel = dock2dockConfiguration.getPrintCrossdockLabelSetting()
     }
@@ -59,6 +63,11 @@ internal class SettingsDialogViewModel: ViewModel() {
     fun onPrinterValueChanged(value: Printer) {
         dock2dockConfiguration.updatePrinter(value.id)
         selectedPrinterText = value.name
+    }
+
+    fun onPickupLocationValueChanged(value: FreightPickupLocation) {
+        dock2dockConfiguration.updatePickupAddress(value.addressId)
+        selectedPickupLocationText = value.name
     }
 
     fun onShowLpQuickCreateViewChanged(value: Boolean) {
@@ -95,6 +104,34 @@ internal class SettingsDialogViewModel: ViewModel() {
                 val handlingUnitId = dock2dockConfiguration.getDefaultHandlingUnit()
                 if (!handlingUnitId.isNullOrEmpty()) {
                     selectedHandlingUnitText = handlingUnits.firstOrNull { it.id == handlingUnitId }?.name ?: ""
+                }
+            }.onError {
+                map(HttpErrorMapper) {
+                    when(this.code) {
+//                        Dock2DockErrorCode.Unauthorised -> onLoadErrorChange("We couldn't validate your credentials. Please check before continuing.")
+//                        else -> {
+//                            onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
+//                        }
+                    }
+                }
+            }.onException {
+//                onLoadErrorChange("An error has occurred. Please retry or contact Dock2Dock support team.")
+            }
+        }
+    }
+
+    private fun getFreightPickupLocations() {
+        viewModelScope.launch {
+            val response = publicApiClient.getFreightPickupLocations()
+            response.onSuccess {
+                pickupLocations = mutableListOf<FreightPickupLocation>().apply {
+                    add(FreightPickupLocation("", "--None selected--", ""))
+                    addAll(data.value)
+                }
+
+                val pickupLocationAddressId = dock2dockConfiguration.getDefaultPickupAddress()
+                if (!pickupLocationAddressId.isNullOrEmpty()) {
+                    selectedPickupLocationText = pickupLocations.firstOrNull { it.addressId == pickupLocationAddressId }?.name ?: ""
                 }
             }.onError {
                 map(HttpErrorMapper) {
