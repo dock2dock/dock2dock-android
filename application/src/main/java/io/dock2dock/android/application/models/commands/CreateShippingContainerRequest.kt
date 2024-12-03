@@ -25,6 +25,13 @@ data class PrintConsignmentItemShippingLabelsRequest(
     val quantity: Int,
     val deliveryInstructions: String?)
 
+data class PrintManualConsignmentShippingLabelsRequest(
+    val consignmentHeaderNo: String,
+    val consignmentProductId: String,
+    val printerId: String,
+    val quantity: Int,
+    val deliveryInstructions: String?)
+
 data class PrintConsignmentManifestItemShippingLabelsRequest(
     val consignmentManifestId: String,
     val consignmentProductId: String,
