@@ -32,8 +32,10 @@ import io.dock2dock.android.freightmanagement.viewModels.PrintConsignmentItemVie
 import io.dock2dock.android.freightmanagement.viewModels.ShippingContainersDataTableViewModel
 import io.dock2dock.android.ui.components.BasicDropdownMenuItem
 import io.dock2dock.android.ui.components.ButtonVariant
+import io.dock2dock.android.ui.components.Dock2DockCheckbox
 import io.dock2dock.android.ui.components.Dock2DockDropdown
 import io.dock2dock.android.ui.components.Dock2DockNumberTextField
+import io.dock2dock.android.ui.components.Dock2DockSwitch
 import io.dock2dock.android.ui.components.Dock2DockTextArea
 import io.dock2dock.android.ui.components.Dock2DockTextField
 import io.dock2dock.android.ui.components.FormItem
@@ -83,20 +85,48 @@ fun PrintConsignmentItemScreen(consignmentHeaderNo: String, onDismissRequest: ()
                     .verticalScroll(scrollState)
             ) {
 
-                FormItem("Consignment Item") {
-                    Dock2DockDropdown(
-                        options = viewModel.consignmentHeaderItems,
-                        selectedTextExpression = { it.description },
-                        selectedText = viewModel.consignmentHeaderItemName,
-                        errorMessage = viewModel.consignmentHeaderItemErrorMessage,
-                        isError = viewModel.consignmentHeaderItemIsError,
-                        placeholderText = "--Select--",
-                        selectedItemChanged = {
-                            viewModel.onConsignmentHeaderItemValueChanged(it)
+                FormItem("Manual") {
+                    Dock2DockSwitch(
+                        checked = viewModel.isManual,
+                        checkedChanged = {
+                            viewModel.isManualValueChanged(it)
+                        })
+                }
+                if (!viewModel.isManual) {
+                    FormItem("Consignment Item") {
+                        Dock2DockDropdown(
+                            options = viewModel.consignmentHeaderItems,
+                            selectedTextExpression = { it.description },
+                            selectedText = viewModel.consignmentHeaderItemName,
+                            errorMessage = viewModel.consignmentHeaderItemErrorMessage,
+                            isError = viewModel.consignmentHeaderItemIsError,
+                            placeholderText = "--Select--",
+                            selectedItemChanged = {
+                                viewModel.onConsignmentHeaderItemValueChanged(it)
+                            }
+                        )
+                        {
+                            BasicDropdownMenuItem(it.description)
                         }
-                    )
-                    {
-                        BasicDropdownMenuItem(it.description)
+                    }
+                }
+
+                if (viewModel.isManual) {
+                    FormItem("Consignment Product") {
+                        Dock2DockDropdown(
+                            options = viewModel.consignmentProducts,
+                            selectedTextExpression = { it.name },
+                            selectedText = viewModel.consignmentProductName,
+                            errorMessage = viewModel.consignmentProductErrorMessage,
+                            isError = viewModel.consignmentProductIsError,
+                            placeholderText = "--Select--",
+                            selectedItemChanged = {
+                                viewModel.onConsignmentProductValueChanged(it)
+                            }
+                        )
+                        {
+                            BasicDropdownMenuItem(it.name)
+                        }
                     }
                 }
                 FormItem("Quantity") {
