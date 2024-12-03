@@ -8,6 +8,7 @@ import com.skydoves.sandwich.map
 import com.skydoves.sandwich.onError
 import com.skydoves.sandwich.onException
 import com.skydoves.sandwich.onSuccess
+import io.dock2dock.android.application.Utils
 import io.dock2dock.android.application.configuration.Dock2DockConfiguration
 import io.dock2dock.android.application.eventBus.Dock2DockEventBus
 import io.dock2dock.android.application.events.Dock2DockBarcodeScannedEvent
@@ -196,6 +197,7 @@ class ShippingContainerViewModel(private val shippingContainerId: String, privat
                 _shippingContainerPackages.value += shippingContainerPackage
                 updateShippingContainerQty(1, shippingContainerPackage.quantity)
             }.onError {
+                Utils.playErrorSound()
                 map(HttpErrorMapper) {
                     when(this.code) {
                         Dock2DockErrorCode.Unauthorised -> {
@@ -231,6 +233,7 @@ class ShippingContainerViewModel(private val shippingContainerId: String, privat
                     updateShippingContainerQty(-1, -consignmentPackage.quantity)
                 }
             }.onError {
+                Utils.playErrorSound()
                 map(HttpErrorMapper) {
                     when(this.code) {
                         Dock2DockErrorCode.Unauthorised -> {
