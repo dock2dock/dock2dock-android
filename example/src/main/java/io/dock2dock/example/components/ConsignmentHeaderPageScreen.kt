@@ -19,7 +19,7 @@ import io.dock2dock.android.ui.components.DefaultTopAppBar
 fun ConsignmentHeaderPageScreen(
     navController: NavController
 ) {
-    val salesOrderNumber = "FC1008"
+    val salesOrderNumber = "109316"
 
     fun navigateToPrintShippingLabels() {
         navController.navigate("consignmentHeader/$salesOrderNumber/printShippingLabels")
