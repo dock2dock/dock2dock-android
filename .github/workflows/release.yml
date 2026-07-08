@@ -4,6 +4,11 @@ on:
   release:
     types: [ released ]
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g. 0.2.14). Defaults to Configuration.kt versionName.'
+        required: false
+        type: string
 
 jobs:
   publish:
@@ -21,9 +26,22 @@ jobs:
       - name: Clean build directory
         run: ./gradlew clean
 
+      - name: Resolve version
+        id: resolve_version
+        run: |
+          # GitHub Releases are cut from tags created by generate-tag.yml
+          # (format vX.Y.Z), so the tag itself is the source of truth for the version.
+          VERSION="${{ inputs.version }}"
+          if [ -z "$VERSION" ]; then
+            VERSION="${{ github.event.release.tag_name }}"
+            VERSION="${VERSION#v}"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
       - name: Build and upload artifacts
         run: ./gradlew publishReleasePublicationToSonatypeRepository --no-daemon --no-parallel --stacktrace
         env:
+          VERSION: ${{ steps.resolve_version.outputs.version }}
           ORG_GRADLE_PROJECT_nexusUserName: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
           ORG_GRADLE_PROJECT_nexusPassword: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
           ORG_GRADLE_PROJECT_sonatypeStagingProfileId: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
