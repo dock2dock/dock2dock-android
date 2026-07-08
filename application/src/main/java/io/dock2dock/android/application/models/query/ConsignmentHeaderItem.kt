@@ -13,7 +13,8 @@ data class ConsignmentHeaderItem(
     val height: Double,
     val quantity: Double,
     val pallets: Int,
-    val locked: Boolean
+    val locked: Boolean,
+    val isPallet: Boolean
 ) {
     val description: String
         get() {
@@ -23,7 +24,4 @@ data class ConsignmentHeaderItem(
                 "$consignmentProductName · Qty: ${"%.0f".format(quantity)} · Wgt: $weight"
             }
         }
-
-    val isPallet: Boolean
-        get() = consignmentProductTypeId == "pallet"
 }
