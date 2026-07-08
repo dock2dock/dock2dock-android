@@ -38,8 +38,14 @@ jobs:
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Build and upload artifacts
-        run: ./gradlew publishReleasePublicationToSonatypeRepository --no-daemon --no-parallel --stacktrace
+      # The close/release tasks must run in the same Gradle invocation as the
+      # upload: gradle-nexus.publish-plugin only tracks the created staging
+      # repository's ID in memory for the current build, so a separate
+      # ./gradlew call for closeAndReleaseSonatypeStagingRepository has no
+      # record of it and fails with "Failed to calculate the value of task
+      # ':closeSonatypeStagingRepository' property 'stagingRepositoryId'".
+      - name: Build, upload, close and release artifacts
+        run: ./gradlew publishReleasePublicationToSonatypeRepository closeAndReleaseSonatypeStagingRepository --no-daemon --no-parallel --stacktrace
         env:
           VERSION: ${{ steps.resolve_version.outputs.version }}
           ORG_GRADLE_PROJECT_nexusUserName: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
@@ -48,13 +54,3 @@ jobs:
           ORG_GRADLE_PROJECT_signingKeyId: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGKEYID }}
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGKEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGPASSWORD }}
-
-      # publishReleasePublicationToSonatypeRepository only stages the artifacts;
-      # Maven Central won't serve them until the staging repo is closed and released.
-      - name: Close and release staging repository
-        run: ./gradlew closeAndReleaseSonatypeStagingRepository --no-daemon --no-parallel --stacktrace
-        env:
-          VERSION: ${{ steps.resolve_version.outputs.version }}
-          ORG_GRADLE_PROJECT_nexusUserName: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
-          ORG_GRADLE_PROJECT_nexusPassword: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
-          ORG_GRADLE_PROJECT_sonatypeStagingProfileId: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
