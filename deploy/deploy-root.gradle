@@ -38,7 +38,11 @@ nexusPublishing {
 
     repositories {
         sonatype {
-            stagingProfileId = sonatypeStagingProfileId
+            // Only set stagingProfileId when provided: assigning an empty string still
+            // marks the Property as present, which skips the plugin's auto-detection.
+            if (sonatypeStagingProfileId) {
+                stagingProfileId = sonatypeStagingProfileId
+            }
             username = ossrhUsername
             password = ossrhPassword
             nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
