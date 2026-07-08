@@ -14,6 +14,7 @@ import io.dock2dock.android.application.eventBus.Dock2DockEventBus
 import io.dock2dock.android.application.events.Dock2DockBarcodeFailedEvent
 import io.dock2dock.android.application.events.Dock2DockBarcodeScannedEvent
 import io.dock2dock.android.barcodeScanner.models.AndroidOsBrand
+import io.dock2dock.android.barcodeScanner.models.BarcodeScannedEvent
 import io.dock2dock.android.barcodeScanner.models.HoneywellBarcodeReader
 import io.dock2dock.android.barcodeScanner.models.IBarcodeReader
 import io.dock2dock.android.barcodeScanner.models.IBarcodeReaderListener
@@ -59,11 +60,11 @@ class MainActivity : ComponentActivity(),
         }
     }
 
-    override fun onBarcodeScanned(barcode: String) {
+    override fun onBarcodeScanned(event: BarcodeScannedEvent) {
         runBlocking {
             withContext(Dispatchers.IO) {
-                val event = Dock2DockBarcodeScannedEvent(barcode)
-                Dock2DockEventBus.publish(event)
+                val scannedEvent = Dock2DockBarcodeScannedEvent(event.barcode, event.barcodeType.name)
+                Dock2DockEventBus.publish(scannedEvent)
             }
         }
     }
