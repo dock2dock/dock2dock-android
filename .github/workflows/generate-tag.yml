@@ -1,0 +1,41 @@
+name: Generate tag
+
+# Runs on every merge to main. paulhatch/semantic-version computes the next
+# version from git tag/commit history (patch bumps by default; include
+# "(MINOR)" or "(MAJOR)" in a commit message to bump those instead) and the
+# commit is tagged accordingly. Pushing the tag triggers release-snapshot.yml
+# separately, which publishes it as a SNAPSHOT to Maven.
+#
+# Nothing is committed back to main - only a tag is pushed - so this doesn't
+# run into the branch protection rule requiring PR review on main.
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  generate-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Compute next version
+        id: semver
+        uses: paulhatch/semantic-version@v5.4.0
+        with:
+          tag_prefix: "v"
+          major_pattern: "(MAJOR)"
+          minor_pattern: "(MINOR)"
+          version_format: "${major}.${minor}.${patch}"
+          bump_each_commit: false
+
+      - name: Create and push tag
+        run: |
+          set -euo pipefail
+          git tag "${{ steps.semver.outputs.version_tag }}"
+          git push origin "${{ steps.semver.outputs.version_tag }}"

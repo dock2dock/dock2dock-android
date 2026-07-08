@@ -27,7 +27,14 @@ if (secretPropsFile.exists()) {
     ext["snapshot"] = System.getenv('SNAPSHOT')
 }
 
-if (snapshot) {
+// CI publishes tag-derived versions (see .github/workflows/generate-tag.yml,
+// release-snapshot.yml and release.yml) rather than relying on Configuration.kt
+// being bumped by hand. Configuration.versionName/snapshotVersionName remain
+// the fallback for local/manual runs.
+def versionOverride = System.getenv('VERSION')
+if (versionOverride) {
+    ext["rootVersionName"] = versionOverride
+} else if (snapshot) {
     ext["rootVersionName"] = Configuration.snapshotVersionName
 } else {
     ext["rootVersionName"] = Configuration.versionName
