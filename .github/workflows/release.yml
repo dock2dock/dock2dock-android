@@ -48,3 +48,13 @@ jobs:
           ORG_GRADLE_PROJECT_signingKeyId: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGKEYID }}
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGKEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGPASSWORD }}
+
+      # publishReleasePublicationToSonatypeRepository only stages the artifacts;
+      # Maven Central won't serve them until the staging repo is closed and released.
+      - name: Close and release staging repository
+        run: ./gradlew closeAndReleaseSonatypeStagingRepository --no-daemon --no-parallel --stacktrace
+        env:
+          VERSION: ${{ steps.resolve_version.outputs.version }}
+          ORG_GRADLE_PROJECT_nexusUserName: ${{ secrets.SONATYPE_NEXUS_USERNAME }}
+          ORG_GRADLE_PROJECT_nexusPassword: ${{ secrets.SONATYPE_NEXUS_PASSWORD }}
+          ORG_GRADLE_PROJECT_sonatypeStagingProfileId: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
