@@ -22,7 +22,7 @@ interface IBarcodeReader {
 }
 
 interface IBarcodeReaderListener {
-    fun onBarcodeScanned(barcode: String)
+    fun onBarcodeScanned(event: BarcodeScannedEvent)
     fun onBarcodeFailure()
 }
 
@@ -30,7 +30,10 @@ interface IBarcodeTriggerListener {
     fun onBarcodeTrigger()
 }
 
-class HoneywellBarcodeReader(private val context: Context): IBarcodeReader, DefaultLifecycleObserver {
+class HoneywellBarcodeReader(
+    private val context: Context,
+    private val config: BarcodeReaderConfig = BarcodeReaderConfig()
+): IBarcodeReader, DefaultLifecycleObserver {
 
     private var reader: BarcodeReader? = null
     private var barcodeReaderListener: BarcodeReader.BarcodeListener? = null
@@ -52,25 +55,23 @@ class HoneywellBarcodeReader(private val context: Context): IBarcodeReader, Defa
                     BarcodeReader.TRIGGER_CONTROL_MODE_CLIENT_CONTROL
                 )
 
-                reader?.setProperty(BarcodeReader.PROPERTY_CODE_39_ENABLED, true)
-                reader?.setProperty(BarcodeReader.PROPERTY_DATAMATRIX_ENABLED, true)
-                reader?.setProperty(BarcodeReader.PROPERTY_CODE_128_ENABLED, true)
-                reader?.setProperty(BarcodeReader.PROPERTY_GS1_128_ENABLED, true)
-                reader?.setProperty(BarcodeReader.PROPERTY_CODE_39_ENABLED, true)
-                reader?.setProperty(BarcodeReader.PROPERTY_DATAMATRIX_ENABLED, true)
-                reader?.setProperty(BarcodeReader.PROPERTY_UPC_A_ENABLE, true)
-                reader?.setProperty(BarcodeReader.PROPERTY_EAN_13_ENABLED, true)
-                reader?.setProperty(BarcodeReader.PROPERTY_AZTEC_ENABLED, false)
-                reader?.setProperty(BarcodeReader.PROPERTY_CODABAR_ENABLED, false)
-                reader?.setProperty(BarcodeReader.PROPERTY_INTERLEAVED_25_ENABLED, false)
-                reader?.setProperty(BarcodeReader.PROPERTY_PDF_417_ENABLED, false)
+                reader?.setProperty(BarcodeReader.PROPERTY_CODE_39_ENABLED, config.code39Enabled)
+                reader?.setProperty(BarcodeReader.PROPERTY_DATAMATRIX_ENABLED, config.dataMatrixEnabled)
+                reader?.setProperty(BarcodeReader.PROPERTY_CODE_128_ENABLED, config.code128Enabled)
+                reader?.setProperty(BarcodeReader.PROPERTY_GS1_128_ENABLED, config.gs1_128Enabled)
+                reader?.setProperty(BarcodeReader.PROPERTY_UPC_A_ENABLE, config.upcAEnabled)
+                reader?.setProperty(BarcodeReader.PROPERTY_EAN_13_ENABLED, config.ean13Enabled)
+                reader?.setProperty(BarcodeReader.PROPERTY_AZTEC_ENABLED, config.aztecEnabled)
+                reader?.setProperty(BarcodeReader.PROPERTY_CODABAR_ENABLED, config.codabarEnabled)
+                reader?.setProperty(BarcodeReader.PROPERTY_INTERLEAVED_25_ENABLED, config.interleaved25Enabled)
+                reader?.setProperty(BarcodeReader.PROPERTY_PDF_417_ENABLED, config.pdf417Enabled)
 
                 //Set Max Code 39 barcode length
-                reader?.setProperty(BarcodeReader.PROPERTY_CODE_39_MAXIMUM_LENGTH, 10)
+                reader?.setProperty(BarcodeReader.PROPERTY_CODE_39_MAXIMUM_LENGTH, config.code39MaximumLength)
                 // Turn on center decoding
-                reader?.setProperty(BarcodeReader.PROPERTY_CENTER_DECODE, true)
+                reader?.setProperty(BarcodeReader.PROPERTY_CENTER_DECODE, config.centerDecodeEnabled)
                 // Enable bad read response
-                reader?.setProperty(BarcodeReader.PROPERTY_NOTIFICATION_BAD_READ_ENABLED, true)
+                reader?.setProperty(BarcodeReader.PROPERTY_NOTIFICATION_BAD_READ_ENABLED, config.badReadNotificationEnabled)
 
                 barcodeReaderListener?.let {
                     reader?.addBarcodeListener(it)
@@ -92,7 +93,9 @@ class HoneywellBarcodeReader(private val context: Context): IBarcodeReader, Defa
                 try {
                     reader?.softwareTrigger(false)
                     val data = event.barcodeData
-                    listener.onBarcodeScanned(data)
+                    val type = event.codeId
+                    val barcodeType = HoneywellBarcodeType.getBarcodeType(type)
+                    listener.onBarcodeScanned(BarcodeScannedEvent(data, barcodeType))
 
                 } catch (e: ScannerNotClaimedException) {
                     e.printStackTrace()
