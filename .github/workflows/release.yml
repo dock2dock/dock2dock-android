@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to publish (e.g. 0.2.14). Defaults to Configuration.kt versionName.'
+        description: 'Version to publish (e.g. 0.2.14). Defaults to the release tag, or the dispatched tag ref if run manually against a tag.'
         required: false
         type: string
 
@@ -29,12 +29,25 @@ jobs:
       - name: Resolve version
         id: resolve_version
         run: |
+          set -euo pipefail
           # GitHub Releases are cut from tags created by generate-tag.yml
           # (format vX.Y.Z), so the tag itself is the source of truth for the version.
           VERSION="${{ inputs.version }}"
           if [ -z "$VERSION" ]; then
             VERSION="${{ github.event.release.tag_name }}"
-            VERSION="${VERSION#v}"
+          fi
+          # github.event.release.tag_name is only populated for `release` events.
+          # workflow_dispatch runs against a tag ref instead, so fall back to that.
+          if [ -z "$VERSION" ] && [ "${{ github.ref_type }}" = "tag" ]; then
+            VERSION="${GITHUB_REF_NAME}"
+          fi
+          VERSION="${VERSION#v}"
+          if [ -z "$VERSION" ]; then
+            # Refuse to fall back to Configuration.kt's versionName: that silently
+            # rebuilds an already-published version and Sonatype rejects the
+            # duplicate deployment as "already exists".
+            echo "::error::Could not resolve a version to publish (no version input, no release tag, and not run against a tag ref)." >&2
+            exit 1
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
