@@ -94,7 +94,7 @@ class HoneywellBarcodeReader(
                     reader?.softwareTrigger(false)
                     val data = event.barcodeData
                     val type = event.codeId
-                    val barcodeType = HoneywellBarcodeType.getBarcodeType(type)
+                    val barcodeType = HoneywellSymbology.fromCodeId(type)
                     listener.onBarcodeScanned(BarcodeScannedEvent(data, barcodeType))
 
                 } catch (e: ScannerNotClaimedException) {
