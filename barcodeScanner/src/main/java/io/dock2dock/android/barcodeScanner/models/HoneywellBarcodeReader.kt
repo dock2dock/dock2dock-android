@@ -91,7 +91,12 @@ class HoneywellBarcodeReader(
         barcodeReaderListener = object : BarcodeReader.BarcodeListener {
             override fun onBarcodeEvent(event: BarcodeReadEvent) {
                 try {
-                    reader?.softwareTrigger(false)
+                    // Stop decoding via the same client-controlled decode() API the
+                    // TriggerListener uses. softwareTrigger() sends a synthetic trigger
+                    // up/down action through the physical trigger's own channel, which
+                    // desyncs hardware/software trigger state in client-control mode and
+                    // left the reader stuck reporting onFailureEvent after the first scan.
+                    reader?.decode(false)
                     val data = event.barcodeData
                     val type = event.codeId
                     val barcodeType = HoneywellSymbology.fromCodeId(type)
