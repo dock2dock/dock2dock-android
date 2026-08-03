@@ -91,7 +91,12 @@ class HoneywellBarcodeReader(
         barcodeReaderListener = object : BarcodeReader.BarcodeListener {
             override fun onBarcodeEvent(event: BarcodeReadEvent) {
                 try {
-                    reader?.softwareTrigger(false)
+                    // Trigger arm/disarm is owned entirely by the TriggerListener below,
+                    // reacting to the physical trigger's real press/release state - this
+                    // matches Honeywell's documented client-trigger-control sample, which
+                    // calls no reader method here. Calling softwareTrigger()/decode() from
+                    // this handler injects a second, out-of-band trigger transition that
+                    // desyncs hardware/software trigger state and breaks later scans.
                     val data = event.barcodeData
                     val type = event.codeId
                     val barcodeType = HoneywellSymbology.fromCodeId(type)
