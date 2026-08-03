@@ -13,5 +13,6 @@ data class BarcodeReaderConfig(
     val interleaved25Enabled: Boolean = false,
     val pdf417Enabled: Boolean = false,
     val centerDecodeEnabled: Boolean = true,
-    val badReadNotificationEnabled: Boolean = true
+    val badReadNotificationEnabled: Boolean = true,
+    val goodReadNotificationEnabled: Boolean = true
 )
