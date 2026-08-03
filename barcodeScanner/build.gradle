@@ -14,7 +14,7 @@ dependencies {
     implementation(Dependencies.androidxLifecycleRunTimeKtx)
     implementation(Dependencies.androidxLifecycleCommon)
 
-    implementation files('libs/DataCollection.aar')
+    api project(':honeywell')
 
     testImplementation(Dependencies.jUnit)
     androidTestImplementation(Dependencies.androidxTestJunit)
