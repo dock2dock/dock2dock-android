@@ -55,6 +55,8 @@ class HoneywellBarcodeReader(
                     BarcodeReader.TRIGGER_CONTROL_MODE_CLIENT_CONTROL
                 )
 
+                reader?.setProperty(BarcodeReader.PROPERTY_NOTIFICATION_GOOD_READ_ENABLED, config.goodReadNotificationEnabled)
+
                 reader?.setProperty(BarcodeReader.PROPERTY_CODE_39_ENABLED, config.code39Enabled)
                 reader?.setProperty(BarcodeReader.PROPERTY_DATAMATRIX_ENABLED, config.dataMatrixEnabled)
                 reader?.setProperty(BarcodeReader.PROPERTY_CODE_128_ENABLED, config.code128Enabled)
